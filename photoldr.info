@@ -1,0 +1,16 @@
+name = PhotoLDR
+description = Use the PhotoLDR iOS App with this site.
+core = 7.x
+package = PhotoLDR
+php = 5.1
+
+files[] = photoldr.module
+files[] = photoldr.admin.inc
+files[] = photoldr_post_page.inc
+files[] = photoldr_output_page.inc
+
+version = "7.x-0.8"
+configure = admin/config/photoldr
+project = photoldr
+project status url = http://www.photoldr.com/projects
+datestamp = "1334835098"

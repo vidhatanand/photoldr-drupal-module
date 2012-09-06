@@ -1,0 +1,496 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Present data and receive data from an iOS app PhotoLDR
+ */
+ 
+ /**
+ * Implements hook_menu().
+ */
+function photoldr_menu() {
+
+  
+  // Give the site the structure of the nodes
+  // Use HTML Authentication
+  $items['photoldrstructure.xml'] = array(
+    'title' => 'PhotoLDR XML Data',
+    'description' => 'PhotoLDR prsentaion of Node Structure using HTML authentication',
+    'page callback' => 'photoldr_node_structure_page_auth',
+    'access arguments' => array('access content'),
+    'file' => 'photoldr_output_page.inc',
+    'file path' => drupal_get_path('module', 'photoldr'),
+    'weight' => 1,
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+  
+  // Give the site the structure of the nodes
+  // Use Drupal Authentication
+  $items['admin/config/photoldr/photoldrstructure.xml'] = array(
+    'title' => 'PhotoLDR XML Data Debug Page',
+    'description' => 'PhotoLDR prsentaion of Node Structure using Drupal authentication',
+    'page callback' => 'photoldr_node_structure_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'photoldr_output_page.inc',
+    'file path' => drupal_get_path('module', 'photoldr'),
+    'weight' => 1,
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
+ 
+
+  // Post data to site in $_POST
+  $items['photoldrpost.php'] = array(
+    'title' => 'Post Page',
+    'description' => 'Post page for data from the PhotoLDR App.',
+    'page callback' => 'photoldr_post_page',
+    'access arguments' => array('access content'),
+    'file' => 'photoldr_post_page.inc',
+    'file path' => drupal_get_path('module', 'photoldr'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+  
+ 
+   // Module settings.
+ 
+  $items['admin/config/photoldr'] = array(
+    'title' => 'PhotoLDR',
+    'description' => 'PhotoLDR Module Configuration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('photoldr_admin_settings'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'photoldr.admin.inc',
+    'file path' => drupal_get_path('module', 'photoldr'),
+  );
+  return $items;
+}
+ 
+ /**
+ * Implements hook_permission().
+ *
+ * Learn more about hook_permission here:
+ * http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_permission/7
+ */
+function photoldr_permission() {
+  return array(
+    'photoldr link' => array(
+      'title' => t('PhotoLDR Link'),
+      'description' => t('Show the PhotoLDR link on any node add form.'),
+    ),
+    'debug photoldr' => array(
+      'title' => t('Debug PhotoLDR'),
+      'description' => t('Extra debug options for the PhotoLDR link on any node add form.'),
+    ),
+  );
+}
+
+
+
+
+
+// Internal function checks _POST and _GET for data and returns FALSE or a valid UserID
+function _photoldr_html_user_auth() {
+  $uid = FALSE;
+  if (isset($_POST['username'])) {
+    $data = $_POST;
+  }
+  else if (isset($_GET['username'])) {
+    $data = $_GET;
+  }
+
+  // Authenticate the user
+  if (isset($data['username']) && isset($data['password'])){
+    $usern = check_plain($data['username']);
+    $passw = check_plain($data['password']);
+    $uid = user_authenticate($usern, $passw);
+  } else {
+      watchdog('PhotoLDR', 'No DATA moved from Post or Get.');
+  }
+
+  return $uid;
+}
+
+
+
+
+// private function takes a query result for a group of nodes and
+// parses them into a single array.  
+function _prep_node_for_xml($result, $pub, $account) {
+  $field_image_id = variable_get('photoldr_image_field', 'field_image');
+  $simple_dates = array('created', 'changed', 'revision_timestamp', 'last_comment_timestamp');
+  $image_style = variable_get('photoldr_image_field_style', 'medium');
+  $icon_style = variable_get('photoldr_image_icon_field_style', 'thumbnail');
+
+//  drupal_set_message('<pre>Account Info ' . print_r($account, true) . '</pre>');
+//  drupal_set_message('<pre>' . print_r($image_pixels, true) . '</pre>');
+
+
+
+  foreach ($result as $row) {
+    // process query results as individual nodes
+    $node = node_load($row->nid);
+    $type = $node->type;
+    $ntype = $node->type;
+    $instances = field_info_instances('node', $type);
+   //    drupal_set_message('<pre>' . print_r($instances, true) . '</pre>');
+   
+      $access = 'create ' . $ntype . ' content';
+      if (user_access($access, $account)) {
+        $usercreate = TRUE;
+      } else {
+        $usercreate = FALSE;
+      }
+
+      $access = 'edit any ' . $ntype . ' content';
+      if (user_access($access, $account)) {
+        $usereditany = TRUE;
+      } else {
+        $usereditany = FALSE;
+      }
+  
+      $access = 'edit own ' . $ntype . ' content';
+      if (user_access($access, $account)) {
+        $usereditown = TRUE;
+      } else {
+        $usereditown = FALSE;
+      } 
+
+      $access = 'delete any ' . $ntype . ' content';
+      if (user_access($access, $account)) {
+        $userdeleteany = TRUE;
+      } else {
+        $userdeleteany = FALSE;
+      }
+
+      $access = 'delete own ' . $ntype . ' content';
+      if (user_access($access, $account)) {
+        $userdeleteown = TRUE;
+      } else {
+        $userdeleteown = FALSE;
+      } 
+   
+      $access = 'administer nodes';
+      if (user_access($access, $account)) {
+        $nodeadmin = TRUE;
+      } else {
+        $nodeadmin = FALSE;
+      }
+   
+   
+   
+    foreach ($node as $k => $v) {
+      // Process nodes as fields
+             
+      $pub['nodes'][$row->nid]['userdelete'] = '0';
+      $pub['nodes'][$row->nid]['useredit'] = '0';
+
+     // Add extra info about the user access to this node. 
+     if ($nodeadmin) {
+        $pub['nodes'][$row->nid]['userdelete'] = '1';
+        $pub['nodes'][$row->nid]['useredit'] = '1';
+     } else {
+       
+       if ($row->uid == $account->uid) {
+         if ($userdeleteown) {
+           $pub['nodes'][$row->nid]['userdelete'] = '1';
+         }
+         if ($usereditown) {
+           $pub['nodes'][$row->nid]['useredit'] = '1';
+         }
+       }
+       if ($userdeleteany) {
+           $pub['nodes'][$row->nid]['userdelete'] = '1';
+       }
+       if ($usereditany) {
+           $pub['nodes'][$row->nid]['useredit'] = '1';
+       }
+     }
+     
+     
+
+
+     if (isset($instances[$k]['widget']['module'])) {
+        // Process custom fields 
+
+
+        // Process image field 
+        if ($instances[$k]['widget']['module'] == 'image') {
+              foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                  if ((!isset($v2)) || ($v2 == "")) {
+                    continue;
+                  }
+                  $imgpath = file_create_url($v2['uri']);
+
+                  $themed_icon = image_style_url($icon_style, $v2['uri']);
+                  $key = 'icon' . $k2;
+                  $pub['nodes'][$row->nid][$key] =  $themed_icon;
+
+                  $themed_img = image_style_url($image_style, $v2['uri']);
+                  $key = 'image' . $k2;
+                  $pub['nodes'][$row->nid][$key] =  $themed_img;
+
+                }
+              }
+          continue;
+        }  // End field_image
+        
+        // Process Date fields
+        if ($instances[$k]['widget']['module'] == 'date') {
+           foreach ($v as $k1 => $v1) {
+             $pub['nodes'][$row->nid][$k]['value'] =  $v1['0']['value'];
+             $pub['nodes'][$row->nid][$k]['value2'] =  isset($v1['0']['value2']) ? $v1['0']['value2'] : $v1['0']['value'];
+             $pub['nodes'][$row->nid][$k]['timezone'] =  $v1['0']['timezone'];
+             // drupal_set_message('<pre>' . print_r($v1, true) . '</pre>');
+           }
+           continue;
+        }
+        
+
+        // Process Address fields
+        if ($instances[$k]['widget']['module'] == 'addressfield') {
+  
+           foreach ($v['und'] as $k1 => $v1) {
+
+              $pub['nodes'][$row->nid]['street1'] =  $v1['thoroughfare'];
+              $pub['nodes'][$row->nid]['street2'] =  $v1['premise'];
+              $pub['nodes'][$row->nid]['city'] =  $v1['locality'];
+              $pub['nodes'][$row->nid]['state'] =  $v1['administrative_area'];
+              $pub['nodes'][$row->nid]['zip'] =  $v1['postal_code'];
+              $pub['nodes'][$row->nid]['country'] =  $v1['country'];
+
+           }
+          continue;
+        }
+
+         // Process Product fields  
+         // TODO this needs some work.  
+        if ($instances[$k]['widget']['module'] == 'commerce_product_reference') {
+          
+          if (isset($v['und']['0']['product_id'])) {
+            $product = commerce_product_load($v['und']['0']['product_id']);
+            // hardcoding field_image
+            $product_images = $product->field_image;
+            $product_title = $product->title;
+            $product_sku = $product->sku;
+            
+              foreach ($product_images as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                  if ((!isset($v2)) || ($v2 == "")) {
+                    continue;
+                  }
+                  $imgpath = file_create_url($v2['uri']);
+
+                  $themed_icon = image_style_url($icon_style, $v2['uri']);
+                  $key = 'icon' . $k2;
+                  $pub['nodes'][$row->nid][$key] =  $themed_icon;
+
+                  $themed_img = image_style_url($image_style, $v2['uri']);
+                  $key = 'image' . $k2;
+                  $pub['nodes'][$row->nid][$key] =  $themed_img;
+
+                }
+              }
+            
+           /* 
+            $handle = fopen("commerce_product_reference.txt", "a");
+            fwrite($handle, 'Key: ' . print_r($product, true) . '  ');
+            fclose($handle); 
+						*/
+          }
+  
+          continue;
+        }
+
+      }  // End if widget module fields
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // Handle simple dates that are timestamps
+      if (in_array($k, $simple_dates) && (is_numeric($v))) {
+        $pub['nodes'][$row->nid][$k] =  date('Y-m-d', $v);
+        continue;
+      }
+      
+
+
+
+
+
+
+
+
+
+
+
+        
+        // Default field Handling - All other or unsupported fields.
+      if (is_array($v)) {
+        if (isset($v['und']['0']['safe_value'])) {
+      $val = strip_tags($v['und']['0']['value'], '<a><em><img><strong><cite><blockquote><code><ul><ol><li><dl><dt><dd>');
+          $pub['nodes'][$row->nid][$k] = htmlspecialchars($val);
+          //$pub['nodes'][$row->nid][$k] = print_r(htmlentities(strip_tags($v['und']['0']['value'], '<a><img><br>')), true);
+          continue;
+        }
+      } else {
+        $pub['nodes'][$row->nid][$k] =  htmlspecialchars(strip_tags($v));
+      }
+    
+    }
+  
+  
+  }  // All data gathered in PUB varialble
+
+  return $pub;
+  
+}
+
+
+
+
+function _account_to_xml($account, $pub) {
+    // At this point we have a Valid user.  Lets get some data
+  // Store data in the PUB variable to later generate XML.
+  $simple_dates = array('created', 'changed', 'access', 'login');
+  
+    $pub['name'] = $account->name;
+    $pub['email'] = $account->mail;
+    $instances = field_info_instances('user', 'user');
+
+    foreach ($account as $k => $v) {
+          $k = (isset($k)) ? $k : 'item';
+          $k = is_string($k) ? $k : 'item';
+
+
+        if (in_array($k, $simple_dates) && (is_numeric($v))) {
+          $pub['user'][$k] =  date('Y-m-d', $v);
+          continue;
+        }
+ 
+
+      if (isset($instances[$k]['widget']['module'])) {
+        // Process custom fields 
+        if ($instances[$k]['widget']['module'] == 'image') {
+              foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                  $imgpath = file_create_url($v2['uri']);
+                  $key = 'image' . $k2;
+                  $pub['user'][$key] =  $imgpath;
+                }
+              }
+          continue;
+        }  // End field_image
+        
+        if ($instances[$k]['widget']['module'] == 'date') {
+          
+           foreach ($v as $k1 => $v1) {
+             foreach ($v1 as $k2 => $v2) {
+               $pub['user'][$k] =  $v2['value'];
+             }
+           }
+           continue;
+        }  // end date field
+        
+        
+      }  // end special fields
+    
+          if(is_array($v)){
+            $pub['user'][$k] = serialize($v); 
+          } else {
+            $pub['user'][$k] = $v;
+          }
+    }
+    return $pub;
+  
+}
+
+
+
+function _array_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
+  $output = '';
+     // make XML from $pub
+    foreach ($pub as $k => $v) {
+      if (in_array($k, $restrictedfields)) {
+        continue;
+      }
+
+          $k = (isset($k)) ? $k : 'item';
+          $k = is_string($k) ? $k : 'item';
+
+          if(is_array($v)){
+            $output .= '<' . $k . ' count="' . count($v) . '">';
+              foreach ($v as $k1 => $v1) {
+                if (in_array($k1, $restrictedfields)) {
+                  continue;
+                }
+                  $k1 = isset($k1) ? $k1 : 'node';
+                  $k1 = is_string($k1) ? $k1 : 'node';
+                
+                if(is_array($v1)){
+                  $output .=  '<' . $k1 . '>';
+                    foreach ($v1 as $k2 => $v2) {
+                        if (in_array($k2, $restrictedfields)) {
+                          continue;
+                        }
+                      if(is_array($v2)){
+                         $output .=  '<' . $k2 . '>';
+                         foreach ($v2 as $k3 => $v3) {
+                            if (in_array($k3, $restrictedfields)) {
+                              continue;
+                            }
+                             if(is_array($v3)){
+                               $output .=  '<' . $k3 . '>';
+                               foreach ($v3 as $k4 => $v4) {
+                                  if (in_array($k4, $restrictedfields)) {
+                                    continue;
+                                  }
+                                   if(is_array($v4)){
+                                     $output .= '<' . $k4 . '>' . serialize($v4) . '</' . $k4 . '>' ;  // <tag>serialarray</tag>
+                                   } else {
+                                     $output .= '<' . $k4 . '>' . $v4 . '</' . $k4 . '>' ;  // <tag>serialarray</tag>
+                                   }
+                               }
+                               $output .=  '</' . $k3 . '>';
+                            } else {
+                               $output .= '<' . $k3 . '>' . $v3 . '</' . $k3 . '>' ;  // <tag>serialarray</tag>
+                            }
+                         }
+                         $output .=  '</' . $k2 . '>';
+                      }
+                      else {
+                        $output .= '<' . $k2 . '>' . $v2 . '</' . $k2 . '>' ;  // <tag>serialarray</tag>
+                      }
+                    }
+                  $output .=  '</' . $k1 . '>';
+                } else {
+                  if (!is_object($v1)) {
+                    $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' ;  // <tag>serialarray</tag>
+                  }
+                }
+                
+              } // END foreach ($v as $k1 => $v1)
+              
+              $output .= '</' . $k . '>';
+
+            
+          } else {
+            if (!is_object($v)) {
+              $output .= '<' . $k . '>' .$v . '</' . $k . '>' ;  // <tag>serialarray</tag>
+            }
+          }
+          
+    }
+  
+  return $output;
+  
+}

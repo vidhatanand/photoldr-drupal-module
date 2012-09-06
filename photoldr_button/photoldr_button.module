@@ -1,0 +1,158 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Add a link to Image widgets to photoldr_button://
+ */
+ 
+ /**
+ * Implements hook_menu().
+ */
+function photoldr_button_menu() { 
+   // Module settings.
+ 
+  $items['admin/config/photoldr_button'] = array(
+    'title' => 'photoldr_button',
+    'description' => 'photoldr_button Module Configuration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('photoldr_button_admin_settings'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'photoldr_button.admin.inc',
+    'file path' => drupal_get_path('module', 'photoldr_button'),
+  );
+  return $items;
+}
+ 
+ /**
+ * Implements hook_permission().
+ *
+ * Learn more about hook_permission here:
+ * http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_permission/7
+ */
+function photoldr_button_permission() {
+  return array(
+    'photoldr_button link' => array(
+      'title' => t('photoldr_button Link'),
+      'description' => t('Show the photoldr_button link on any node add form.'),
+    ),
+  );
+}
+ /**
+ * Implements hook_form_alter().
+ *
+ * Alter Node Form to add photoldr_button launch button with URL.
+ *
+ */
+function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  global $base_url;
+  $hostname = variable_get('photoldr_button_FQDN', $base_url['host']);
+
+  $access = 'photoldr_button link';
+  $defaultnodeslist = array('article', 'book', 'page', 'product_display');
+  $photoldr_button_node_types = variable_get('photoldr_button_types',$defaultnodeslist);
+  $uid = $user->uid;
+  if (!user_access($access, $user)) {
+    return;
+  }
+  if (!isset($form['#node_edit_form'])) {
+    return;
+  }
+  if (!isset($form['#node'])) {
+    return;
+  }
+  if (!array_search($form['#node']->type, $photoldr_button_node_types)) {
+    return;
+  }
+  if (!(preg_match('/(iphone|ipad|ipod)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))) {
+    //TODO uncomment the return so that only iOS devices see the link
+    // return;
+  }
+
+  $type = $form['#node']->type;
+  $nid = isset($form['#node']->nid) ? $form['#node']->nid : 'new';
+  $nuid = $form['#node']->uid;
+  $q = $_GET['q'];
+
+    
+  if ($uid != $nuid) {
+      //must own node to use this.
+      if ($uid != 1) {
+        return;
+      }
+  }
+
+
+    $opts = _photoldr_button_parse_form($form);
+    
+    $url = 'photoldr_button://' . $hostname . '/' . $opts;
+    
+    $new1 = '<div class="ui-btn-up-c"><h4>Add ' . $type . ' from an iPhone, iPad or iPod. 
+              <a href="' . $url . '">
+               <input type="button" value="photoldr_button" class="form-submit">
+              </a></h4></div>';
+    if (user_access('debug photoldr_button')) {
+      $new1 .= '<br>' . print_r($url, TRUE);
+    }
+
+  if (user_access('photoldr_button link')) {
+    $form['photldr_app'] = array(
+      '#title' => t('PhotLDR App'),
+      '#type' => 'markup',
+      '#weight' => '16',
+      '#prefix' =>  '<div><h3>These buttons will be used with the photoldr_button iOS app.</h3>',
+      '#sufix' =>  '</div>',
+      '#markup' =>  $new1,
+    );
+  }
+
+
+  return $form;
+
+}
+
+
+
+//  Private function that helps build the URL for photoldr:// from active form elements.
+function _photoldr_button_parse_form($form) {
+  $node = $form['#node'];
+  
+//  drupal_set_message('<pre>' . print_r($form, true) . '</pre>' );
+  if (!isset($form['nid']['#value'])) {
+    $url = '&type=' . $form['#node']->type;
+    return $url;
+    
+  }
+  $url = '';
+  foreach ($node as $field => $v) {
+      switch (strtolower($field)) {
+        case 'nid':
+        case 'date':
+        case 'type':
+        case 'title':
+        case 'status':
+            if (isset($v)) {
+              $url .= '&' . $field . '=' . urlencode(check_plain($v));
+            }
+            break;
+        case 'body':
+            if (isset($v)) {
+              $url .= '&' . $field . '=' . urlencode(check_plain($v['und']['0']['value']));
+            }
+            break;
+        case 'field_address':
+               $url .= '&street1=' .  urlencode(check_plain($node->field_address['und']['0']['thoroughfare']));
+               $url .= '&street2=' .  urlencode(check_plain($node->field_address['und']['0']['premise']));
+               $url .= '&city=' .  urlencode(check_plain($node->field_address['und']['0']['locality']));
+               $url .= '&state' .  urlencode(check_plain($node->field_address['und']['0']['administrative_area']));
+               $url .= '&zip=' .  urlencode(check_plain($node->field_address['und']['0']['postal_code']));
+               $url .= '&country=' .  urlencode(check_plain($node->field_address['und']['0']['country']));
+            break;
+    }
+  }
+  
+  return $url;
+  
+}
+
+

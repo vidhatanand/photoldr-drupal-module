@@ -1,0 +1,9 @@
+name = PhotoLDR Button
+description = Show the PhotoLDR button on this site.
+package = PhotoLDR
+core = 7.x
+php = 5.1
+version = "7.x-0.7-alpha1"
+configure = admin/config/photoldr
+files[] = photoldr_button.module
+files[] = photoldr_button.admin.inc
