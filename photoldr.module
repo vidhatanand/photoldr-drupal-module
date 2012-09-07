@@ -5,6 +5,22 @@
  * Present data and receive data from an iOS app PhotoLDR
  */
  
+ 
+ /**
+ * Implements hook_help(). 
+ */
+function photoldr_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#photoldr':
+      // Return a line-break version of the module README.txt
+			$helptxt = check_markup(file_get_contents( dirname(__FILE__) . "/README.txt"));
+
+      return $helptxt;
+  }
+}
+ 
+ 
+ 
  /**
  * Implements hook_menu().
  */
@@ -64,26 +80,6 @@ function photoldr_menu() {
   );
   return $items;
 }
- 
- /**
- * Implements hook_permission().
- *
- * Learn more about hook_permission here:
- * http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_permission/7
- */
-function photoldr_permission() {
-  return array(
-    'photoldr link' => array(
-      'title' => t('PhotoLDR Link'),
-      'description' => t('Show the PhotoLDR link on any node add form.'),
-    ),
-    'debug photoldr' => array(
-      'title' => t('Debug PhotoLDR'),
-      'description' => t('Extra debug options for the PhotoLDR link on any node add form.'),
-    ),
-  );
-}
-
 
 
 
