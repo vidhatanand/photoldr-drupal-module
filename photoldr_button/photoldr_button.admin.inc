@@ -7,18 +7,15 @@
  */
 
 function photoldr_button_admin_settings() {
-  $helptxt = '<p><strong>PhotoLDR Button must have node types allowed.  Then users permissions must be set to allow users to create content, or the post will fail. </strong></p>';
+
   
-  $nodenames = node_type_get_names();
-  $defaultnodeslist = array('article', 'book', 'page', 'product_display');
-  $form['photoldr_button_types'] = array(
+  $options = array('no', 'yes');
+  $form['photoldr_button_on_forms'] = array(
     '#type' => 'select',
-    '#multiple' => 'TRUE',
-    '#title' => t('Nodes'),
-    '#options' => $nodenames,
-    '#size' =>  min(2, count($nodenames)),
-    '#default_value' => variable_get('photoldr_button_types', $defaultnodeslist),
-    '#description' => t('Select the types of nodes used by PhotoLDR Button.'),
+    '#title' => t('Button on Node Forms'),
+    '#options' => $options,
+    '#default_value' => variable_get('photoldr_button_on_forms', 'no'),
+    '#description' => t('Show the PhotoLDR app link on node add/edit forms.'),
   );
 
   // drupal_set_message('<pre>' . print_r($nodenames, true) . '</pre>');

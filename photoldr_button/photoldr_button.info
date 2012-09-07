@@ -1,9 +1,14 @@
 name = PhotoLDR Button
-description = Show the PhotoLDR button on this site.
-package = PhotoLDR
+description = Blocks for the PhotoLDR app.
 core = 7.x
+package = PhotoLDR
 php = 5.1
-version = "7.x-0.7-alpha1"
-configure = admin/config/photoldr
+
 files[] = photoldr_button.module
-files[] = photoldr_button.admin.inc
+dependencies[] = photoldr
+dependencies[] = block
+
+version = "7.x-0.8"
+configure = admin/config/photoldr_button
+project = photoldr
+project status url = http://www.photoldr.com/projects

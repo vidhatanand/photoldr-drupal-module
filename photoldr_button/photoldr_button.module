@@ -12,8 +12,8 @@ function photoldr_button_menu() {
    // Module settings.
  
   $items['admin/config/photoldr_button'] = array(
-    'title' => 'photoldr_button',
-    'description' => 'photoldr_button Module Configuration',
+    'title' => 'PhotoLDR Button',
+    'description' => 'Photoldr Button Configuration',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('photoldr_button_admin_settings'),
     'access arguments' => array('access administration pages'),
@@ -23,20 +23,8 @@ function photoldr_button_menu() {
   return $items;
 }
  
- /**
- * Implements hook_permission().
- *
- * Learn more about hook_permission here:
- * http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_permission/7
- */
-function photoldr_button_permission() {
-  return array(
-    'photoldr_button link' => array(
-      'title' => t('photoldr_button Link'),
-      'description' => t('Show the photoldr_button link on any node add form.'),
-    ),
-  );
-}
+ 
+ 
  /**
  * Implements hook_form_alter().
  *
@@ -46,13 +34,13 @@ function photoldr_button_permission() {
 function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   global $user;
   global $base_url;
-  $hostname = variable_get('photoldr_button_FQDN', $base_url['host']);
+  $hostname = variable_get('Photoldr_FQDN', $base_url['host']);
 
-  $access = 'photoldr_button link';
+  $showbutton = variable_get('photoldr_button_on_forms', 'no');
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $photoldr_button_node_types = variable_get('photoldr_button_types',$defaultnodeslist);
   $uid = $user->uid;
-  if (!user_access($access, $user)) {
+  if ($showbutton == 'no') {
     return;
   }
   if (!isset($form['#node_edit_form'])) {
