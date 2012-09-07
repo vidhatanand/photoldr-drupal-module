@@ -38,7 +38,7 @@ function photoldr_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('Expiration Date'),
     '#default_value' => variable_get('Photoldr_exp_date', date("Y-m-d", strtotime('+3 year'))),
-     '#description' => t('Expiration Date for this interface.  An expired domain is removed from view in the app.  Useful if you are migrating to a new site, or shutting down a site.'),
+     '#description' => t('Enter a relative string like +3 months, +90 days, +1 year, or a static date as YYYY-MM-DD. Expiration Date for data that is cached in the iOS app.  An expired domains data is removed from the app.  Useful if you are migrating to a new site, or shutting down a site, or have data that is time sensative. The app should attemt to refresh the data every day, but if the data is not refreshed for (+3 months, +90 days, +1 year) then the data is cleared from the app.'),
   );
 
   $nodenames = node_type_get_names();
@@ -46,11 +46,11 @@ function photoldr_admin_settings() {
   $form['photoldr_types'] = array(
     '#type' => 'select',
     '#multiple' => 'TRUE',
-    '#title' => t('Node types visible in PhotoLDR app.'),
+    '#title' => t('Node Types'),
     '#options' => $nodenames,
     '#size' =>  min(2, count($nodenames)),
     '#default_value' => variable_get('photoldr_types', $defaultnodeslist),
-    '#description' => t('Select the types of nodes used by PhotoLDR.'),
+    '#description' => t('Select the types of nodes used by PhotoLDR. CTRL-click to select multiple.'),
   );
 
   // drupal_set_message('<pre>' . print_r($nodenames, true) . '</pre>');
