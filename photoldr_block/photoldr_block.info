@@ -1,7 +1,7 @@
 ; $Id$
 ; Read more about Drupal 7 .info files here: http://drupal.org/node/542202
 name = PhotoLDR Blocks
-description = Use Blocks to let people know you are using the PhotoLDR iOS App.
+description = Use Blocks to let people know you are using the PhotoLDR iOS App.  One block for general user and the other for iOS only display.
 core = 7.x
 package = PhotoLDR
 php = 5.1
