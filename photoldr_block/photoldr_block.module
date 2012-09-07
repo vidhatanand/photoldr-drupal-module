@@ -21,34 +21,12 @@ function photoldr_block_block_info() {
     'info' => t('PhotoLDR Block'),
   );
   $blocks['photoldr_block_ios'] = array(
-    'info' => t('PhotoLDR Block for iOS devices ONLY'),
+    'info' => t('PhotoLDR Block for iOS Devices'),
   );
   return $blocks;
 }
 
-/**
- * Implements hook_block_configure().
- *
- * Learn more about hook_block_configure() here:
- * http://api.drupal.org/api/drupal/modules--block--block.api.php/function/hook_block_configure/7
- *
- * Challenge yourself!
- *  - Add a setting for the 'granularity' used in the format_interval() function you see
- *    in hook_block_view().
- */
-function photoldr_block_block_configure($delta = '') {
 
-}
-
-/**
- * Implements hook_block_save().
- *
- * Learn more about hook_block_save() here:
- * http://api.drupal.org/api/drupal/modules--block--block.api.php/function/hook_block_save/7
- */
-function photoldr_block_block_save($delta = '', $edit = array()) {
-
-}
 
 /**
  * Implementation of hook_block_view
@@ -61,21 +39,40 @@ function photoldr_block_block_view($delta=0) {
   $block['subject'] = '';
   $block['content'] = l(t('Use PhotoLDR App'), 'photoldr://' . $hostname);
   $build = array();
-  if ($user->roles[1] == 'anonymous user') {
-   $block['subject'] = t('PhotoLDR App');
-   $build = array(
-      'header_text' => array(
-        '#type' => 'markup',
-        '#markup' => '<article>'
-              . t('Step') . '1: ' . l(t('Create your account'), 'user/register') . '</br>'
-              . t('Step') . '2: ' . l(t('Install the App'), 'http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8') . '</br>'
-              . t('Step') . '3: <a href="photoldr://' . $hostname. '">' . t('Start Using the App') . '</a></br>'
-              . '</article>'
-        ,
-      ),
-    );
-    $block_content = drupal_render($build);
-    $block['content'] = $block_content;
-    return $block;
+
+
+  $block['subject'] = t('PhotoLDR App');
+  $build = array(
+    'header_text' => array(
+      '#type' => 'markup',
+      '#markup' => '<article>'
+            . t('Step') . '1: ' . l(t('Create your account'), 'user/register') . '</br>'
+            . t('Step') . '2: ' . l(t('Install the App'), 'http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8') . '</br>'
+            . t('Step') . '3: <a href="photoldr://' . $hostname. '">' . t('Start Using the App') . '</a></br>'
+            . '</article>'
+      ,
+    ),
+  );
+  $block_content = drupal_render($build);
+  $block['content'] = $block_content;
+
+
+  return $block;
+}
+
+
+
+/**
+ * Implementation of hook_block_view
+ *
+ * Only display on iOS devices
+ */
+function photoldr_block_ios_block_view($delta=0) {
+  
+  if (!(preg_match('/(iphone|ipad|ipod)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))) {
+    //TODO uncomment the return so that only iOS devices see the link
+    return;
   }
+
+  return photoldr_block_block_view();
 }
