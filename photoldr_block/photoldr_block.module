@@ -22,6 +22,8 @@ function photoldr_block_block_info() {
   );
   $blocks['photoldr_block_ios'] = array(
     'info' => t('PhotoLDR Block for iOS Devices'),
+    'status' => TRUE, 
+    'region' => 'sidebar_first', // Not usually provided.
   );
   return $blocks;
 }
@@ -32,6 +34,19 @@ function photoldr_block_block_info() {
  * Implementation of hook_block_view
  */
 function photoldr_block_block_view($delta=0) {
+   switch ($delta) {
+    case 'photoldr_block':
+      // any options for the regulat block
+      break;
+    case 'photoldr_block_ios':
+      // code for the iOS only block.  return if not iOS device.
+      if (!(preg_match('/(iphone|ipad|ipod)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))) {
+        return;
+      }
+      break;
+   
+  }
+  
   global $user;
   global $base_url;
   $hostname = variable_get('Photoldr_FQDN', $base_url['host']);
@@ -55,24 +70,8 @@ function photoldr_block_block_view($delta=0) {
   );
   $block_content = drupal_render($build);
   $block['content'] = $block_content;
-
+  
 
   return $block;
 }
 
-
-
-/**
- * Implementation of hook_block_view
- *
- * Only display on iOS devices
- */
-function photoldr_block_ios_block_view($delta=0) {
-  
-  if (!(preg_match('/(iphone|ipad|ipod)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))) {
-    //TODO uncomment the return so that only iOS devices see the link
-    return;
-  }
-
-  return photoldr_block_block_view();
-}
