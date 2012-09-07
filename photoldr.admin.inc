@@ -10,6 +10,7 @@
  * Builds and returns the appdb settings form.
  */
 function photoldr_admin_settings() {
+  global $base_url;
   $feed_back = "";
   $links = photoldr_menu();
   $nodeorder = array();
@@ -30,7 +31,7 @@ function photoldr_admin_settings() {
   $form['Photoldr_FQDN'] = array(
     '#type' => 'textfield',
     '#title' => t('FQDN'),
-    '#default_value' => variable_get('Photoldr_FQDN', $_SERVER['SERVER_NAME']),
+    '#default_value' => variable_get('Photoldr_FQDN', $base_url['host']),
     '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.thiswebsite.com'),
  );
 

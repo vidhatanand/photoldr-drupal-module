@@ -4,11 +4,11 @@
 The photoldr module allows two way communication with an iOS app.
 
 The iOS app reads XML from the PhotoLDR Module at /?q=photoldrstructure.xml
-
 The iOS app can manipulate the data or create new data and submit
 back to /?q=photoldrpost.php
 
 The photoldr module pareses post data and updates or creates nodes.
+
 
 
 For a full description of the module, visit the project page:
@@ -17,6 +17,8 @@ For a full description of the module, visit the project page:
 To submit bug reports and feature suggestions, or to track changes:
   http://github.com/willisiw/photoldr-drupal-module/issues
 
+
+The XML Output is described in SAMPLE.txt and sample.xml
 
 -- REQUIREMENTS --
 
