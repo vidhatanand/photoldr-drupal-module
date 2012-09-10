@@ -23,6 +23,10 @@ function photoldr_help($path, $arg) {
  
  /**
  * Implements hook_menu().
+ *
+ * XML Document
+ * php post page
+ * configuration page
  */
 function photoldr_menu() {
 
@@ -84,7 +88,10 @@ function photoldr_menu() {
 
 
 
-// Internal function checks _POST and _GET for data and returns FALSE or a valid UserID
+/**
+ * Private function checks _POST and _GET for data and 
+ * returns FALSE or a valid UID integer
+ */
 function _photoldr_html_user_auth() {
   $uid = FALSE;
   if (isset($_POST['username'])) {
@@ -109,8 +116,10 @@ function _photoldr_html_user_auth() {
 
 
 
-// private function takes a query result for a group of nodes and
-// parses them into a single array.  
+/**
+ * Private function takes a query result for a group of nodes and
+ * parses them into a single array
+ */
 function _prep_node_for_xml($result, $pub, $account) {
   $field_image_id = variable_get('photoldr_image_field', 'field_image');
   $simple_dates = array('created', 'changed', 'revision_timestamp', 'last_comment_timestamp');
@@ -354,6 +363,11 @@ function _prep_node_for_xml($result, $pub, $account) {
 
 
 
+/**
+ * Private function to create XML from an user object.
+ * simpledates are presented as Y-m-d
+ * appends and returns through the $pub array.
+ */ 
 function _account_to_xml($account, $pub) {
     // At this point we have a Valid user.  Lets get some data
   // Store data in the PUB variable to later generate XML.
@@ -412,6 +426,10 @@ function _account_to_xml($account, $pub) {
 
 
 
+/**
+ * Private function to create XML from an array.
+ * restricted fields are not exposed as XML, they are skipped.
+ */ 
 function _array_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
   $output = '';
      // make XML from $pub

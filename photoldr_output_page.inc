@@ -4,11 +4,21 @@
 /**
  * @file
  * Node Structure presented to PhotoLDR iOS App.
+ *
+ * /?q=photoldrstructure.xml
+ * 
+ * See SAMPLE.txt and sample.xml for the document structure.
+ *
+ * This presents this Druapl site as XML.
  */
  
  
  
-// /?q=domains.xml&username=&password=
+ 
+/**
+ * Presents XML page after checing user authentication via POST or GET variables
+ * username and password.
+ */
 function photoldr_node_structure_page_auth() {
   $uid = _photoldr_html_user_auth();
   photoldr_node_structure_page($uid); 
@@ -17,6 +27,10 @@ function photoldr_node_structure_page_auth() {
 
 
 
+/**
+ * Presents XML page with the current Drupal authenicated user.
+ * 
+ */
 function photoldr_node_structure_page($uidvar = NULL) {
   global $user;
   $uid = (isset($uidvar)) ? $uidvar : $user->uid; 
@@ -55,9 +69,12 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
  
 
-
-// SHOW FIELD SETTINGS for PHOTOLDR APP
-
+		/**
+		 * Accumulate the data to be converted to XML inside the $pub array
+		 * the base if the document <domains><domain> is the equivilent of the 
+		 * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
+		 * <domains><domain><FQDN>...</FQDN>
+		 */
     $pub['FQDN'] = variable_get('Photoldr_FQDN', $_SERVER['SERVER_NAME']);
     $pub['published'] = "1";
     $pub['cms'] = "drupal";
@@ -66,12 +83,20 @@ function photoldr_node_structure_page($uidvar = NULL) {
     $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
     $pub['exp_url'] = variable_get('Photoldr_FQDN', $_SERVER['SERVER_NAME']);
     $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
+		/**
+			 * <app_options> exposes site specific options for user settings
+			 * in the iOS app
+			 */
       $pub['app_options'][] = "app:Username:username:textfield:";
       $pub['app_options'][] = "app:Password:password:password:";
       $pub['app_options'][] = "app:Publish:status:checkbox:";
 
 
-// SHOW FIELD SETTINGS for PHOTOLDR APP
+	/**
+	 * <form_items> tag exposes field settings to PHOTOLDR APP
+	 * <node_types> tag will eventually allow configurable displays in the iOS app like
+	 *   table view, map view, or book view.
+	 */
   $feed_back = '<form_items>' . "\n";
   $node_display_settings = '<node_types>' . "\n";
 
@@ -101,20 +126,28 @@ function photoldr_node_structure_page($uidvar = NULL) {
       
       $node_display_settings .= '<option>' . $ntype . ':' . $node_view . '</option>' . "\n";
 
-   // Add postURL for user's allowed to add this node type.
-   // nodetype:Hidden:posturl:http://hostname/?q=photoldrpost.php
+   /**
+	  * Add postURL option ONLY for user's with permission to create/add this type of node.
+    * nodetype:Hidden:posturl:http://hostname/?q=photoldrpost.php
+		*/
    if ($usercreate) {
        $feed_back .= '<option>' . $ntype . ':Hidden:posturl:' . $pub['post_url'] . '</option>';
        $feed_back .= "\n";
    }
 
-      // Add title
+  /**
+	  * Basically all Drupal nodes have a title and body. Verify first then add option.
+		*/
       if (isset($type->has_title)) {
             $feed_back .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
             $feed_back .= "\n";
       }
       
       
+			 /**
+				 * Check the widget and setup the option for the field.
+				 * Also address unsupported fields.
+				 */
       foreach ($fields as $instance) {
         $module = $instance['widget']['module'];
         $label = $instance['label'];
@@ -160,6 +193,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
         }
   
 
+				 /**
+					* Special support for the addressfield module.
+					*/
         if ($instance['widget']['module'] == 'addressfield') {
          
           foreach ($addressfields as $fieldname) {
@@ -234,7 +270,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
      $node_display_settings .= '</node_types>' . "\n";
     
     
-    // make XML for Domain from Pub.
+   /**
+	  * This is the actual conversion of the $pub array to the <domain> XML element.
+		*/
     $output .= '<domain>' . "\n";
     foreach ($pub as $k => $v) {
 
@@ -271,7 +309,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
     $output .= $feed_back;
     $output .= $node_display_settings;
 
-    // Make XML from Node Content
+    /**
+	  * Make XML from Node Content.
+		*/ 
     $output .= _photoldr_xml_node_content();
     
   
@@ -297,6 +337,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
 
 
+/** 
+ * Get nodes and convert them to XML.
+ */ 
 function _photoldr_xml_node_content() {
   global $user;
   global $language;
@@ -389,6 +432,9 @@ function _photoldr_xml_node_content() {
 
 
 
+/**
+ * Make XML from Unpublishe Node Content.  Unused as of now.
+ */ 
 function _photoldr_xml_unpublished_node_content() {
   global $user;
   global $language;

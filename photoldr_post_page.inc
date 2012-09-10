@@ -3,14 +3,19 @@
 
 /**
  * @file
- * Post page for the photoldr_interact module.
+ * Post page for the photoldr module.
  *
- * This is the App to Web portion of the exchange
+ * /?q=photoldrpost.php
+ *
+ * Accepts images in POST and strings in POST and GET
+
  */
  
   
-// /?q=xmlpost.php
-// This is a form page for posting a widget
+/**
+ * This is a form page for posting from the iOS app
+ * username and password in POST or GET authenticate.
+ */
 function photoldr_post_page() {
   global $language;
   $langcode = isset($langcode) ? $langcode : $language->language;
@@ -402,11 +407,13 @@ function photoldr_post_page() {
 
 
 
-
-
-// Private function to process images.
-// Process image uploads from POST
-// $type is the node type to associate
+/**
+ * Private function to process images in POST
+ *
+ * $type is the node type to associate
+ * $uid is the authenticate user uid
+ * $field_name is the image field name for this node type/
+ */
 function _photoldr_process_images($type, $uid, $field_name) {
   $feed_user = "";
   if (!isset($_FILES)) {
@@ -528,7 +535,11 @@ function _photoldr_process_images($type, $uid, $field_name) {
 
 }
 
-// $image is stdClass image object
+/**
+ * Private function to rotate images if possible
+ *
+ * $imagefile is the image object
+ */
 function autorotate_image($imagefile) {
    // drupal_set_message('<pre>autorotate_image image: '  .  print_r($image, true) . '</pre>'); 
   
