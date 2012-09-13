@@ -9,8 +9,5 @@ files[] = photoldr.admin.inc
 files[] = photoldr_post_page.inc
 files[] = photoldr_output_page.inc
 
-version = "7.x-0.8"
+version = "7.x-0.82"
 configure = admin/config/photoldr
-project = photoldr
-project status url = http://www.photoldr.com/projects
-datestamp = "1334835098"
