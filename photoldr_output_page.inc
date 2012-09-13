@@ -39,7 +39,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
   $build = array();
   $output = '';
 
-  $exp_date = variable_get('Photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
+  $exp_date = variable_get('photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
   
 
  
@@ -75,13 +75,13 @@ function photoldr_node_structure_page($uidvar = NULL) {
 		 * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
 		 * <domains><domain><FQDN>...</FQDN>
 		 */
-    $pub['FQDN'] = variable_get('Photoldr_FQDN', $_SERVER['SERVER_NAME']);
+    $pub['FQDN'] = variable_get('photoldr_FQDN', $_SERVER['SERVER_NAME']);
     $pub['published'] = "1";
     $pub['cms'] = "drupal";
     $pub['standalone'] = "1";
     $pub['date'] = date( "Y-m-d H:i") ;
     $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
-    $pub['exp_url'] = variable_get('Photoldr_FQDN', $_SERVER['SERVER_NAME']);
+    $pub['exp_url'] = variable_get('photoldr_FQDN', $_SERVER['SERVER_NAME']);
     $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
 		/**
 			 * <app_options> exposes site specific options for user settings

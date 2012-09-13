@@ -30,18 +30,18 @@ function photoldr_admin_settings() {
 
 
   // Site settings for PhotoLDR
-  $form['Photoldr_FQDN'] = array(
+  $form['photoldr_FQDN'] = array(
     '#type' => 'textfield',
     '#title' => t('FQDN'),
-    '#default_value' => variable_get('Photoldr_FQDN', $base_url['host']),
+    '#default_value' => variable_get('photoldr_FQDN', $base_url['host']),
     '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.thiswebsite.com'),
  );
 
-  $form['Photoldr_exp_date'] = array(
+  $form['photoldr_exp_date'] = array(
     '#type' => 'textfield',
     '#title' => t('Expiration Date'),
-    '#default_value' => variable_get('Photoldr_exp_date', date("Y-m-d", strtotime('+3 year'))),
-     '#description' => t('Enter a relative string like +3 months, +90 days, +1 year, or a static date as YYYY-MM-DD. Expiration Date for data that is cached in the iOS app.  An expired domains data is removed from the app.  Useful if you are migrating to a new site, or shutting down a site, or have data that is time sensative. The app should attemt to refresh the data every day, but if the data is not refreshed for (+3 months, +90 days, +1 year) then the data is cleared from the app.'),
+    '#default_value' => variable_get('photoldr_exp_date', '+3 months'),
+     '#description' => t('Enter a relative string like +3 months, +90 days, +1 year, or a static date as YYYY-MM-DD. </br> Expiration Date for data that is cached in the iOS app.  An expired domains data is removed from the app.  Useful if you are migrating to a new site, or shutting down a site, or have data that is time sensative. The app should attemt to refresh the data every day, but if the data is not refreshed for (+3 months, +90 days, +1 year) then the data is cleared from the app.'),
   );
 
   $nodenames = node_type_get_names();
@@ -90,9 +90,16 @@ function photoldr_admin_settings() {
     '#options' => $nodenames,
     '#default_value' => variable_get('photoldr_default_post_type', 'page'),
     '#description' => t('Select the types of nodes to use PhotoLDR.  Revisit this page after setting this for more settings.'),
-      '#suffix' => '<hr/>',
+    '#suffix' => '<hr/>',
   );
   
+  $form['photoldr_markup_message1'] = array(
+    '#type' => 'markup',
+    '#markup' => '<h3>' . t('Save Settings after changing any above options to refresh the available options bellow.') . '</h3>',
+  );
+	$form['submit'] = array('#type' => 'submit', '#value' => t('Save and Refresh'), '#suffix' => '<hr/>',);
+	
+	
   // view_types is for a future feature in the iOS app which 
   // allows a site admin to select how the data should be shown in the iOS app.
   $view_types = array('table' => 'Table', 'map' => 'Map -coming soon');

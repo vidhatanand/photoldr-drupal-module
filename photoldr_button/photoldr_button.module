@@ -11,7 +11,7 @@
 function photoldr_button_menu() { 
    // Module settings.
  
-  $items['admin/config/photoldr_button'] = array(
+  $items['admin/config/photoldr/photoldr_button'] = array(
     'title' => 'PhotoLDR Button',
     'description' => 'Photoldr Button Configuration',
     'page callback' => 'drupal_get_form',
@@ -34,7 +34,7 @@ function photoldr_button_menu() {
 function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   global $user;
   global $base_url;
-  $hostname = variable_get('Photoldr_FQDN', $base_url['host']);
+  $hostname = variable_get('photoldr_FQDN', $base_url['host']);
 
   $showbutton = variable_get('photoldr_button_on_forms', 'no');
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');

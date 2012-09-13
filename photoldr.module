@@ -82,6 +82,15 @@ function photoldr_menu() {
     'file' => 'photoldr.admin.inc',
     'file path' => drupal_get_path('module', 'photoldr'),
   );
+  $items['admin/config/photoldr/photoldr'] = array(
+    'title' => 'PhotoLDR',
+    'description' => 'PhotoLDR Module Configuration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('photoldr_admin_settings'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'photoldr.admin.inc',
+    'file path' => drupal_get_path('module', 'photoldr'),
+  );
   return $items;
 }
 
