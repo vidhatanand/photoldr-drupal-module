@@ -24,10 +24,6 @@ function photoldr_post_page() {
   // Give the user feedback.  Accumulate througouht process
   $feed_user = "";
   
-  $handle = fopen("post_data.txt", "w");
-  fwrite($handle, print_r($_POST, true));
-  fclose($handle);
-
   // Decide on Get or Post  Post preffered
   if (isset($_POST['username'])) {
     $data = $_POST;
@@ -339,25 +335,10 @@ function photoldr_post_page() {
   }  // END ISSET FIELDNAME
 
 
-  
- 
-  // cache_set('NodeReview:' . $type . $uid->name, $node, 'cache_page', CACHE_TEMPORARY);
-  $handle = fopen("presaved_node.txt", "w");
-  fwrite($handle, print_r($node, true));
-  fclose($handle);
-  //  drupal_set_message('<pre>Pre-Saved Node ' .  print_r($node, true). '</pre>');
 
-
-  $node_render = node_view($node);
-  // $node_rendered = drupal_render($node_render);
+ // $node_render = node_view($node);
   
   node_save($node);
-  
-  $handle = fopen("saved_node.txt", "w");
-  fwrite($handle, print_r($node, true));
-  fclose($handle);
-  //  drupal_set_message('<pre>Saved Node ' .  print_r($node, true). '</pre>');
-
 
 
    // This is an XML return
