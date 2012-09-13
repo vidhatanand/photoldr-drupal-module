@@ -23,8 +23,6 @@ function photoldr_post_page() {
 
   // Give the user feedback.  Accumulate througouht process
   $feed_user = "";
-  // drupal_set_message('PostPage ' . print_r($_POST, true));
-  // drupal_set_message('GetPage ' . print_r($_GET, true));
   
   $handle = fopen("post_data.txt", "w");
   fwrite($handle, print_r($_POST, true));

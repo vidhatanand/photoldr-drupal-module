@@ -3,15 +3,17 @@
 
 /**
  * @file
- * Admin page callback for the appdb module.
+ * Admin page callback for the PhotoLDR module.
  */
 
 /**
- * Builds and returns the appdb settings form.
+ * Builds and returns the PhotoLDR admin page settings form.
  */
 function photoldr_admin_settings() {
   global $base_url;
   $feed_back = "";
+  
+  // Add a list of links at the top of the admin page showing all menu links for this module.
   $links = photoldr_menu();
   $nodeorder = array();
   $helptxt = '<p><strong>PhotoLDR must have node types allowed.  Then users permissions must be set to allow users to create content, or the post will fail. </strong></p>';
@@ -19,8 +21,6 @@ function photoldr_admin_settings() {
   foreach ($links as $link => $v) {
     $helptxt .= '<p>' . l($v['title'] . ' - ' . $v['description'],$link) . '</p>';
   }
-  
-  
   $form['help'] = array(
       '#type' => 'markup',
       '#preface' => '<div>',
@@ -28,6 +28,8 @@ function photoldr_admin_settings() {
       '#suffix' => '</div>',
    );
 
+
+  // Site settings for PhotoLDR
   $form['Photoldr_FQDN'] = array(
     '#type' => 'textfield',
     '#title' => t('FQDN'),
@@ -57,24 +59,8 @@ function photoldr_admin_settings() {
   // drupal_set_message('<pre>' . print_r($nodenames, true) . '</pre>');
 
 
-  $fields = field_info_fields();
-  $imagefields = array();
-  foreach ($fields as $k => $v) {
-    $module = $v['module'];
-    if (in_array($module, array('image'))) {
-      $imagefields[$k] = $k;
-    }
-  }
-  reset($imagefields);
-  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');;
-  $form['photoldr_image_field'] = array(
-    '#type' => 'select',
-    '#title' => t('Image Field'),
-    '#options' => $imgoptions,
-    '#default_value' => variable_get('photoldr_image_field', ''),
-    '#description' => t('Limit one.'),
-  );
   
+  // Allow the Site admin to pick image sizes to show in the iOS app.
   foreach (image_styles() as $style) {
     $styles[$style['name']] = $style['name'];
   }
@@ -95,7 +81,8 @@ function photoldr_admin_settings() {
   
 
 
-
+  // This is the default data/node type to create when a user adds data.  This is only useful if there is only one data type.
+  // This may be removed unless a value is found.
   reset($nodenames);
   $form['photoldr_default_post_type'] = array(
     '#type' => 'select',
@@ -106,11 +93,16 @@ function photoldr_admin_settings() {
       '#suffix' => '<hr/>',
   );
   
+  // view_types is for a future feature in the iOS app which 
+  // allows a site admin to select how the data should be shown in the iOS app.
   $view_types = array('table' => 'Table', 'map' => 'Map -coming soon');
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $enabled_nodes = variable_get('photoldr_types', $defaultnodeslist);
   $weight_used = array();
   $count = 0;
+  
+  // This is a rough attempt at setting the order of the node types to display in the XML.
+  // There is a better way I just need to find out how the Drupal ordered weights is implemented.
   foreach ($enabled_nodes as $k => $nodename) {
     $weight =  variable_get('photoldr_node_weight_' . $nodename,'');
     if ($weight == '') {
@@ -137,6 +129,11 @@ function photoldr_admin_settings() {
     '#markup' => '<hr/>',
   );
   
+  
+  // This section presents node type specific settings for each node 
+  // in a three column table layaout.  This could be improved also.
+  // The settings are very useful for a site admin to customize the delivery 
+  // to the iOS app.
   foreach ($enabled_nodes as $k => $nodename) {
 
     $form['photoldr_node_view_' . $nodename] = array(
@@ -191,7 +188,10 @@ function photoldr_admin_settings() {
 // SHOW FIELD SETTINGS for PHOTOLDR APP
   $feed_back = '<br> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br>nodetype:Label:field_name:type:options<br><br>';
 
+  // These modules/widget types are supported.
   $supported_fields = array('image', 'textfield', 'text', 'textarea', 'checkbox', 'date', 'cck_phone', 'addressfield');
+  // This is the added support for the addressfield type.  Addressfield is a field collection.
+  // Currently only US formatted addresses are supported.
   $addressfields = array('street1', 'street2', 'city', 'state', 'zip', 'country');
   $field_types = field_info_field_types();
 
@@ -289,16 +289,39 @@ function photoldr_admin_settings() {
           $feed_back .= '<br>' . "\n";
     }  // END foreach ($instances as $instance)
     
-
-    $form['post_devel5'] = array(
-      '#type' => 'markup',
-      '#weight' => '14',
-      '#preface' => '<pre>Options: <br/>',
-      '#markup' => $feed_back,
-      '#suffix' => '</pre>',
+    
+    // This is just for site developers to see how the node data is presented.
+    $form['photoldr_admin'] = array(
+      '#title' => 'Node Type Samples',
+      '#type' => 'fieldset',
+      '#weight' => '20',
+      '#collapsible' => TRUE, 
+      '#collapsed' => TRUE,
     );
+    $form['photoldr_admin']['samples'] = array(
+      '#type' => 'markup',
+      '#prefix' => '<strong>Sample format of data:</strong> <br/>',
+      '#markup' => $feed_back,
+      '#suffix' => '</hr>',
+    );
+		  // Image Field Name selection.  This is depreciated and may be pruned soon.
+  $fields = field_info_fields();
+  $imagefields = array();
+  foreach ($fields as $k => $v) {
+    $module = $v['module'];
+    if (in_array($module, array('image'))) {
+      $imagefields[$k] = $k;
+    }
+  }
+  reset($imagefields);
+  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');;
+  $form['photoldr_admin']['photoldr_image_field'] = array(
+    '#type' => 'markup',
+    '#prefix' => '<strong>' . t('Image Fields in this site.') . '</strong><pre><br/>',
+    '#markup' => print_r($imgoptions, TRUE),
+    '#suffix' => '</pre>',
+  );
 
 
-  // drupal_set_message('<pre>' . print_r($styles, true) . '</pre>');
   return system_settings_form($form);
 }

@@ -121,14 +121,10 @@ function _photoldr_html_user_auth() {
  * parses them into a single array
  */
 function _prep_node_for_xml($result, $pub, $account) {
-  $field_image_id = variable_get('photoldr_image_field', 'field_image');
+	// simple_dates are timestamps
   $simple_dates = array('created', 'changed', 'revision_timestamp', 'last_comment_timestamp');
   $image_style = variable_get('photoldr_image_field_style', 'medium');
   $icon_style = variable_get('photoldr_image_icon_field_style', 'thumbnail');
-
-//  drupal_set_message('<pre>Account Info ' . print_r($account, true) . '</pre>');
-//  drupal_set_message('<pre>' . print_r($image_pixels, true) . '</pre>');
-
 
 
   foreach ($result as $row) {
