@@ -47,13 +47,20 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   if (!isset($form['#node'])) {
     return;
   }
-  if (!array_search($form['#node']->type, $photoldr_button_node_types)) {
+  if (array_search($form['#node']->type, $photoldr_button_node_types) != FALSE) {
     return;
   }
   if (!(preg_match('/(iphone|ipad|ipod)/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT'])))) {
     //uncomment the return so that only iOS devices see the link
-    return;
+    // return;
   }
+  /**
+  drupal_set_message(print_r($photoldr_button_node_types, TRUE));
+            $handle = fopen("formarry.txt", "a");
+            fwrite($handle, print_r($form, true));
+            fclose($handle); 
+            
+  */
 
   $type = $form['#node']->type;
   $nid = isset($form['#node']->nid) ? $form['#node']->nid : 'new';
@@ -64,7 +71,7 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   if ($uid != $nuid) {
       //must own node to use this.
       if ($uid != 1) {
-        return;
+       // return;
       }
   }
 
@@ -82,6 +89,7 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
     }
 
   if (user_access('photoldr_button link')) {
+  }  
     $form['photldr_app'] = array(
       '#title' => t('PhotLDR App'),
       '#type' => 'markup',
@@ -90,7 +98,7 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
       '#sufix' =>  '</div>',
       '#markup' =>  $new1,
     );
-  }
+
 
 
   return $form;
