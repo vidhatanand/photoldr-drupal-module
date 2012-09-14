@@ -10,7 +10,5 @@ files[] = photoldr_block.module
 dependencies[] = photoldr
 dependencies[] = block
 
-version = "7.x-0.8"
-project = photoldr
-project status url = http://www.photoldr.com/projects
-datestamp = "1334835098"
+version = "7.x-0.82"
+

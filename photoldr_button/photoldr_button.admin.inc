@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /**
  * @file
  * Admin page callback for the photoldr_button module.
@@ -17,8 +15,6 @@ function photoldr_button_admin_settings() {
     '#default_value' => variable_get('photoldr_button_on_forms', 'no'),
     '#description' => t('Show the PhotoLDR app link on node add/edit forms.'),
   );
-
-  // drupal_set_message('<pre>' . print_r($nodenames, true) . '</pre>');
 
 
   return system_settings_form($form);

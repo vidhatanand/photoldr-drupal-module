@@ -1,10 +1,9 @@
 <?php
-// $Id$
 /**
  * @file
  * Module for guiding new users.
  */
- 
+
 
 /**
  * Implements hook_block_info().
@@ -34,32 +33,32 @@ function photoldr_block_block_info() {
 
 
 /**
- * Implementation of hook_block_view
+ * Implements hook_block_view().
  */
 function photoldr_block_block_view($delta=0) {
-	$icontag = '<img src="' . drupal_get_path('module', 'photoldr_block') . '/photoldr.png">';
-	
-   switch ($delta) {
+  $icontag = '<img src="' . drupal_get_path('module', 'photoldr_block') . '/photoldr.png">';
+  
+  switch ($delta) {
     case 'photoldr_icon':
       // any options for the regulat block
-	    $block['subject'] = '';
- 		$block['content'] = '<a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">' 
-		. $icontag 
-		. '</br><small>This site supports</br>PhotoLDR iOS app</small></a>';
+      $block['subject'] = '';
+      $block['content'] = '<a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">' 
+     . $icontag 
+     . '</br><small>This site supports</br>PhotoLDR iOS app</small></a>';
 
-	  
-	  return $block;
+    
+    return $block;
       break;
     case 'photoldr_block':
       // any options for the regulat block
       break;
     case 'photoldr_block_ios':
       // code for the iOS only block.  return if not iOS device.
-      if (!(preg_match('/(iphone|ipad|ipod)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))) {
+      if (!(preg_match('/(iphone|ipad|ipod)/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT'])))) {
         return;
       }
       break;
-   
+    
   }
   
   global $user;
@@ -78,7 +77,7 @@ function photoldr_block_block_view($delta=0) {
       '#markup' => '<article>'
             . t('Step') . '1: ' . l(t('Create your account'), 'user/register') . '</br>'
             . t('Step') . '2: ' . l(t('Install the App'), 'http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8') . '</br>'
-            . t('Step') . '3: <a href="photoldr://' . $hostname. '">' . t('Start Using the App') . '</a></br>'
+            . t('Step') . '3: <a href="photoldr://' . $hostname . '">' . t('Start Using the App') . '</a></br>'
             . '</article>'
       ,
     ),

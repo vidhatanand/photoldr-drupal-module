@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /**
  * @file
  * Post page for the photoldr module.
@@ -10,7 +8,7 @@
  * Accepts images in POST and strings in POST and GET
 
  */
- 
+  
   
 /**
  * This is a form page for posting from the iOS app
@@ -28,7 +26,7 @@ function photoldr_post_page() {
   if (isset($_POST['username'])) {
     $data = $_POST;
   }
-  else if (isset($_GET['username'])) {
+  elseif (isset($_GET['username'])) {
     $data = $_GET;
   }
   else {
@@ -36,67 +34,73 @@ function photoldr_post_page() {
     return;
   }
   $default_type = variable_get('photoldr_default_post_type', 'page');
-  $ntype = isset($data['type']) ? strtolower(check_plain($data['type'])) : $default_type;
- 
+  $ntype = isset($data['type']) ? drupal_strtolower(check_plain($data['type'])) : $default_type;
+
 
   // Authenticate the user
   
   $uid = _photoldr_html_user_auth();
   if ($uid == FALSE) {
-    // drupal_set_message(t('Access Will Be Denied. type, username, password required.  User must have create permission to type.'));
     drupal_access_denied();
     return;
-  } else {
+  }
+  else {
     $account = user_load($uid);
     
       $access = 'create ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usercreate = TRUE;
-      } else {
+      }
+      else {
         $usercreate = FALSE;
       }
 
       $access = 'edit any ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usereditany = TRUE;
-      } else {
+      }
+      else {
         $usereditany = FALSE;
       }
   
       $access = 'edit own ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usereditown = TRUE;
-      } else {
+      }
+      else {
         $usereditown = FALSE;
       } 
 
       $access = 'delete any ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $userdeleteany = TRUE;
-      } else {
+      }
+      else {
         $userdeleteany = FALSE;
       }
 
       $access = 'delete own ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $userdeleteown = TRUE;
-      } else {
+      }
+      else {
         $userdeleteown = FALSE;
       } 
-   
+  
       $access = 'administer nodes';
       if (user_access($access, $account)) {
         $nodeadmin = TRUE;
-      } else {
+      }
+      else {
         $nodeadmin = FALSE;
       }
-   
-   
     
     
     
     
-   
+    
+    
+    
     if (!($usercreate)) {
       drupal_access_denied();
     print "<!doctype html><html><head><meta charset=\"UTF-8\"><title>Access Denied</title></head><body>Access Denied</body></html>";
@@ -107,11 +111,11 @@ function photoldr_post_page() {
 
   $types = node_type_get_names();
   if (!isset($types[$ntype])) {
-    watchdog('PhotoLDR', '%ntype is not a valid node type on this site.  </br> %uri </br> %host </br> %addr',
+    watchdog('PhotoLDR', '%ntype is not a valid node type on this site.  <br /> %uri <br /> %host <br /> %addr',
               array('%ntype' => $ntype, 
-               '%uri' => $_SERVER['REQUEST_URI'], 
+               '%uri' => request_uri(), 
                '%host' => $_SERVER['REMOTE_HOST'], 
-               '%addr' => $_SERVER['REMOTE_ADDR'],)
+               '%addr' => $_SERVER['REMOTE_ADDR'], )
               ); 
     return;
   }
@@ -170,9 +174,7 @@ function photoldr_post_page() {
       $field = field_info_field($field_name);
       // Skeleton node object with $node->field_name
       $node->{$instance['field_name']} = "";
-      $module[] = $field_types[$field['type']]['module'];
-   //   drupal_set_message('<pre> ' . $ntype . ' ' . print_r($module , true) . '</pre>');
-   
+      $module[] = $field_types[$field['type']]['module'];   
     }
   }
     
@@ -180,7 +182,7 @@ function photoldr_post_page() {
 
   // Get the default addresses from the user or Instance if the user is not set
   // Build node address field.
-  if (isset($instances['field_address'])){
+  if (isset($instances['field_address'])) {
     $node->field_address['und']['0'] = isset($account->field_address['und']['0']) ? $account->field_address['und']['0'] : $instances['field_address']['default_value'];
     unset($node->field_address['und']['0']['thoroughfare']);
     unset($node->field_address['und']['0']['premise']);
@@ -200,8 +202,8 @@ function photoldr_post_page() {
       // If $v is an array, make it a string.
       $v = implode('; ', $v);
     }
-   
-    switch (strtolower($k)) {
+    
+    switch (drupal_strtolower($k)) {
         case 'status':
             $node->status = (isset($v)) ? check_plain($v) : $node->status;
             break;
@@ -226,13 +228,13 @@ function photoldr_post_page() {
             $node->field_address['und']['0']['locality'] = ($v) ? check_plain($v) : $node->field_address['und']['0']['locality'];
             break;
         case 'state':
-            $node->field_address['und']['0']['administrative_area'] = ($v) ? check_plain(strtoupper($v)) : $node->field_address['und']['0']['administrative_area'];
+            $node->field_address['und']['0']['administrative_area'] = ($v) ? check_plain(drupal_strtoupper($v)) : $node->field_address['und']['0']['administrative_area'];
             break;
         case 'zip':
             $node->field_address['und']['0']['postal_code'] = ($v) ? check_plain($v) : $node->field_address['und']['0']['postal_code'];
             break;
         case 'country':
-            $node->field_address['und']['0']['country'] = ($v) ? check_plain(strtoupper($v)) : $node->field_address['und']['0']['country'];
+            $node->field_address['und']['0']['country'] = ($v) ? check_plain(drupal_strtoupper($v)) : $node->field_address['und']['0']['country'];
             break;
         case 'phone':
             if ($nid != 'new') {
@@ -279,9 +281,9 @@ function photoldr_post_page() {
   $instance = field_info_instances('node', $ntype);
   $imagefieldnames = array();
     foreach ($instance as $k => $v) {
-           if ($v['widget']['module'] == 'image') {
-             $imagefieldnames[] = $v['field_name'];
-           }
+          if ($v['widget']['module'] == 'image') {
+            $imagefieldnames[] = $v['field_name'];
+          }
     }
 
   if (count($imagefieldnames) > 1) {
@@ -289,7 +291,7 @@ function photoldr_post_page() {
       $photoldr_interact_image_field = $imagefieldnames['0'];
   }
   if (count($imagefieldnames) == 1) {
-     $photoldr_interact_image_field = $imagefieldnames['0'];
+    $photoldr_interact_image_field = $imagefieldnames['0'];
   }
 
   // Get the field name for the image field.
@@ -318,10 +320,10 @@ function photoldr_post_page() {
         default:
           $max = $imagefieldinfo['cardinality'];
           break;
-       }
-       $images = _photoldr_process_images($ntype, $uid, $field_name);
- 
-        if (is_array($images)){
+      }
+      $images = _photoldr_process_images($ntype, $uid, $field_name);
+
+        if (is_array($images)) {
           
           foreach ($images as $image) {
            // Final touches on the Image Field.
@@ -341,26 +343,27 @@ function photoldr_post_page() {
   node_save($node);
 
 
-   // This is an XML return
-
-   $xml_head = '<?xml version="1.0" encoding="utf-8"?><domains><domain>';
-   $xml_foot = '</domain></domains>';
+  // This is an XML return
+  $xml_head = '<?xml version="1.0" encoding="utf-8"?><domains><domain>';
+  $xml_foot = '</domain></domains>';
+  
   if ($node->nid) {
-      watchdog('PhotoLDR', 'Posted data for %nid as uid %uid.', array('%nid' => $node->nid, '%uid' => $node->uid,));
+      watchdog('PhotoLDR', 'Posted data for %nid as uid %uid.', array('%nid' => $node->nid, '%uid' => $node->uid, ));
   }
+  
   if ($node->nid) {
     //   print "<h1>Success - Node ID " . $node->nid . "</h1>";
     $result = array();
     $pub = array();
     $result[] = $node;
-    $pub = _prep_node_for_xml($result, $pub, $account);
-    $xml_body = _array_to_xml($pub, $restrictedfields);
+    $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
+    $xml_body = _photoldr_array_to_xml($pub, $restrictedfields);
     drupal_add_http_header('Content-Type', 'application/xml');
     print($xml_head);
     print($xml_body);
     print($xml_foot);
-
-  } else {
+  }
+  else {
     // This is an HTML return
    // print "<h1>ERROR - Node not saved.</h1>";
     
@@ -454,7 +457,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
   foreach ($_FILES as $k => $v) {
     $src = new stdClass();
     $src->uri = $v['tmp_name'];
-    $fuid = str_pad((int) $uid, 6,"0",STR_PAD_LEFT);
+    $fuid = str_pad((int) $uid, 6, "0", STR_PAD_LEFT);
     $fdate = date('Y-m-d-Hi', REQUEST_TIME);
     $filename = $type . '-' . $fuid . '-' . $fdate . '-' . $v['name'];
     
@@ -471,14 +474,13 @@ function _photoldr_process_images($type, $uid, $field_name) {
     if (empty($validimg)) {
       $file_copy->status = 1;
     }
- 
- //    drupal_set_message('<pre>file_copy: '  .  print_r($file_copy, true) . '</pre>'); 
-
-    // The file will be purged if it has a status of 0;
+    
+     // The file will be purged if it has a status of 0;
     if ($file_copy->status == 0) {
       file_delete($file_copy);
-      $feed_user .= 'Bad file ' . $v['name'] . ' removed.<br>';
-    } else {
+      $feed_user .= 'Bad file ' . $v['name'] . ' removed.<br />';
+    }
+    else {
         $result_save = file_save($file_copy);
         
         // This collects the image objects to save in the node.
@@ -495,12 +497,12 @@ function _photoldr_process_images($type, $uid, $field_name) {
 
   $images_return = '';
 
- 
-  foreach ($images as $key => $imgObj) {
-    file_validate_image_resolution($imgObj, $max_res, $min_res);
-    autorotate_image($imgObj);
 
-    foreach ($imgObj as $obj => $value) {
+  foreach ($images as $key => $imgobj) {
+    file_validate_image_resolution($imgobj, $max_res, $min_res);
+    autorotate_image($imgobj);
+
+    foreach ($imgobj as $obj => $value) {
       $images_return[$key][$obj] = $value;
     }
   }
@@ -532,43 +534,42 @@ function autorotate_image($imagefile) {
   $exif = exif_read_data($filename);
     //  drupal_set_message('<pre>exif_read_data  function <br>' . print_r($exif,true) . ' </pre>'); 
 
-  $ort = (isset($exif['Orientation'])) ? $exif['Orientation'] : 1;
+  $ort = isset($exif['Orientation']) ? $exif['Orientation'] : 1;
   
-  switch($ort)
-  {
+  switch ($ort) {
       case 1: // nothing
       break;
 
       case 2: // horizontal flip
       //    image_flip($image, 1);
       break;
-                              
+
       case 3: // 180 rotate left
-          image_rotate($image,180);
+          image_rotate($image, 180);
           image_save($image);
       break;
-                  
+
       case 4: // vertical flip
       //    image_flip($image, 2);
       break;
-              
+
       case 5: // vertical flip + 90 rotate right
       //        image_flip($image, 2);
               image_rotate($image, -90);
               image_save($image);
       break;
-              
+
       case 6: // 90 rotate right
           image_rotate($image, -90);
           image_save($image);
       break;
-              
+
       case 7: // horizontal flip + 90 rotate right
       //    image_flip($image,1);
           image_rotate($image, -90);
           image_save($image);
       break;
-              
+
       case 8:    // 90 rotate left
           image_rotate($image, 90);
           image_save($image);

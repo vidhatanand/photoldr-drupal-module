@@ -8,7 +8,5 @@ files[] = photoldr_button.module
 dependencies[] = photoldr
 dependencies[] = block
 
-version = "7.x-0.8"
+version = "7.x-0.82"
 configure = admin/config/photoldr_button
-project = photoldr
-project status url = http://www.photoldr.com/projects

@@ -102,8 +102,8 @@ url - fully formed url: http://www.example.com/postpage.php
 
     <user>
       <uid>1</uid>
-      <name>admin</name>
-      <mail>willisianw@gmail.com</mail>
+      <name>demo</name>
+      <mail>demo@example.com</mail>
     </user>
 
 

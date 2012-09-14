@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /**
  * @file
  * Admin page callback for the PhotoLDR module.
@@ -19,14 +17,14 @@ function photoldr_admin_settings() {
   $helptxt = '<p><strong>PhotoLDR must have node types allowed.  Then users permissions must be set to allow users to create content, or the post will fail. </strong></p>';
   
   foreach ($links as $link => $v) {
-    $helptxt .= '<p>' . l($v['title'] . ' - ' . $v['description'],$link) . '</p>';
+    $helptxt .= '<p>' . l($v['title'] . ' - ' . $v['description'], $link) . '</p>';
   }
   $form['help'] = array(
       '#type' => 'markup',
       '#preface' => '<div>',
       '#markup' => $helptxt,
       '#suffix' => '</div>',
-   );
+  );
 
 
   // Site settings for PhotoLDR
@@ -34,8 +32,8 @@ function photoldr_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('FQDN'),
     '#default_value' => variable_get('photoldr_FQDN', $base_url['host']),
-    '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.thiswebsite.com'),
- );
+    '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.example.com'),
+  );
 
   $form['photoldr_exp_date'] = array(
     '#type' => 'textfield',
@@ -56,8 +54,6 @@ function photoldr_admin_settings() {
     '#description' => t('Select the types of nodes used by PhotoLDR. CTRL-click to select multiple.'),
   );
 
-  // drupal_set_message('<pre>' . print_r($nodenames, true) . '</pre>');
-
 
   
   // Allow the Site admin to pick image sizes to show in the iOS app.
@@ -76,7 +72,7 @@ function photoldr_admin_settings() {
     '#title' => t('Icon style'),
     '#options' => $styles,
     '#default_value' => variable_get('photoldr_image_icon_field_style', array('thumbnail' => 'thumbnail')),
-    '#description' => t('Select the image style of icon displayed by PhotoLDR. ') . l('Image Style Config', 'admin/config/media/image-styles'),
+    '#description' => t('Select the image style of icon displayed by PhotoLDR.') . ' ' . l(t('Image Style Config'), 'admin/config/media/image-styles'),
   );
   
 
@@ -97,9 +93,9 @@ function photoldr_admin_settings() {
     '#type' => 'markup',
     '#markup' => '<h3>' . t('Save Settings after changing any above options to refresh the available options bellow.') . '</h3>',
   );
-	$form['submit'] = array('#type' => 'submit', '#value' => t('Save and Refresh'), '#suffix' => '<hr/>',);
-	
-	
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Save and Refresh'), '#suffix' => '<hr/>');
+  
+  
   // view_types is for a future feature in the iOS app which 
   // allows a site admin to select how the data should be shown in the iOS app.
   $view_types = array('table' => 'Table', 'map' => 'Map -coming soon');
@@ -111,7 +107,7 @@ function photoldr_admin_settings() {
   // This is a rough attempt at setting the order of the node types to display in the XML.
   // There is a better way I just need to find out how the Drupal ordered weights is implemented.
   foreach ($enabled_nodes as $k => $nodename) {
-    $weight =  variable_get('photoldr_node_weight_' . $nodename,'');
+    $weight = variable_get('photoldr_node_weight_' . $nodename, '');
     if ($weight == '') {
       $count ++;
       while (in_array($count, $weight_used)) {
@@ -123,7 +119,7 @@ function photoldr_admin_settings() {
     
     $form['photoldr_node_weight_' . $nodename] = array(
       '#type' => 'select',
-      '#title' => t('@nodename - Weight.', array ('@nodename' => $nodename)),
+      '#title' => t('@nodename - Weight.', array('@nodename' => $nodename)),
       '#options' => drupal_map_assoc(range(1, 50)),
       '#default_value' => $weight,
       '#description' => t('This will set the order that node types are presented to the iOS app.'),
@@ -147,7 +143,7 @@ function photoldr_admin_settings() {
       '#prefix' => '<table><tr><td>',
       '#suffix' => '</td>',
       '#type' => 'select',
-      '#title' => t('@nodename - View Type', array ('@nodename' => $nodename)),
+      '#title' => t('@nodename - View Type', array('@nodename' => $nodename)),
       '#options' => $view_types,
       '#default_value' => variable_get('photoldr_node_view_' . $nodename, 'table'),
       '#description' => t('This will set the view type in the iOS app. CURRENTLY Disabled.  Only Tableview is used no matter what is set.'),
@@ -155,7 +151,7 @@ function photoldr_admin_settings() {
     $form['photoldr_item_max_' . $nodename] = array(
       '#prefix' => '<td>',
       '#type' => 'select',
-      '#title' => t('@nodename - Max items', array ('@nodename' => $nodename)),
+      '#title' => t('@nodename - Max items', array('@nodename' => $nodename)),
       '#options' => drupal_map_assoc(range(1, 100)),
       '#default_value' => variable_get('photoldr_item_max_' . $nodename, 10),
       '#description' => t('This will set the maximum number of items presented to the user.'),
@@ -163,22 +159,22 @@ function photoldr_admin_settings() {
     $form['photoldr_item_age_max_' . $nodename] = array(
       '#suffix' => '</td>',
       '#type' => 'select',
-      '#title' => t('@nodename - Max age (weeks)', array ('@nodename' => $nodename)),
+      '#title' => t('@nodename - Max age (weeks)', array('@nodename' => $nodename)),
       '#options' => drupal_map_assoc(range(0, 52)),
       '#default_value' => variable_get('photoldr_item_age_max_' . $nodename, 0),
-      '#description' => t('This will set the maximum allowable age in weeks of the displayed items.  0 is no max '),
+      '#description' => t('This will set the maximum allowable age in weeks of the displayed items.  0 is no max.'),
     );
     $form['photoldr_item_order_' . $nodename] = array(
       '#prefix' => '<td>',
       '#type' => 'select',
-      '#title' => t('@nodename - Sort Order', array ('@nodename' => $nodename)),
+      '#title' => t('@nodename - Sort Order', array('@nodename' => $nodename)),
       '#options' => array('DESC' => 'Descending Z-A or Newest First', 'ASC' => 'Ascending A-Z or Oldest First' ),
       '#default_value' => variable_get('photoldr_item_order_' . $nodename, 'DESC'),
       '#description' => t('This will set the order which items are returned to the App.'),
     );
     $form['photoldr_item_orderby_' . $nodename] = array(
       '#type' => 'select',
-      '#title' => t('@nodename - Sort By', array ('@nodename' => $nodename)),
+      '#title' => t('@nodename - Sort By', array('@nodename' => $nodename)),
       '#options' => array('created' => 'Created', 'changed' => 'Changed', 'title' => 'Title', 'nid' => "Node ID" ),
       '#default_value' => variable_get('photoldr_item_orderby_' . $nodename, 'created'),
       '#description' => t('This will set the field used to sort.'),
@@ -193,7 +189,7 @@ function photoldr_admin_settings() {
   );
 
 // SHOW FIELD SETTINGS for PHOTOLDR APP
-  $feed_back = '<br> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br>nodetype:Label:field_name:type:options<br><br>';
+  $feed_back = '<br /> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br />nodetype:Label:field_name:type:options<br /><br />';
 
   // These modules/widget types are supported.
   $supported_fields = array('image', 'textfield', 'text', 'textarea', 'checkbox', 'date', 'cck_phone', 'addressfield');
@@ -208,7 +204,7 @@ function photoldr_admin_settings() {
       $type = node_type_get_type($ntype);
       if (isset($type->has_title)) {
             $feed_back .= $ntype . ':Title:title:textfield:<em style="color:blue">#required</em>';
-            $feed_back .= '<br>' . "\n";
+            $feed_back .= '<br />' . "\n";
         
         
       }
@@ -221,7 +217,7 @@ function photoldr_admin_settings() {
           
           if ($instance['widget']['type'] == 'options_select') {
             $feed_back .= $field_name . ', ' . $module . ', ' . $instance['widget']['type'] . ',  is not <em style="color:red"><strong>supported</strong></em>. ';
-            $feed_back .= '<br>' . "\n";  
+            $feed_back .= '<br />' . "\n";  
             continue;
           }
           
@@ -231,7 +227,7 @@ function photoldr_admin_settings() {
             $feed_back .= $field_name . ':';
             $feed_back .= 'checkbox:';
             $feed_back .= '<em>#true</em>';
-            $feed_back .= '<br>' . "\n";
+            $feed_back .= '<br />' . "\n";
             continue;            
             
           }
@@ -241,8 +237,7 @@ function photoldr_admin_settings() {
             $feed_back .= 'textfield';
             $feed_back .= '          <strong>   ';
             $feed_back .= $module . ' ' . $instance['widget']['type'] . ' is not <em style="color:red">supported</em>.</strong> ';
-            $feed_back .= '<br>' . "\n";
-         //   drupal_set_message('<pre>Unsupported Instance: <br>' .  print_r($instance,true) . '</pre>');    
+            $feed_back .= '<br />' . "\n";
 
           continue;
         }
@@ -250,13 +245,13 @@ function photoldr_admin_settings() {
         $fieldinfo = field_info_field($instance['field_name']);
 
         if ($instance['widget']['module'] == 'addressfield') {
-         
+        
           foreach ($addressfields as $fieldname) {
             $feed_back .= $ntype . ':';
-            $feed_back .= ucfirst($fieldname) . ':';
+            $feed_back .= drupal_ucfirst($fieldname) . ':';
             $feed_back .= $fieldname . ':';
             $feed_back .= 'textfield';
-            $feed_back .= '<br>' . "\n";
+            $feed_back .= '<br />' . "\n";
           }
         continue;
         }
@@ -265,7 +260,7 @@ function photoldr_admin_settings() {
         $feed_back .= $ntype . ':';
         $feed_back .= $label . ':';
         $feed_back .= $field_name . ':';
-   switch ($module) {
+        switch ($module) {
           case 'date':
                 $feed_back .= 'date' . ':';
                 break;
@@ -283,17 +278,18 @@ function photoldr_admin_settings() {
           default:
                 $feed_back .= $module . ':';
                 break;
-         }
+        }
   
           if ($instance['required']) {
-            $feed_back .= '<em style="color:blue">#required</em>' . '<br>' . "\n";
-          } else {
-            $feed_back .= '<br>' . "\n";
+            $feed_back .= '<em style="color:blue">#required</em>' . '<br />' . "\n";
+          }
+  else {
+            $feed_back .= '<br />' . "\n";
           }
   
   
         }
-          $feed_back .= '<br>' . "\n";
+          $feed_back .= '<br />' . "\n";
     }  // END foreach ($instances as $instance)
     
     
@@ -311,7 +307,7 @@ function photoldr_admin_settings() {
       '#markup' => $feed_back,
       '#suffix' => '</hr>',
     );
-		  // Image Field Name selection.  This is depreciated and may be pruned soon.
+      // Image Field Name selection.  This is depreciated and may be pruned soon.
   $fields = field_info_fields();
   $imagefields = array();
   foreach ($fields as $k => $v) {

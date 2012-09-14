@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /**
  * @file
  * Node Structure presented to PhotoLDR iOS App.
@@ -11,10 +9,9 @@
  *
  * This presents this Druapl site as XML.
  */
- 
- 
- 
- 
+  
+  
+  
 /**
  * Presents XML page after checing user authentication via POST or GET variables
  * username and password.
@@ -42,8 +39,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
   $exp_date = variable_get('photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
   
-
- 
   $fields = field_info_fields();
   $imagefields = array();
   $imagefieldmax = array();
@@ -68,7 +63,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
   $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');;
 
 
- 
+
 
     /**
      * Accumulate the data to be converted to XML inside the $pub array
@@ -116,7 +111,8 @@ function photoldr_node_structure_page($uidvar = NULL) {
       $access = 'create ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usercreate = TRUE;
-      } else {
+      }
+      else {
         $usercreate = FALSE;
       }
 
@@ -131,14 +127,14 @@ function photoldr_node_structure_page($uidvar = NULL) {
     * Add postURL option ONLY for user's with permission to create/add this type of node.
     * nodetype:Hidden:posturl:http://hostname/?q=photoldrpost.php
     */
-   if ($usercreate) {
-       $feed_back .= '<option>' . $ntype . ':Hidden:posturl:' . $pub['post_url'] . '</option>';
-       $feed_back .= "\n";
-   }
+    if ($usercreate) {
+      $feed_back .= '<option>' . $ntype . ':Hidden:posturl:' . $pub['post_url'] . '</option>';
+      $feed_back .= "\n";
+    }
 
-  /**
-    * Basically all Drupal nodes have a title and body. Verify first then add option.
-    */
+      /**
+       * Basically all Drupal nodes have a title and body. Verify first then add option.
+       */
       if (isset($type->has_title)) {
             $feed_back .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
             $feed_back .= "\n";
@@ -170,19 +166,18 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $this_field_type = 'options_select';
             $this_field_required = 'UNSUPPORTED';
             
-          } else if ($instance['widget']['type'] == 'options_onoff') {
+          }
+          elseif ($instance['widget']['type'] == 'options_onoff') {
             // Checkbox
             $this_field_type = 'checkbox';
             $this_field_required = '#true';
-          } else {
+          }
+          else {
             // All other unsupported
             $this_field_type = 'textfield';
             $this_field_required = 'UNSUPPORTED ' . $instance['widget']['module'];
           }
-
-         //   drupal_set_message('<pre>Unsupported Instance: <br>' .  print_r($instance,true) . '</pre>');   
-        
-         
+          
             $feed_back .= '<option>';
             $feed_back .= $this_node_type . ':';
             $feed_back .= $this_field_label . ':';
@@ -198,9 +193,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
           * Special support for the addressfield module.
           */
         if ($instance['widget']['module'] == 'addressfield') {
-         
+          
           foreach ($addressfields as $fieldname) {
-            $this_field_label = ucfirst($fieldname);
+            $this_field_label = drupal_ucfirst($fieldname);
             $this_field_name = $fieldname;
             $this_field_type = 'textfield';
             
@@ -218,14 +213,15 @@ function photoldr_node_structure_page($uidvar = NULL) {
   
   
 
-   switch ($module) {
+    switch ($module) {
           case 'date':
                 $this_field_type = 'date';
                 break;
           case 'image':
                 if ($imagefieldmax[$this_field_name] > 3) {
                   $this_field_type = 'image';
-                } else {
+                }
+                else {
                   $this_field_type = 'image';
                 }
                 $this_field_required = '#' . $imagefieldmax[$this_field_name];
@@ -243,7 +239,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
           default:
                 $this_field_type = $module;
                 break;
-         }
+    } // end of switch statement
   
           if ($instance['required']) {
             $this_field_required = '#required';
@@ -266,9 +262,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
         
         
         
-     }  // END foreach ($instances as $instance)
-     $feed_back .= '</form_items>' . "\n";
-     $node_display_settings .= '</node_types>' . "\n";
+    }  // END foreach ($instances as $instance)
+    $feed_back .= '</form_items>' . "\n";
+    $node_display_settings .= '</node_types>' . "\n";
     
     
    /**
@@ -280,7 +276,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
           $k = (isset($k)) ? $k : 'item';
           $k = is_string($k) ? $k : 'item';
 
-          if(is_array($v)){
+          if (is_array($v)) {
 
             $output .= '<' . $k . '>';
               foreach ($v as $k1 => $v1) {
@@ -289,10 +285,11 @@ function photoldr_node_structure_page($uidvar = NULL) {
                   $k1 = is_string($k1) ? $k1 : 'option';
                   $k1 = 'option';
                 
-                if(is_array($v1)){
+                if (is_array($v1)) {
                   $output .= '<' . $k1 . '>' . serialize($v1) . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
-                } else {
-                  $output .= '<' . $k1 . '>' .$v1 . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
+                }
+                else {
+                  $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
                 }
                 
               } // END foreach ($v as $k1 => $v1)
@@ -300,9 +297,10 @@ function photoldr_node_structure_page($uidvar = NULL) {
               $output .= '</' . $k . '>' . "\n";
 
             
-          } else {
+          }
+          else {
             
-            $output .= '<' . $k . '>' .$v . '</' . $k . '>' . "\n" ;  // <tag>serialarray</tag>
+            $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;  // <tag>serialarray</tag>
             
           }
           
@@ -310,21 +308,16 @@ function photoldr_node_structure_page($uidvar = NULL) {
     $output .= $feed_back;
     $output .= $node_display_settings;
 
-    /**
-    * Make XML from Node Content.
-    */ 
+    // Add <nodes> tag Content.
     $output .= _photoldr_xml_node_content();
     
-  
-
-    
-    
-    $output .= '</domain>'. "\n";
+    // Close the <domain> tag in the document.
+    $output .= '</domain>' . "\n";
 
 
   $xml_head = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
   /* $xml_head .= '<?xml-stylesheet href="XMLViewer.css" type="text/css"?>'. "\n"; */
-  $xml_head .= '<domains src="photoldr_node_structure_page">'. "\n";
+  $xml_head .= '<domains src="photoldr_node_structure_page">' . "\n";
   $xml_foot = '</domains>';
 
   drupal_add_http_header('Content-Type', 'application/xml');
@@ -338,9 +331,18 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
 
 
-/** 
- * Get nodes and convert them to XML.
- */ 
+/**
+ * Get published nodes and convert them to XML.
+ *
+ * This function queries the database for ndoes and returns XML.
+ *
+ *
+ * @return
+ *   String xml document body.  This string should be enclosed in a document tag 
+ *   and have an XML header added to the display.  In this document context, this
+ *   portion of XML will reside withing the <domain></domain> key.
+ *   
+ */
 function _photoldr_xml_node_content() {
   global $user;
   global $language;
@@ -359,10 +361,10 @@ function _photoldr_xml_node_content() {
 
   
   if (isset($_POST['changed'])) {
-    $data['changed'] = $_POST['changed'];
+    $data['changed'] = check_plain($_POST['changed']);
   }
-  else if (isset($_GET['changed'])) {
-    $data['changed'] = $_GET['changed'];
+  elseif (isset($_GET['changed'])) {
+    $data['changed'] = check_plain($_GET['changed']);
   }
 
   $uidvar = _photoldr_html_user_auth();
@@ -370,7 +372,7 @@ function _photoldr_xml_node_content() {
   $account = user_load($uid);
   // END user authentication section
 
-  $pub = _account_to_xml($account, $pub);
+  $pub = _photoldr_account_to_xml($account, $pub);
 
   // Get list of nodes to publish and act on the list
   foreach ($node_order as $nodename => $k) {
@@ -384,7 +386,8 @@ function _photoldr_xml_node_content() {
 
       if ($node_order == 'DESC') {
         $sort = 'DESC';
-      } else {
+      }
+  else {
         $sort = 'ASC';
       }
       
@@ -396,30 +399,31 @@ function _photoldr_xml_node_content() {
       ->condition('n.status', 1)
       ->condition('n.type', $nodename);
     $query
-       ->orderBy('n.' . $node_order_by, $sort);
+      ->orderBy('n.' . $node_order_by, $sort);
 
-    if (isset($data['changed'])){
+    if (isset($data['changed'])) {
       $oldest_date = date(strtotime($data['changed']));
       $query->condition('n.changed', $oldest_date, "<");
-    } elseif (isset($node_age_max) && ($node_age_max != 0)){
+    }
+    elseif (isset($node_age_max) && ($node_age_max != 0)) {
       $oldest_date = date(strtotime('-' . $node_age_max . ' weeks'));
       $query->condition('n.created', $oldest_date, '>');
     }
 
-    if (isset($node_max) && ($node_max != 0)){
+    if (isset($node_max) && ($node_max != 0)) {
       $query->range('0', $node_max);
     }
 
     $result = $query->execute();
     
-    $pub = _prep_node_for_xml($result, $pub, $account);
+    $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
   } // end foreach node type
   
 
   
     // make XML from $pub
-  $xml_body = _array_to_xml($pub, $restrictedfields);
+  $xml_body = _photoldr_array_to_xml($pub, $restrictedfields);
   
   
   // TODO.  What to do with unpublished content
@@ -434,8 +438,16 @@ function _photoldr_xml_node_content() {
 
 
 /**
- * Make XML from Unpublishe Node Content.  Unused as of now.
- */ 
+ * Get unpublished nodes and convert them to XML.
+ *
+ * This function queries the database for ndoes and returns XML.
+ *
+ * @return
+ *   String xml document body.  This string should be enclosed in a document tag 
+ *   and have an XML header added to the display.  In this document context, this
+ *   portion of XML will reside withing the <domain></domain> key.
+ *   
+ */
 function _photoldr_xml_unpublished_node_content() {
   global $user;
   global $language;
@@ -453,10 +465,10 @@ function _photoldr_xml_unpublished_node_content() {
 
 
   if (isset($_POST['changed'])) {
-    $data['changed'] = $_POST['changed'];
+    $data['changed'] = check_plain($_POST['changed']);
   }
-  else if (isset($_GET['changed'])) {
-    $data['changed'] = $_GET['changed'];
+  elseif (isset($_GET['changed'])) {
+    $data['changed'] = check_plain($_GET['changed']);
   }
 
   $uidvar = _photoldr_html_user_auth();
@@ -464,7 +476,7 @@ function _photoldr_xml_unpublished_node_content() {
   $account = user_load($uid);
   // END user authentication section
 
-  $pub = _account_to_xml($account, $pub);
+  $pub = _photoldr_account_to_xml($account, $pub);
 
   // Get list of nodes to publish and act on the list
   foreach ($node_order as $nodename => $k) {
@@ -478,7 +490,8 @@ function _photoldr_xml_unpublished_node_content() {
 
       if ($node_order == 'DESC') {
         $sort = 'DESC';
-      } else {
+      }
+      else {
         $sort = 'ASC';
       }
       
@@ -490,30 +503,31 @@ function _photoldr_xml_unpublished_node_content() {
       ->condition('n.status', 0)
       ->condition('n.type', $nodename);
     $query
-       ->orderBy('n.' . $node_order_by, $sort);
+      ->orderBy('n.' . $node_order_by, $sort);
 
-    if (isset($data['changed'])){
+    if (isset($data['changed'])) {
       $oldest_date = date(strtotime($data['changed']));
       $query->condition('n.changed', $oldest_date, "<");
-    } elseif (isset($node_age_max) && ($node_age_max != 0)){
+    } 
+    elseif (isset($node_age_max) && ($node_age_max != 0)) {
       $oldest_date = date(strtotime('-' . $node_age_max . ' weeks'));
       $query->condition('n.created', $oldest_date, '>');
     }
 
-    if (isset($node_max) && ($node_max != 0)){
+    if (isset($node_max) && ($node_max != 0)) {
       $query->range('0', $node_max);
     }
 
     $result = $query->execute();
     
-    $pub = _prep_node_for_xml($result, $pub, $account);
+    $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
   } // end foreach node type
   
 
   
     // make XML from $pub
-  $xml_body = _array_to_xml($pub, $restrictedfields);
+  $xml_body = _photoldr_array_to_xml($pub, $restrictedfields);
   
 
   return $xml_body;

@@ -1,13 +1,13 @@
 <domains>
 <domain>
-<FQDN>demo.PhotoLDR.com</FQDN>
+<FQDN>www.example.com</FQDN>
 <published>1</published>
 <cms>drupal</cms>
 <standalone>1</standalone>
 <date>2012-09-04 14:36</date>
 <exp_date>2015-07-17</exp_date>
-<exp_url>demo.PhotoLDR.com</exp_url>
-<post_url>http://demo.PhotoLDR.com/?q=photoldrpost.php</post_url>
+<exp_url>www.example.com</exp_url>
+<post_url>http://www.example.com/?q=photoldrpost.php</post_url>
 <app_options>
 <option>app:Username:username:textfield:</option>
 <option>app:Password:password:password:</option>
@@ -15,7 +15,7 @@
 </app_options>
 <form_items>
 <option>
-article:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
+article:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
 </option>
 <option>article:Title:title:textfield:#required</option>
 <option>article:Body:body:textarea:</option>
@@ -25,22 +25,22 @@ article:Tags:field_tags:textfield:UNSUPPORTED taxonomy
 <option>article:Image:field_image:image:#2</option>
 <option>article:Replace Photos:image_overwrite:checkbox:</option>
 <option>
-page:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
+page:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
 </option>
 <option>page:Title:title:textfield:#required</option>
 <option>page:Body:body:textarea:</option>
 <option>
-blog:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
+blog:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
 </option>
 <option>blog:Title:title:textfield:#required</option>
 <option>blog:Body:body:textarea:</option>
 <option>
-book:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
+book:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
 </option>
 <option>book:Title:title:textfield:#required</option>
 <option>book:Body:body:textarea:</option>
 <option>
-guest_status:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
+guest_status:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
 </option>
 <option>guest_status:Title:title:textfield:#required</option>
 <option>guest_status:Body:body:textarea:</option>
@@ -49,7 +49,7 @@ guest_status:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
 guest_status:Replace Photos:image_overwrite:checkbox:
 </option>
 <option>
-poll:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
+poll:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
 </option>
 <option>poll:Title:title:textfield:#required</option>
 </form_items>
@@ -62,11 +62,11 @@ poll:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
 <option>poll:table</option>
 </node_types>
 <name>admin</name>
-<email>admin@photoldr.com</email>
+<email>admin@example.com</email>
 <user count="18">
 <uid>1</uid>
 <name>admin</name>
-<mail>admin@photoldr.com</mail>
+<mail>admin@example.com</mail>
 <theme/>
 <signature/>
 <signature_format/>
@@ -77,7 +77,7 @@ poll:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
 <timezone>America/New_York</timezone>
 <language/>
 <picture/>
-<init>admin@photoldr.com</init>
+<init>admin@example.com</init>
 </user>
 <nodes count="12">
 <node>
@@ -101,7 +101,7 @@ poll:Hidden:posturl:http://demo.PhotoLDR.com/?q=photoldrpost.php
 <revision_timestamp>2012-08-21</revision_timestamp>
 <revision_uid>1</revision_uid>
 <body>
-You have to be signed in to create content. You can use the demo user with the password demo to test here, or you can signup for a free account to create content. Visit demo.PhotoLDR.com/user to get started.
+You have to be signed in to create content. You can use the demo user with the password demo to test here, or you can signup for a free account to create content. Visit www.example.com/user to get started.
 </body>
 <cid>0</cid>
 <last_comment_timestamp>2012-07-31</last_comment_timestamp>
@@ -132,7 +132,7 @@ You have to be signed in to create content. You can use the demo user with the p
 <revision_timestamp>2012-08-31</revision_timestamp>
 <revision_uid>1</revision_uid>
 <body>
-This site is meant to allow you to test PhotoLDR and see how it works. PhotoLDR is an app meant to communicate with web sites using Content Management Systems. This site is built using Drupal, and a Drupal module was built to allow the interaction. The basic function of the PhotoLDR Drupal module is meant to present the site using XML standards, which this app or others like it can read. The same module also accepts data from the outside world, checks the authority of the user posting, then creates the post. The Drupal module code is open source in the tradition of Drupal. The PhotoLDR <a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">iOS app</a> is not open source, but all of the code to build it can be compiled from simple tutorials available on the web. The App is the interface you work with to compose and post your data from where ever you are. Username: demo Password: demo After installing the <a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">iOS app</a>, you can launch the app on you iOS device using this link: <a href="photoldr://demo.photoldr.com/">photoldr://demo.photoldr.com/</a>
+This site is meant to allow you to test PhotoLDR and see how it works. PhotoLDR is an app meant to communicate with web sites using Content Management Systems. This site is built using Drupal, and a Drupal module was built to allow the interaction. The basic function of the PhotoLDR Drupal module is meant to present the site using XML standards, which this app or others like it can read. The same module also accepts data from the outside world, checks the authority of the user posting, then creates the post. The Drupal module code is open source in the tradition of Drupal. The PhotoLDR <a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">iOS app</a> is not open source, but all of the code to build it can be compiled from simple tutorials available on the web. The App is the interface you work with to compose and post your data from where ever you are. Username: demo Password: demo After installing the <a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">iOS app</a>, you can launch the app on you iOS device using this link: <a href="photoldr://www.example.com/">photoldr://www.example.com/</a>
 </body>
 <cid>0</cid>
 <last_comment_timestamp>2012-07-23</last_comment_timestamp>
@@ -163,13 +163,13 @@ This site is meant to allow you to test PhotoLDR and see how it works. PhotoLDR 
 <revision_timestamp>2012-08-21</revision_timestamp>
 <revision_uid>1</revision_uid>
 <body>
-The PhotoLDR Drupal Module allows Drupal 7 administrators to select node types to be presented to the iOS app. After saving this setting, each node type gets an option pack that allows the Drupal Admin to select the order, sort criteria, item age and count limits on a node type basis. The module can be downloaded here: http://demo.PhotoLDR.com/photoldr-7.x-0.8-alpha1.zip
+The PhotoLDR Drupal Module allows Drupal 7 administrators to select node types to be presented to the iOS app. After saving this setting, each node type gets an option pack that allows the Drupal Admin to select the order, sort criteria, item age and count limits on a node type basis. The module can be downloaded here: http://www.example.com/photoldr-7.x-0.8-alpha1.zip
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1053-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1053-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1053-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1053-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-02</last_comment_timestamp>
@@ -203,10 +203,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 Type the complete name of the site. This is referred to as the Fully Qualified Domain Name, or FQDN for short. You don&#039;t need to type http, but if the site requires SSL, you do need to prefix the FQDN with https://
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-0900-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-0900-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-0900-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-0900-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-01</last_comment_timestamp>
@@ -240,10 +240,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 This is the site or Domain list. Select the site you want to use here by tapping the site name. You can also delete or reorder the sites by clicking the Edit button. If a site allows settings like a username or password, you can click the accessory icon to the right to get direct access to the settings screen.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-0904-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-0904-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-0904-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-0904-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-01</last_comment_timestamp>
@@ -277,10 +277,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 Save a username and password to get more access. Set the default publish state for new nodes.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-1230-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-1230-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-1230-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-1230-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-01</last_comment_timestamp>
@@ -314,10 +314,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 Browse content. If you have permission to unpublish a node, swipe to unpublish an item.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-1226-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-01-1226-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-1226-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-01-1226-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-01</last_comment_timestamp>
@@ -351,10 +351,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 If you have permission, an edit button is available. It loads the content you see into a form that you can alter and resubmit to the site. If you edit a node that has existing images, you can select a new image, or leave the image field empty to keep the existing image.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1057-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1057-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1057-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1057-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-02</last_comment_timestamp>
@@ -388,10 +388,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 Hide nodes from public view without deleting them. Swipe, tap, and done. Based on Drupal Permission.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1036-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1036-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1036-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1036-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-02</last_comment_timestamp>
@@ -425,10 +425,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 Quickly add a node. Just like sending a text message. Only nodes you have Drupal permission to add are listed. If you have permission and no add buttons are listed, verify your username and password.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1041-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1041-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1041-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1041-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-02</last_comment_timestamp>
@@ -462,10 +462,10 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 Back at the site list, remove the data stored locally for a domain as well as the button for the site.
 </body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1043-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/article-000001-2012-08-02-1043-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1043-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/field/image/article-000001-2012-08-02-1043-field_image.jpg
 </image0>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-02</last_comment_timestamp>
@@ -497,16 +497,16 @@ http://demo.photoldr.com/sites/default/files/styles/large/public/field/image/art
 <revision_uid>0</revision_uid>
 <body>Water view. Near Key West.</body>
 <icon0>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/guests/guest_status-000003-2012-08-10-1259-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/guests/guest_status-000003-2012-08-10-1259-field_image.jpg
 </icon0>
 <image0>
-http://demo.photoldr.com/sites/default/files/styles/large/public/guests/guest_status-000003-2012-08-10-1259-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/guests/guest_status-000003-2012-08-10-1259-field_image.jpg
 </image0>
 <icon1>
-http://demo.photoldr.com/sites/default/files/styles/thumbnail/public/guests/guest_status-000001-2012-08-21-0953-field_image.jpg
+http://www.example.com/sites/default/files/styles/thumbnail/public/guests/guest_status-000001-2012-08-21-0953-field_image.jpg
 </icon1>
 <image1>
-http://demo.photoldr.com/sites/default/files/styles/large/public/guests/guest_status-000001-2012-08-21-0953-field_image.jpg
+http://www.example.com/sites/default/files/styles/large/public/guests/guest_status-000001-2012-08-21-0953-field_image.jpg
 </image1>
 <cid>0</cid>
 <last_comment_timestamp>2012-08-10</last_comment_timestamp>
