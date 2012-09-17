@@ -21,11 +21,11 @@ function photoldr_block_block_info() {
   );
   $blocks['photoldr_block'] = array(
     'info' => t('PhotoLDR Block'),
+    'status' => TRUE, 
+    'region' => 'sidebar_first', // Not usually provided.
   );
   $blocks['photoldr_block_ios'] = array(
     'info' => t('PhotoLDR Block for iOS Devices'),
-    'status' => TRUE, 
-    'region' => 'sidebar_first', // Not usually provided.
   );
   return $blocks;
 }
@@ -36,39 +36,50 @@ function photoldr_block_block_info() {
  * Implements hook_block_view().
  */
 function photoldr_block_block_view($delta=0) {
-  $icontag = '<img src="' . drupal_get_path('module', 'photoldr_block') . '/photoldr.png">';
-  
+  global $user;
+  global $base_url;
+	$mobile_type = FALSE;
+	if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+		$mobile_type = "iPhone";
+	}
+	if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+		$mobile_type = "iPad";
+	}
+	if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+		$mobile_type = "iPod";
+	}
+  $icontag = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/photoldr.png">';
+  $launchbadge = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/LaunchBadge.png">';
   switch ($delta) {
     case 'photoldr_icon':
       // any options for the regulat block
       $block['subject'] = '';
       $block['content'] = '<a href="http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8">' 
      . $icontag 
-     . '</br><small>This site supports</br>PhotoLDR iOS app</small></a>';
+     . '</br><small>Works in PhotoLDR</small></a>';
 
     
-    return $block;
+      return $block;
       break;
     case 'photoldr_block':
       // any options for the regulat block
       break;
     case 'photoldr_block_ios':
       // code for the iOS only block.  return if not iOS device.
-      if (!(preg_match('/(iphone|ipad|ipod)/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT'])))) {
-        return;
-      }
+       if ($mobile_type == FALSE) {
+       //  return;
+       }
       break;
     
   }
   
-  global $user;
-  global $base_url;
-  $hostname = variable_get('photoldr_FQDN', $base_url['host']);
+
+  $hostname = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
   $block = array();
   $block['subject'] = '';
   $block['content'] = l(t('Use PhotoLDR App'), 'photoldr://' . $hostname);
   $build = array();
-
+  //drupal_set_message(print_r($hostname, true));
 
   $block['subject'] = t('PhotoLDR App');
   $build = array(
@@ -77,8 +88,9 @@ function photoldr_block_block_view($delta=0) {
       '#markup' => '<article>'
             . t('Step') . '1: ' . l(t('Create your account'), 'user/register') . '</br>'
             . t('Step') . '2: ' . l(t('Install the App'), 'http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8') . '</br>'
-            . t('Step') . '3: <a href="photoldr://' . $hostname . '">' . t('Start Using the App') . '</a></br>'
-            . '</article>'
+            . t('Step') . '3: <a href="photoldr://' . $hostname . '">' . t('Start Using the App')
+            . $launchbadge
+            . '</a></article>'
       ,
     ),
   );

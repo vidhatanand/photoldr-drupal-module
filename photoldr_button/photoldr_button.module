@@ -32,12 +32,29 @@ function photoldr_button_menu() {
 function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   global $user;
   global $base_url;
-  $hostname = variable_get('photoldr_FQDN', $base_url['host']);
+
+  $hostname = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
 
   $showbutton = variable_get('photoldr_button_on_forms', 'no');
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $photoldr_button_node_types = variable_get('photoldr_button_types', $defaultnodeslist);
   $uid = $user->uid;
+	$mobile_type = FALSE;
+	if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+		$mobile_type = "iPhone";
+	}
+	if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+		$mobile_type = "iPad";
+	}
+	if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+		$mobile_type = "iPod";
+	}
+	
+
+
+  if ($mobile_type == FALSE) {
+   // return;
+  }
   if ($showbutton == 'no') {
     return;
   }
@@ -50,16 +67,12 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   if (array_search($form['#node']->type, $photoldr_button_node_types) != FALSE) {
     return;
   }
-  if (!(preg_match('/(iphone|ipad|ipod)/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT'])))) {
-    //uncomment the return so that only iOS devices see the link
-    // return;
-  }
   /**
   drupal_set_message(print_r($photoldr_button_node_types, TRUE));
-            $handle = fopen("formarry.txt", "a");
-            fwrite($handle, print_r($form, true));
-            fclose($handle); 
-            
+  $handle = fopen("formarry.txt", "a");
+  fwrite($handle, print_r($form, true));
+  fclose($handle); 
+  
   */
 
   $type = $form['#node']->type;
@@ -77,24 +90,22 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
 
 
     $opts = _photoldr_button_parse_form($form);
-    
-    $url = 'photoldr_button://' . $hostname . '/' . $opts;
-    
-    $new1 = '<div class="ui-btn-up-c"><h4>Add ' . $type . ' from an iPhone, iPad or iPod. 
-              <a href="' . $url . '">
-               <input type="button" value="photoldr_button" class="form-submit">
-              </a></h4></div>';
+    $icontag = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/LaunchBadge.png">';
+    $url = 'photoldr://' . $hostname . '/' . $opts;
+    // <input type="button" value="photoldr_button" class="form-submit">
+    $new1 = '<div class="ui-btn-up-c"><h4>Add ' . $type . ' from ' . $mobile_type 
+              . ' <br /><a href="' . $url . '">'
+              . $icontag .
+              '</a></h4></div>';
     if (user_access('debug photoldr_button')) {
       $new1 .= '<br />' . print_r($url, TRUE);
     }
-
-  if (user_access('photoldr_button link')) {
-  }  
-    $form['photldr_app'] = array(
+    
+    $form['photoldr_app'] = array(
       '#title' => t('PhotLDR App'),
       '#type' => 'markup',
-      '#weight' => '16',
-      '#prefix' =>  '<div><h3>These buttons will be used with the photoldr_button iOS app.</h3>',
+      '#weight' => '-50',
+      '#prefix' =>  '<div>',
       '#sufix' =>  '</div>',
       '#markup' =>  $new1,
     );
