@@ -31,7 +31,7 @@ function photoldr_admin_settings() {
   $form['photoldr_FQDN'] = array(
     '#type' => 'textfield',
     '#title' => t('FQDN'),
-    '#default_value' => variable_get('photoldr_FQDN', $base_url['host']),
+    '#default_value' => variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST'])),
     '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.example.com'),
   );
 

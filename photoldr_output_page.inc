@@ -71,13 +71,13 @@ function photoldr_node_structure_page($uidvar = NULL) {
      * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
      * <domains><domain><FQDN>...</FQDN>
      */
-    $pub['FQDN'] = variable_get('photoldr_FQDN',  $base_url['host']);
+    $pub['FQDN'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
     $pub['published'] = "1";
     $pub['cms'] = "drupal";
     $pub['standalone'] = "1";
     $pub['date'] = date( "Y-m-d H:i") ;
     $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
-    $pub['exp_url'] = variable_get('photoldr_FQDN',  $base_url['host']);
+    $pub['exp_url'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
     $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
     /**
        * <app_options> exposes site specific options for user settings
