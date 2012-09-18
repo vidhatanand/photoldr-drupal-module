@@ -357,7 +357,7 @@ function photoldr_post_page() {
     $pub = array();
     $result[] = $node;
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
-    $xml_body = _photoldr_array_to_xml($pub, $restrictedfields);
+    $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
     drupal_add_http_header('Content-Type', 'application/xml');
     print($xml_head);
     print($xml_body);

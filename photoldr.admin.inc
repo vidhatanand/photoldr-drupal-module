@@ -31,17 +31,31 @@ function photoldr_admin_settings() {
   $form['photoldr_FQDN'] = array(
     '#type' => 'textfield',
     '#title' => t('FQDN'),
+    '#size' => 30,
     '#default_value' => variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST'])),
-    '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.example.com'),
+    '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.Example.com'),
   );
-
+  $form['photoldr_site_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site Name'),
+    '#size' => 30,
+    '#default_value' => variable_get('photoldr_site_name',  variable_get('site_name')),
+    '#description' => t('Site name.  Remember this will be displayed on iPhone and iPad, so best to keep this short. (v2)'),
+  );
   $form['photoldr_exp_date'] = array(
     '#type' => 'textfield',
     '#title' => t('Expiration Date'),
+    '#size' => 30,
     '#default_value' => variable_get('photoldr_exp_date', '+3 months'),
-     '#description' => t('Enter a relative string like +3 months, +90 days, +1 year, or a static date as YYYY-MM-DD. </br> Expiration Date for data that is cached in the iOS app.  An expired domains data is removed from the app.  Useful if you are migrating to a new site, or shutting down a site, or have data that is time sensative. The app should attemt to refresh the data every day, but if the data is not refreshed for (+3 months, +90 days, +1 year) then the data is cleared from the app.'),
+    '#description' => t('Enter a relative string like +3 months, +90 days, +1 year, or a static date as YYYY-MM-DD. </br> Expiration Date for data that is cached in the iOS app.  An expired domains data is removed from the app.  Useful if you are migrating to a new site, or shutting down a site, or have data that is time sensative. The app should attemt to refresh the data every day, but if the data is not refreshed for (+3 months, +90 days, +1 year) then the data is cleared from the app.'),
   );
-
+  $form['photoldr_allow_unpublished'] = array(
+    '#type' => 'select',
+    '#title' => t('Unpublished Content'),
+    '#options' => array('no' => 'No', 'yes' => 'Yes'),
+    '#default_value' => variable_get('photoldr_allow_unpublished'),
+    '#description' => t('Allow content editors with permission to work with unpublished content. (v2)'),
+  );
   $nodenames = node_type_get_names();
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $form['photoldr_types'] = array(

@@ -9,5 +9,5 @@ files[] = photoldr.admin.inc
 files[] = photoldr_post_page.inc
 files[] = photoldr_output_page.inc
 
-version = "7.x-0.82"
+version = "7.x-0.83"
 configure = admin/config/photoldr

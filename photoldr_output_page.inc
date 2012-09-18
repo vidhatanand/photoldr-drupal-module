@@ -93,7 +93,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
    * <node_types> tag will eventually allow configurable displays in the iOS app like
    *   table view, map view, or book view.
    */
-  $feed_back = '<form_items>' . "\n";
+  $form_items = '<form_items>' . "\n";
   $node_display_settings = '<node_types>' . "\n";
 
   $supported_fields = array('image', 'textfield', 'text', 'textarea', 'checkbox', 'date', 'cck_phone', 'addressfield');
@@ -128,16 +128,16 @@ function photoldr_node_structure_page($uidvar = NULL) {
     * nodetype:Hidden:posturl:http://hostname/?q=photoldrpost.php
     */
     if ($usercreate) {
-      $feed_back .= '<option>' . $ntype . ':Hidden:posturl:' . $pub['post_url'] . '</option>';
-      $feed_back .= "\n";
+      $form_items .= '<option>' . $ntype . ':Hidden:posturl:' . $pub['post_url'] . '</option>';
+      $form_items .= "\n";
     }
 
       /**
        * Basically all Drupal nodes have a title and body. Verify first then add option.
        */
       if (isset($type->has_title)) {
-            $feed_back .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
-            $feed_back .= "\n";
+            $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
+            $form_items .= "\n";
       }
       
       
@@ -178,13 +178,13 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $this_field_required = 'UNSUPPORTED ' . $instance['widget']['module'];
           }
           
-            $feed_back .= '<option>';
-            $feed_back .= $this_node_type . ':';
-            $feed_back .= $this_field_label . ':';
-            $feed_back .= $this_field_name . ':';
-            $feed_back .= $this_field_type . ':';
-            $feed_back .= $this_field_required ;
-            $feed_back .= '</option>' . "\n";
+            $form_items .= '<option>';
+            $form_items .= $this_node_type . ':';
+            $form_items .= $this_field_label . ':';
+            $form_items .= $this_field_name . ':';
+            $form_items .= $this_field_type . ':';
+            $form_items .= $this_field_required ;
+            $form_items .= '</option>' . "\n";
           continue;
         }
   
@@ -200,13 +200,13 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $this_field_type = 'textfield';
             
             
-            $feed_back .= '<option>';
-            $feed_back .= $this_node_type . ':';
-            $feed_back .= $this_field_label . ':';
-            $feed_back .= $this_field_name . ':';
-            $feed_back .= $this_field_type . ':';
-            $feed_back .= $this_field_required ;
-            $feed_back .= '</option>' . "\n";
+            $form_items .= '<option>';
+            $form_items .= $this_node_type . ':';
+            $form_items .= $this_field_label . ':';
+            $form_items .= $this_field_name . ':';
+            $form_items .= $this_field_type . ':';
+            $form_items .= $this_field_required ;
+            $form_items .= '</option>' . "\n";
           }
         continue;
         }
@@ -245,17 +245,17 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $this_field_required = '#required';
           }
 
-          $feed_back .= '<option>';
-          $feed_back .= $this_node_type . ':';
-          $feed_back .= $this_field_label . ':';
-          $feed_back .= $this_field_name . ':';
-          $feed_back .= $this_field_type . ':';
-          $feed_back .= $this_field_required ;
-          $feed_back .= '</option>' . "\n";
+          $form_items .= '<option>';
+          $form_items .= $this_node_type . ':';
+          $form_items .= $this_field_label . ':';
+          $form_items .= $this_field_name . ':';
+          $form_items .= $this_field_type . ':';
+          $form_items .= $this_field_required ;
+          $form_items .= '</option>' . "\n";
   
   
           if ($module == 'image') {
-            $feed_back .= '<option>' . $ntype . ':Replace Photos:image_overwrite:checkbox:</option>';
+            $form_items .= '<option>' . $ntype . ':Replace Photos:image_overwrite:checkbox:</option>';
           }
         }  // end foreach field
         
@@ -263,7 +263,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
         
         
     }  // END foreach ($instances as $instance)
-    $feed_back .= '</form_items>' . "\n";
+    $form_items .= '</form_items>' . "\n";
     $node_display_settings .= '</node_types>' . "\n";
     
     
@@ -271,46 +271,22 @@ function photoldr_node_structure_page($uidvar = NULL) {
     * This is the actual conversion of the $pub array to the <domain> XML element.
     */
     $output .= '<domain>' . "\n";
-    foreach ($pub as $k => $v) {
 
-          $k = (isset($k)) ? $k : 'item';
-          $k = is_string($k) ? $k : 'item';
+    // Move code to function  <domain> site fields are in $pub
+    $output .= _photoldr_domain_to_xml($pub);
+    
+    // These are the settings for the iOS app add/edit forms
+    $output .= $form_items;
 
-          if (is_array($v)) {
-
-            $output .= '<' . $k . '>';
-              foreach ($v as $k1 => $v1) {
-
-                  $k1 = isset($k1) ? $k1 : 'option';
-                  $k1 = is_string($k1) ? $k1 : 'option';
-                  $k1 = 'option';
-                
-                if (is_array($v1)) {
-                  $output .= '<' . $k1 . '>' . serialize($v1) . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
-                }
-                else {
-                  $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
-                }
-                
-              } // END foreach ($v as $k1 => $v1)
-              
-              $output .= '</' . $k . '>' . "\n";
-
-            
-          }
-          else {
-            
-            $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;  // <tag>serialarray</tag>
-            
-          }
-          
-    }
-    $output .= $feed_back;
     $output .= $node_display_settings;
 
     // Add <nodes> tag Content.
     $output .= _photoldr_xml_node_content();
     
+    if (variable_get('photoldr_allow_unpublished', 'no') != 'no') {
+      // Add <nodes> tag Content for unpublished nodes.
+      $output .= _photoldr_xml_unpublished_node_content();
+    }
     // Close the <domain> tag in the document.
     $output .= '</domain>' . "\n";
 
@@ -420,10 +396,8 @@ function _photoldr_xml_node_content() {
 
   } // end foreach node type
   
-
-  
     // make XML from $pub
-  $xml_body = _photoldr_array_to_xml($pub, $restrictedfields);
+  $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
   
   
   // TODO.  What to do with unpublished content
@@ -445,10 +419,37 @@ function _photoldr_xml_node_content() {
  * @return
  *   String xml document body.  This string should be enclosed in a document tag 
  *   and have an XML header added to the display.  In this document context, this
- *   portion of XML will reside withing the <domain></domain> key.
+ *   portion of XML will reside withing the <domain></domain> key.  For no access
+ *   or no results, returns empty string.
  *   
  */
 function _photoldr_xml_unpublished_node_content() {
+  /**  This can help show permissions
+  foreach (module_list(FALSE, FALSE, TRUE) as $module) {
+    print_r($module);
+    
+    // Drupal 7
+    if ($permissions = module_invoke($module, 'permission')) {
+      print_r($permissions);
+    }
+  }
+  */
+  $unpublished = FALSE;
+  $userunpublished = FALSE;
+  $access = 'administer nodes';
+  $access1 = 'view own unpublished content';
+  if (user_access($access, $account)) {
+    $unpublished = TRUE;
+  }
+  elseif (user_access($access1, $account)) {
+    $userunpublished = TRUE;
+  }
+  else {
+    // return empty string for no results.
+    return '';
+  }
+  
+  
   global $user;
   global $language;
   $langcode = isset($langcode) ? $langcode : $language->language;
@@ -463,20 +464,11 @@ function _photoldr_xml_unpublished_node_content() {
   }
   asort($node_order);
 
-
-  if (isset($_POST['changed'])) {
-    $data['changed'] = check_plain($_POST['changed']);
-  }
-  elseif (isset($_GET['changed'])) {
-    $data['changed'] = check_plain($_GET['changed']);
-  }
-
+  drupal_set_message('UID: ' . $user->uid);
   $uidvar = _photoldr_html_user_auth();
   $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid; 
   $account = user_load($uid);
   // END user authentication section
-
-  $pub = _photoldr_account_to_xml($account, $pub);
 
   // Get list of nodes to publish and act on the list
   foreach ($node_order as $nodename => $k) {
@@ -500,18 +492,18 @@ function _photoldr_xml_unpublished_node_content() {
     $query = db_select('node', 'n');
     $query
       ->fields('n')
-      ->condition('n.status', 0)
       ->condition('n.type', $nodename);
     $query
       ->orderBy('n.' . $node_order_by, $sort);
-
-    if (isset($data['changed'])) {
-      $oldest_date = date(strtotime($data['changed']));
-      $query->condition('n.changed', $oldest_date, "<");
+    
+    //Decide what unpublished nodes to display.
+    if ($unpublished) {
+      $query->condition('n.status', 0);
     } 
-    elseif (isset($node_age_max) && ($node_age_max != 0)) {
-      $oldest_date = date(strtotime('-' . $node_age_max . ' weeks'));
-      $query->condition('n.created', $oldest_date, '>');
+    elseif ($userunpublished) {
+      $query
+          ->condition('n.status', 0)
+          ->condition('n.uid', $uid, '=');
     }
 
     if (isset($node_max) && ($node_max != 0)) {
@@ -524,10 +516,9 @@ function _photoldr_xml_unpublished_node_content() {
 
   } // end foreach node type
   
-
   
     // make XML from $pub
-  $xml_body = _photoldr_array_to_xml($pub, $restrictedfields);
+  $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
   
 
   return $xml_body;

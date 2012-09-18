@@ -162,7 +162,10 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
     $type = $node->type;
     $ntype = $node->type;
     $instances = field_info_instances('node', $type);
-    
+		$container = 'nodes';
+    if ($node->status == 0) {
+			$container = 'unpublished_nodes';
+		}
       $access = 'create ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usercreate = TRUE;
@@ -216,28 +219,28 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
     foreach ($node as $k => $v) {
       // Process nodes as fields
       
-      $pub['nodes'][$row->nid]['userdelete'] = '0';
-      $pub['nodes'][$row->nid]['useredit'] = '0';
+      $pub[$container][$row->nid]['userdelete'] = '0';
+      $pub[$container][$row->nid]['useredit'] = '0';
 
      // Add extra info about the user access to this node. 
     if ($nodeadmin) {
-        $pub['nodes'][$row->nid]['userdelete'] = '1';
-        $pub['nodes'][$row->nid]['useredit'] = '1';
+        $pub[$container][$row->nid]['userdelete'] = '1';
+        $pub[$container][$row->nid]['useredit'] = '1';
     }
     else {
       if ($row->uid == $account->uid) {
         if ($userdeleteown) {
-          $pub['nodes'][$row->nid]['userdelete'] = '1';
+          $pub[$container][$row->nid]['userdelete'] = '1';
         }
         if ($usereditown) {
-          $pub['nodes'][$row->nid]['useredit'] = '1';
+          $pub[$container][$row->nid]['useredit'] = '1';
         }
       }
       if ($userdeleteany) {
-        $pub['nodes'][$row->nid]['userdelete'] = '1';
+        $pub[$container][$row->nid]['userdelete'] = '1';
       }
       if ($usereditany) {
-        $pub['nodes'][$row->nid]['useredit'] = '1';
+        $pub[$container][$row->nid]['useredit'] = '1';
       }
     }
     
@@ -258,11 +261,11 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
   
                 $themed_icon = image_style_url($icon_style, $v2['uri']);
                 $key = 'icon' . $k2;
-                $pub['nodes'][$row->nid][$key] =  $themed_icon;
+                $pub[$container][$row->nid][$key] =  $themed_icon;
   
                 $themed_img = image_style_url($image_style, $v2['uri']);
                 $key = 'image' . $k2;
-                $pub['nodes'][$row->nid][$key] =  $themed_img;
+                $pub[$container][$row->nid][$key] =  $themed_img;
   
               }
             }
@@ -272,9 +275,9 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
         // Process Date fields
         if ($instances[$k]['widget']['module'] == 'date') {
           foreach ($v as $k1 => $v1) {
-            $pub['nodes'][$row->nid][$k]['value'] =  $v1['0']['value'];
-            $pub['nodes'][$row->nid][$k]['value2'] =  isset($v1['0']['value2']) ? $v1['0']['value2'] : $v1['0']['value'];
-            $pub['nodes'][$row->nid][$k]['timezone'] =  $v1['0']['timezone'];
+            $pub[$container][$row->nid][$k]['value'] =  $v1['0']['value'];
+            $pub[$container][$row->nid][$k]['value2'] =  isset($v1['0']['value2']) ? $v1['0']['value2'] : $v1['0']['value'];
+            $pub[$container][$row->nid][$k]['timezone'] =  $v1['0']['timezone'];
           }
           continue;
         }
@@ -285,12 +288,12 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
   
           foreach ($v['und'] as $k1 => $v1) {
 
-              $pub['nodes'][$row->nid]['street1'] =  $v1['thoroughfare'];
-              $pub['nodes'][$row->nid]['street2'] =  $v1['premise'];
-              $pub['nodes'][$row->nid]['city'] =  $v1['locality'];
-              $pub['nodes'][$row->nid]['state'] =  $v1['administrative_area'];
-              $pub['nodes'][$row->nid]['zip'] =  $v1['postal_code'];
-              $pub['nodes'][$row->nid]['country'] =  $v1['country'];
+              $pub[$container][$row->nid]['street1'] =  $v1['thoroughfare'];
+              $pub[$container][$row->nid]['street2'] =  $v1['premise'];
+              $pub[$container][$row->nid]['city'] =  $v1['locality'];
+              $pub[$container][$row->nid]['state'] =  $v1['administrative_area'];
+              $pub[$container][$row->nid]['zip'] =  $v1['postal_code'];
+              $pub[$container][$row->nid]['country'] =  $v1['country'];
 
           }
           continue;
@@ -316,11 +319,11 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
                   $themed_icon = image_style_url($icon_style, $v2['uri']);
                   $key = 'icon' . $k2;
-                  $pub['nodes'][$row->nid][$key] =  $themed_icon;
+                  $pub[$container][$row->nid][$key] =  $themed_icon;
 
                   $themed_img = image_style_url($image_style, $v2['uri']);
                   $key = 'image' . $k2;
-                  $pub['nodes'][$row->nid][$key] =  $themed_img;
+                  $pub[$container][$row->nid][$key] =  $themed_img;
 
                 }
               }
@@ -351,7 +354,7 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
       // Handle simple dates that are timestamps
       if (in_array($k, $simple_dates) && (is_numeric($v))) {
-        $pub['nodes'][$row->nid][$k] =  date('Y-m-d', $v);
+        $pub[$container][$row->nid][$k] =  date('Y-m-d', $v);
         continue;
       }
       
@@ -371,13 +374,13 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
       if (is_array($v)) {
         if (isset($v['und']['0']['safe_value'])) {
       $val = strip_tags($v['und']['0']['value'], '<a><em><img><strong><cite><blockquote><code><ul><ol><li><dl><dt><dd>');
-          $pub['nodes'][$row->nid][$k] = htmlspecialchars($val);
-          //$pub['nodes'][$row->nid][$k] = print_r(htmlentities(strip_tags($v['und']['0']['value'], '<a><img><br>')), true);
+          $pub[$container][$row->nid][$k] = htmlspecialchars($val);
+          //$pub[$container][$row->nid][$k] = print_r(htmlentities(strip_tags($v['und']['0']['value'], '<a><img><br>')), true);
           continue;
         }
       }
       else {
-        $pub['nodes'][$row->nid][$k] =  htmlspecialchars(strip_tags($v));
+        $pub[$container][$row->nid][$k] =  htmlspecialchars(strip_tags($v));
       }
     
     }
@@ -467,7 +470,7 @@ function _photoldr_account_to_xml($account, $pub) {
 
 
 /**
- * Create a string object consing XML from an array.
+ * Create a string object XML from an array of nodes.
  *
  * This step turns the accumulated site information into XML.
  *
@@ -481,7 +484,7 @@ function _photoldr_account_to_xml($account, $pub) {
  *   String of XML tags.  This string should be enclosed in an XML tag 
  *   
  */
-function _photoldr_array_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
+function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
   $output = '';
      // make XML from $pub
     foreach ($pub as $k => $v) {
@@ -498,7 +501,7 @@ function _photoldr_array_to_xml($pub,  $restrictedfields = array('pass', 'data',
                 if (in_array($k1, $restrictedfields)) {
                   continue;
                 }
-                  $k1 = isset($k1) ? $k1 : 'node';
+                  $k1 = (isset($k1)) ? $k1 : 'node';
                   $k1 = is_string($k1) ? $k1 : 'node';
                 
                 if (is_array($v1)) {
@@ -562,4 +565,63 @@ function _photoldr_array_to_xml($pub,  $restrictedfields = array('pass', 'data',
   
   return $output;
   
+}
+
+
+
+
+/**
+ * Create a string object consing XML from an array.
+ *
+ * This step turns the accumulated site information into XML.
+ *
+ *
+ * @param $pub
+ *   This array should already contain data, which will be preserved.
+ * @param $restrictedfields
+ *   Array of fields to skip in creating the XML.
+ *
+ * @return
+ *   String of XML tags.  This string should be enclosed in an XML tag 
+ *   
+ */
+function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
+  $output = '';
+
+
+  foreach ($pub as $k => $v) {
+
+          $k = (isset($k)) ? $k : 'item';
+          $k = is_string($k) ? $k : 'item';
+
+          if (is_array($v)) {
+
+            $output .= '<' . $k . '>';
+              foreach ($v as $k1 => $v1) {
+
+                  $k1 = isset($k1) ? $k1 : 'option';
+                  $k1 = is_string($k1) ? $k1 : 'option';
+                  $k1 = 'option';
+                
+                if (is_array($v1)) {
+                  $output .= '<' . $k1 . '>' . serialize($v1) . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
+                }
+                else {
+                  $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
+                }
+                
+              } // END foreach ($v as $k1 => $v1)
+              
+              $output .= '</' . $k . '>' . "\n";
+
+            
+          }
+          else {
+            
+            $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;  // <tag>serialarray</tag>
+            
+          }
+          
+    }
+    return $output;
 }
