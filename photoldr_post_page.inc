@@ -108,6 +108,7 @@ function photoldr_post_page() {
     }
   }
 
+  // End user authentication check
 
   $types = node_type_get_names();
   if (!isset($types[$ntype])) {
@@ -214,9 +215,10 @@ function photoldr_post_page() {
             $node->title = ($v) ? check_plain($v) : $node->title;
             break;
         case 'body':
-            $node->body['und']['0']['value'] = ($v) ? check_plain($v) : $node->body['und']['0']['value'];
             $node->body['und']['0']['format'] = isset($node->body['und']['0']['format']) ? $node->body['und']['0']['format'] : 'filtered_html';
-              
+            $node->body['und']['0']['value'] = isset($v) ? check_markup($v, $node->body['und']['0']['format']) : $node->body['und']['0']['value'];
+
+            
             break;
         case 'street1':
             $node->field_address['und']['0']['thoroughfare'] = ($v) ? check_plain($v) : $node->field_address['und']['0']['thoroughfare'];
@@ -249,7 +251,6 @@ function photoldr_post_page() {
             if ($nid != 'new') {
               $node->field_date['und']['0']['value'] = ($v) ? check_plain($v) : $node->field_date['und']['0']['value'];
             }
-            
             if ($nid == 'new') {
               $node->field_date['und'][] = array(
                   'value' => check_plain($v),
