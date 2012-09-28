@@ -195,8 +195,6 @@ function photoldr_post_page() {
 
 
 
-
-
 // Loop through $data array and fill in the node values
   foreach ($data as $k => $v) {
     if (is_array($v)) {
@@ -215,9 +213,9 @@ function photoldr_post_page() {
             $node->title = ($v) ? check_plain($v) : $node->title;
             break;
         case 'body':
-            $node->body['und']['0']['format'] = isset($node->body['und']['0']['format']) ? $node->body['und']['0']['format'] : 'filtered_html';
-            $node->body['und']['0']['value'] = isset($v) ? check_markup($v, $node->body['und']['0']['format']) : $node->body['und']['0']['value'];
-
+         //   $node->body['und']['0']['format'] = isset($node->body['und']['0']['format']) ? $node->body['und']['0']['format'] : 'full_html';
+            $node->body['und']['0']['value'] = isset($v) ? check_markup($v, 'full_html') : $node->body['und']['0']['value'];
+            $node->body['und']['0']['safe_value'] = isset($v) ? check_markup($v, 'full_html') : $node->body['und']['0']['safe_value'];
             
             break;
         case 'street1':

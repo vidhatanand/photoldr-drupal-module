@@ -345,13 +345,6 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
 
 
-
-
-
-
-
-
-
       // Handle simple dates that are timestamps
       if (in_array($k, $simple_dates) && (is_numeric($v))) {
         $pub[$container][$row->nid][$k] =  date('Y-m-d', $v);
@@ -362,22 +355,19 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
 
 
-
-
-
-
-
-
-
         
         // Default field Handling - All other or unsupported fields.
       if (is_array($v)) {
         if (isset($v['und']['0']['safe_value'])) {
-      $val = strip_tags($v['und']['0']['value'], '<a><em><img><strong><cite><blockquote><code><ul><ol><li><dl><dt><dd>');
-          $pub[$container][$row->nid][$k] = htmlspecialchars($val);
+          $pub[$container][$row->nid][$k] = htmlspecialchars($v['und']['0']['safe_value']);
           //$pub[$container][$row->nid][$k] = print_r(htmlentities(strip_tags($v['und']['0']['value'], '<a><img><br>')), true);
           continue;
         }
+				else {
+					$pub[$container][$row->nid][$k] = htmlspecialchars($v['und']['0']['value']);
+					
+					
+				}
       }
       else {
         $pub[$container][$row->nid][$k] =  htmlspecialchars(strip_tags($v));

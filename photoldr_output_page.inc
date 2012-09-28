@@ -72,6 +72,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
      * <domains><domain><FQDN>...</FQDN>
      */
     $pub['FQDN'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
+    $pub['site_name'] = variable_get('photoldr_site_name',  variable_get('site_name'));
     $pub['published'] = "1";
     $pub['cms'] = "drupal";
     $pub['standalone'] = "1";
@@ -285,7 +286,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
     
     if (variable_get('photoldr_allow_unpublished', 'no') != 'no') {
       // Add <nodes> tag Content for unpublished nodes.
-      $output .= _photoldr_xml_unpublished_node_content();
+      $output .= _photoldr_xml_unpublished_node_content($account);
     }
     // Close the <domain> tag in the document.
     $output .= '</domain>' . "\n";
@@ -423,7 +424,7 @@ function _photoldr_xml_node_content() {
  *   or no results, returns empty string.
  *   
  */
-function _photoldr_xml_unpublished_node_content() {
+function _photoldr_xml_unpublished_node_content($account) {
   /**  This can help show permissions
   foreach (module_list(FALSE, FALSE, TRUE) as $module) {
     print_r($module);
