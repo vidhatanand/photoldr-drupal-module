@@ -109,6 +109,17 @@ function photoldr_post_page() {
   }
 
   // End user authentication check
+  
+  // debug post data.  st uid to -10 to disable
+  if ($uid == 1) {
+    $testdata = $data;
+    unset($testdata['password']);
+    $handle = fopen("postdata.txt", "a");
+    fwrite($handle, 'Data: \n' . print_r($testdata, true) . '  ');
+    fclose($handle); 
+  }
+
+
 
   $types = node_type_get_names();
   if (!isset($types[$ntype])) {
@@ -245,17 +256,6 @@ function photoldr_post_page() {
                     'number' => check_plain($v));
             }
             break;
-        case 'date':
-            if ($nid != 'new') {
-              $node->field_date['und']['0']['value'] = ($v) ? check_plain($v) : $node->field_date['und']['0']['value'];
-            }
-            if ($nid == 'new') {
-              $node->field_date['und'][] = array(
-                  'value' => check_plain($v),
-                  'timezone' => $account->timezone
-                  );
-            }
-            break;
         case 'address':
             $useraddress = _post_widget_get_user_address($uid);
             $node->field_address['und'][] = $useraddress;
@@ -283,6 +283,22 @@ function photoldr_post_page() {
           if ($v['widget']['module'] == 'image') {
             $imagefieldnames[] = $v['field_name'];
           }
+					
+			// Date field handling
+      if ($v['widget']['module'] == 'date') {
+        $datefield = $v['field_name'];
+        $node->{$datefield}['und']['0'] = array(
+                  'value' => isset($data[$datefield]) ? check_plain($data[$datefield]) : $node->{$datefield}['und']['0']['value'],
+                  'value2' => isset($data[$datefield . '_end']) ? check_plain($data[$datefield . '_end']) : $node->{$datefield}['und']['0']['value2'],
+                );
+            if ($nid == 'new') {
+              $node->{$datefield}['und']['0'] = array(
+                    'timezone' => $account->timezone
+               );
+            }
+      }  // End date handling
+			
+			
     }
 
   if (count($imagefieldnames) > 1) {
@@ -340,6 +356,16 @@ function photoldr_post_page() {
  // $node_render = node_view($node);
   
   node_save($node);
+
+  // debug post data.  st uid to -10 to disable
+  if ($uid == 1) {
+    $testdata = $node;
+    // unset($testdata['password']);
+    $handle = fopen("postdata.txt", "a");
+    fwrite($handle, 'Node: \n' . print_r($testdata, true) . '  ');
+    fclose($handle); 
+  }
+
 
 
   // This is an XML return
