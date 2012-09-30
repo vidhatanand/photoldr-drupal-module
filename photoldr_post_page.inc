@@ -525,7 +525,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
 
   foreach ($images as $key => $imgobj) {
     file_validate_image_resolution($imgobj, $max_res, $min_res);
-    autorotate_image($imgobj);
+    photoldr_autorotate_image($imgobj);
 
     foreach ($imgobj as $obj => $value) {
       $images_return[$key][$obj] = $value;
@@ -546,8 +546,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
  *
  * $imagefile is the image object
  */
-function autorotate_image($imagefile) {
-   // drupal_set_message('<pre>autorotate_image image: '  .  print_r($image, true) . '</pre>'); 
+function photoldr_autorotate_image($imagefile) {
   
   if (!function_exists('exif_read_data')) {
     // drupal_set_message('<pre>exif_read_data  function does not exist </pre>'); 
