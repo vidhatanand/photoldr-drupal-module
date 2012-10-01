@@ -86,9 +86,8 @@ function photoldr_block_block_view($delta=0) {
     'header_text' => array(
       '#type' => 'markup',
       '#markup' => '<article>'
-            . t('Step') . '1: ' . l(t('Create your account'), 'user/register') . '</br>'
-            . t('Step') . '2: ' . l(t('Install the App'), 'http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8') . '</br>'
-            . t('Step') . '3: <a href="photoldr://' . $hostname . '">' . t('Start Using the App')
+            . t('Step') . '1: ' . l(t('Install the App'), 'http://itunes.apple.com/us/app/photoldr/id555194288?ls=1&mt=8') . '</br>'
+            . t('Step') . '2: <a href="photoldr://' . $hostname . '">' . t('Launch the App') . '<br />'
             . $launchbadge
             . '</a></article>'
       ,
