@@ -211,13 +211,36 @@ function photoldr_node_structure_page($uidvar = NULL) {
           }
         continue;
         }
+        
+          /**
+          * Special support for the date module.
+          */
+        if ($instance['widget']['module'] == 'date') {
+          
+            $this_field_type = 'date';
+            
+            $form_items .= '<option>';
+            $form_items .= $this_node_type . ':';
+            $form_items .= $this_field_label . ':';
+            $form_items .= $this_field_name . ':';
+            $form_items .= $this_field_type . ':';
+            $form_items .= $this_field_required ;
+            $form_items .= '</option>' . "\n";
+            
+            $form_items .= '<option>';
+            $form_items .= $this_node_type . ':';
+            $form_items .= $this_field_label . ' End:';
+            $form_items .= $this_field_name . '_end:';
+            $form_items .= $this_field_type . ':';
+            $form_items .= $this_field_required ;
+            $form_items .= '</option>' . "\n";
+          
+        continue;
+        }
   
   
 
     switch ($module) {
-          case 'date':
-                $this_field_type = 'date';
-                break;
           case 'image':
                 if ($imagefieldmax[$this_field_name] > 3) {
                   $this_field_type = 'image';
@@ -400,10 +423,11 @@ function _photoldr_xml_node_content() {
     // make XML from $pub
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
   
-  
-  // TODO.  What to do with unpublished content
-  if ((isset($_POST['unpublished'])) || (isset($_GET['unpublished']))) {
-    $pub['unpublished'] = _photoldr_xml_node_unpublished_content();
+    // debug post data.  st uid to -10 to disable
+  if ($uid == 1) {
+    $handle = fopen("pubdata.txt", "a");
+    fwrite($handle, 'Pub: ' . print_r($pub, true) . '  ');
+    fclose($handle);
   }
   return $xml_body;
 
