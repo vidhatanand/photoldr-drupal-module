@@ -284,12 +284,12 @@ function photoldr_post_page() {
             $imagefieldnames[] = $v['field_name'];
           }
 					
-			// Date field handling
+			// Date field handling  date("Y-m-d H:i", strtotime($exp_date))
       if ($v['widget']['module'] == 'date') {
         $datefield = $v['field_name'];
         $node->{$datefield}['und']['0'] = array(
-                  'value' => isset($data[$datefield]) ? check_plain($data[$datefield]) : $node->{$datefield}['und']['0']['value'],
-                  'value2' => isset($data[$datefield . '_end']) ? check_plain($data[$datefield . '_end']) : $node->{$datefield}['und']['0']['value2'],
+                  'value' => isset($data[$datefield]) ? date("Y-m-d H:i", strtotime(check_plain($data[$datefield]))) : $node->{$datefield}['und']['0']['value'],
+                  'value2' => isset($data[$datefield . '_end']) ? date("Y-m-d H:i", strtotime(check_plain($data[$datefield . '_end']))) : $node->{$datefield}['und']['0']['value2'],
                 );
             if ($nid == 'new') {
               $node->{$datefield}['und']['0'] = array(
