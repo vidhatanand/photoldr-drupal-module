@@ -38,16 +38,16 @@ function photoldr_block_block_info() {
 function photoldr_block_block_view($delta=0) {
   global $user;
   global $base_url;
-	$mobile_type = FALSE;
-	if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPhone";
-	}
-	if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPad";
-	}
-	if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPod";
-	}
+  $mobile_type = FALSE;
+  if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPhone";
+  }
+  if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPad";
+  }
+  if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPod";
+  }
   $icontag = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/photoldr.png">';
   $launchbadge = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/LaunchBadge.png">';
   switch ($delta) {

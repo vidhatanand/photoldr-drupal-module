@@ -1,143 +1,143 @@
-<domains> Top level document. Container for <domain>
-<domain> Document Contents – Contains all other tags with site data.
-
-
-<FQDN> Fully Qualified Domains Name – Site Admin settable option that is the sites URL.  Must be a resolvable URL, but allow mixed case. 
-    <FQDN>www.Example.com</FQDN>
-
-
-<cms> Content Management System name. Single string: drupal, joomla, wordpress
-    <cms>drupal</cms>
-
-
-<date> Current date that this page was requested.  PHP date( "Y-m-d H:i")
-    <date>2012-09-05 16:22</date>
-
-
-<exp_date> Date to stop using this data without a refresh.  PHP date( "Y-m-d").  Admin should be able to set a Relative date +3 months, +1 year, which will be 
-    <exp_date>2013-09-05</exp_date>
-
-
-<exp_url> URL to send an expired request. Fully formatted URL:
-    <exp_url>http://www.example.com/exppage.html</exp_url>
-
-
-<post_url> Default site post URL.
-    <post_url>http://www.example.com?q=photoldrpost.php</post_url>
-
-
-<app_options> container for <options> which is a list of fields to collect settings from the app.
-
-
-<option> When in <app_options> this is a descriptor for fields. 
-     <option>app:Label:fieldname:fieldtype:options</option>
-        app - Lowercase, no spaces.
-        label - Case allowed, spaces permitted.
-        fieldname - Machine name of the field. Lowercase, no spaces
-        fieldtype - textfield, textarea, password, checkbox, date, image
-        options - #required for any except images
-
-
-<app_options>
-<option>app:Username:username:textfield:</option>
-<option>app:Password:password:password:</option>
-<option>app:Publish:status:checkbox:</option>
-</app_options>
-
-
-<form_items> container for <options> which list of node types and fields with settings.
-
-
-In <form_items> the first <option> is a special "hidden" option that is present ONLY when the authenticated user has permission to Add this type of record. 
-<option>recordtype:Hidden:posturl:url</option>
-url - fully formed url: http://www.example.com/postpage.php
-
-
-<option> - describes fields per each node type.
-     <option>recordtype:Label:fieldname:fieldtype:options</option>
-        recordtype - in drupal this is the machine name of the node type. Lowercase, no spaces
-        label - Case allowed, spaces permitted.
-        fieldname - Machine name of the field. Lowercase, no spaces
-        fieldtype - textfield, textarea, password, checkbox, date, image
-        options - #required for any except images, OR #1-9 for images count.  9 max.
-
-
-    <form_items>
-      <option>
-      article:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
-      </option>
-      <option>article:Title:title:textfield:#required</option>
-      <option>article:Body:body:textarea:</option>
-      <option>
-      article:Tags:field_tags:textfield:UNSUPPORTED taxonomy
-      </option>
-      <option>article:Image:field_image:image:#9</option>
-      <option>article:Replace Photos:image_overwrite:checkbox:</option>
-      <option>
-      page:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
-      </option>
-      <option>page:Title:title:textfield:#required</option>
-      <option>page:Body:body:textarea:</option>
-      <option>
-      gathering:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
-      </option>
-      <option>gathering:Title:title:textfield:#required</option>
-      <option>gathering:Notes:body:textarea:</option>
-      <option>gathering:Date:field_date:date:</option>
-      <option>gathering:Street1:street1:textfield:</option>
-      <option>gathering:Street2:street2:textfield:</option>
-      <option>gathering:City:city:textfield:</option>
-      <option>gathering:State:state:textfield:</option>
-      <option>gathering:Zip:zip:textfield:</option>
-      <option>gathering:Country:country:textfield:</option>
-      <option>gathering:Organizers:field_organizers:textfield:</option>
-      <option>gathering:Image:field_image:image:#9</option>
-      <option>gathering:Replace Photos:image_overwrite:checkbox:</option>
-    </form_items>
-
-
-
-<user> contains information only if a user has authenticated.
-
-
-    <user>
-      <uid>1</uid>
-      <name>demo</name>
-      <mail>demo@example.com</mail>
-    </user>
-
-
-<nodes> is a container for multiple <node> items
-
-
-<node> is the record from the site.  These nodes typically contain a lot of data not needed by the user.  All significant data, which will be editable by the user will be presented as a <key>string</key> where key is the fieldname to match fieldnames in the node structure.  Special additional items will be <userdelete> and <useredit>
-
-  
-  <userdelete>1</userdelete> Only if the authenticated user can delete this item
-  <useredit>1</useredit> Only if the authenticated user can modify this item
-
-
-This and all samples are based on the Drupal Module and node structure.
-    <node>
-      <userdelete>1</userdelete>
-      <useredit>1</useredit>
-      <uid>1</uid>
-      <title>Page Title</title>
-      <type>page</type>
-      <created>2012-02-16</created>
-      <changed>2012-08-31</changed>
-      <body>Sample Node Body</body>
-      <icon0>
-      http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/somefile.jpg
-      </icon0>
-      <image0>
-      http://www.example.com/sites/default/files/styles/medium/public/field/image/somefile.jpg
-      </image0>
-      <name>admin</name>
-    </node>
-
-
-
-
-<icon#> This is the image in a compact (100-200 pixels wide x 100-200 pixels high)
+<domains> Top level document. Container for <domain>
+<domain> Document Contents – Contains all other tags with site data.
+
+
+<FQDN> Fully Qualified Domains Name – Site Admin settable option that is the sites URL.  Must be a resolvable URL, but allow mixed case. 
+    <FQDN>www.Example.com</FQDN>
+
+
+<cms> Content Management System name. Single string: drupal, joomla, wordpress
+    <cms>drupal</cms>
+
+
+<date> Current date that this page was requested.  PHP date( "Y-m-d H:i")
+    <date>2012-09-05 16:22</date>
+
+
+<exp_date> Date to stop using this data without a refresh.  PHP date( "Y-m-d").  Admin should be able to set a Relative date +3 months, +1 year, which will be 
+    <exp_date>2013-09-05</exp_date>
+
+
+<exp_url> URL to send an expired request. Fully formatted URL:
+    <exp_url>http://www.example.com/exppage.html</exp_url>
+
+
+<post_url> Default site post URL.
+    <post_url>http://www.example.com?q=photoldrpost.php</post_url>
+
+
+<app_options> container for <options> which is a list of fields to collect settings from the app.
+
+
+<option> When in <app_options> this is a descriptor for fields. 
+     <option>app:Label:fieldname:fieldtype:options</option>
+        app - Lowercase, no spaces.
+        label - Case allowed, spaces permitted.
+        fieldname - Machine name of the field. Lowercase, no spaces
+        fieldtype - textfield, textarea, password, checkbox, date, image
+        options - #required for any except images
+
+
+<app_options>
+<option>app:Username:username:textfield:</option>
+<option>app:Password:password:password:</option>
+<option>app:Publish:status:checkbox:</option>
+</app_options>
+
+
+<form_items> container for <options> which list of node types and fields with settings.
+
+
+In <form_items> the first <option> is a special "hidden" option that is present ONLY when the authenticated user has permission to Add this type of record. 
+<option>recordtype:Hidden:posturl:url</option>
+url - fully formed url: http://www.example.com/postpage.php
+
+
+<option> - describes fields per each node type.
+     <option>recordtype:Label:fieldname:fieldtype:options</option>
+        recordtype - in drupal this is the machine name of the node type. Lowercase, no spaces
+        label - Case allowed, spaces permitted.
+        fieldname - Machine name of the field. Lowercase, no spaces
+        fieldtype - textfield, textarea, password, checkbox, date, image
+        options - #required for any except images, OR #1-9 for images count.  9 max.
+
+
+    <form_items>
+      <option>
+      article:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
+      </option>
+      <option>article:Title:title:textfield:#required</option>
+      <option>article:Body:body:textarea:</option>
+      <option>
+      article:Tags:field_tags:textfield:UNSUPPORTED taxonomy
+      </option>
+      <option>article:Image:field_image:image:#9</option>
+      <option>article:Replace Photos:image_overwrite:checkbox:</option>
+      <option>
+      page:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
+      </option>
+      <option>page:Title:title:textfield:#required</option>
+      <option>page:Body:body:textarea:</option>
+      <option>
+      gathering:Hidden:posturl:http://www.example.com/?q=photoldrpost.php
+      </option>
+      <option>gathering:Title:title:textfield:#required</option>
+      <option>gathering:Notes:body:textarea:</option>
+      <option>gathering:Date:field_date:date:</option>
+      <option>gathering:Street1:street1:textfield:</option>
+      <option>gathering:Street2:street2:textfield:</option>
+      <option>gathering:City:city:textfield:</option>
+      <option>gathering:State:state:textfield:</option>
+      <option>gathering:Zip:zip:textfield:</option>
+      <option>gathering:Country:country:textfield:</option>
+      <option>gathering:Organizers:field_organizers:textfield:</option>
+      <option>gathering:Image:field_image:image:#9</option>
+      <option>gathering:Replace Photos:image_overwrite:checkbox:</option>
+    </form_items>
+
+
+
+<user> contains information only if a user has authenticated.
+
+
+    <user>
+      <uid>1</uid>
+      <name>demo</name>
+      <mail>demo@example.com</mail>
+    </user>
+
+
+<nodes> is a container for multiple <node> items
+
+
+<node> is the record from the site.  These nodes typically contain a lot of data not needed by the user.  All significant data, which will be editable by the user will be presented as a <key>string</key> where key is the fieldname to match fieldnames in the node structure.  Special additional items will be <userdelete> and <useredit>
+
+  
+  <userdelete>1</userdelete> Only if the authenticated user can delete this item
+  <useredit>1</useredit> Only if the authenticated user can modify this item
+
+
+This and all samples are based on the Drupal Module and node structure.
+    <node>
+      <userdelete>1</userdelete>
+      <useredit>1</useredit>
+      <uid>1</uid>
+      <title>Page Title</title>
+      <type>page</type>
+      <created>2012-02-16</created>
+      <changed>2012-08-31</changed>
+      <body>Sample Node Body</body>
+      <icon0>
+      http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/somefile.jpg
+      </icon0>
+      <image0>
+      http://www.example.com/sites/default/files/styles/medium/public/field/image/somefile.jpg
+      </image0>
+      <name>admin</name>
+    </node>
+
+
+
+
+<icon#> This is the image in a compact (100-200 pixels wide x 100-200 pixels high)
 <image#>This is the image in a medium to large format (640-2000 pixels wide x 480-2000 pixels high)

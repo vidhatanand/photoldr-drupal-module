@@ -39,17 +39,17 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $photoldr_button_node_types = variable_get('photoldr_button_types', $defaultnodeslist);
   $uid = $user->uid;
-	$mobile_type = FALSE;
-	if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPhone";
-	}
-	if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPad";
-	}
-	if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPod";
-	}
-	
+  $mobile_type = FALSE;
+  if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPhone";
+  }
+  if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPad";
+  }
+  if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPod";
+  }
+  
 
 
   if ($mobile_type == FALSE) {
