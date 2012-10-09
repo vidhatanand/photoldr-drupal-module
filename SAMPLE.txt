@@ -78,13 +78,13 @@ ONLY when the authenticated user has permission to Add this type of record.
                    OR #1-9 for images count.  9 max.
 
  NOTE:
-    Only <node> tags that match the fieldname in the above <form_items><options> 
-    will be rendered editable on the iOS app. Al other tags will not be editable.
+  Only <node> tags that match the fieldname in the above <form_items><options> 
+  will be rendered editable on the iOS app. Al other tags will not be editable.
 
 
 
 --------------------------------------------------------------------------------
-<user> contains information only if a user has authenticated. uid, name, and mail 
+<user> contains information only if a user has authenticated. uid, name, and mail
 are required for authenticated users.
 
   EXAMPLE:
@@ -116,3 +116,4 @@ are required for authenticated users.
     <image#>This is the image in a medium to large format 
        (640-2000 pixels wide x 480-2000 pixels high)
     Images get special handling.
+
