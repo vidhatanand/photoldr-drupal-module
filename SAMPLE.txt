@@ -8,7 +8,9 @@
 
     <FQDN>www.Example.com</FQDN>
 
+<site_name> is the plain text title for the site.  
 
+    <site_name>Example dot Com</site_name>
 
 <cms> Content Management System name. Single string: drupal, joomla, wordpress
 
