@@ -4,21 +4,21 @@
  * Node Structure presented to PhotoLDR iOS App.
  *
  * /?q=photoldrstructure.xml
- * 
+ *
  * See SAMPLE.txt and sample.xml for the document structure.
  *
  * This presents this Druapl site as XML.
  */
-  
-  
-  
+
+
+
 /**
  * Presents XML page after checing user authentication via POST or GET variables
  * username and password.
  */
 function photoldr_node_structure_page_auth() {
   $uid = _photoldr_html_user_auth();
-  photoldr_node_structure_page($uid); 
+  photoldr_node_structure_page($uid);
 }
 
 
@@ -26,23 +26,23 @@ function photoldr_node_structure_page_auth() {
 
 /**
  * Presents XML page with the current Drupal authenicated user.
- * 
+ *
  */
 function photoldr_node_structure_page($uidvar = NULL) {
   global $user;
   global $base_url;
-  $uid = (isset($uidvar)) ? $uidvar : $user->uid; 
+  $uid = (isset($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
 
   $build = array();
   $output = '';
 
   $exp_date = variable_get('photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
-  
+
   $fields = field_info_fields();
   $imagefields = array();
   $imagefieldmax = array();
-  
+
   foreach ($fields as $k => $v) {
     $module = $v['module'];
     if (in_array($module, array('image'))) {
@@ -67,7 +67,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
     /**
      * Accumulate the data to be converted to XML inside the $pub array
-     * the base if the document <domains><domain> is the equivilent of the 
+     * the base if the document <domains><domain> is the equivilent of the
      * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
      * <domains><domain><FQDN>...</FQDN>
      */
@@ -105,7 +105,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
     $instances = field_info_instances('node');
     foreach ($instances as $ntype => $fields) {
       $type = node_type_get_type($ntype);
-      
+
       if ($uid == FALSE) {
         $usercreate = FALSE;
       }
@@ -121,7 +121,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
       $node_max = variable_get('photoldr_item_max_' . $ntype, 10);
       $node_age_max = variable_get('photoldr_item_age_max_' . $ntype, 0);
       $node_order = variable_get('photoldr_item_order_' . $ntype, 0);
-      
+
       $node_display_settings .= '<option>' . $ntype . ':' . $node_view . '</option>' . "\n";
 
    /**
@@ -140,8 +140,8 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
             $form_items .= "\n";
       }
-      
-      
+
+
        /**
          * Check the widget and setup the option for the field.
          * Also address unsupported fields.
@@ -157,16 +157,16 @@ function photoldr_node_structure_page($uidvar = NULL) {
         $this_field_name = $field_name;
         $this_field_type = '';
         $this_field_required = '';
-        
-        
+
+
         // Handle other or unsupported fields
         if (!in_array($module, $supported_fields)) {
-          
+
           if ($instance['widget']['type'] == 'options_select') {
             // Option Select Fields
             $this_field_type = 'options_select';
             $this_field_required = 'UNSUPPORTED';
-            
+
           }
           elseif ($instance['widget']['type'] == 'options_onoff') {
             // Checkbox
@@ -178,7 +178,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $this_field_type = 'textfield';
             $this_field_required = 'UNSUPPORTED ' . $instance['widget']['module'];
           }
-          
+
             $form_items .= '<option>';
             $form_items .= $this_node_type . ':';
             $form_items .= $this_field_label . ':';
@@ -188,19 +188,19 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $form_items .= '</option>' . "\n";
           continue;
         }
-  
+
 
          /**
           * Special support for the addressfield module.
           */
         if ($instance['widget']['module'] == 'addressfield') {
-          
+
           foreach ($addressfields as $fieldname) {
             $this_field_label = drupal_ucfirst($fieldname);
             $this_field_name = $fieldname;
             $this_field_type = 'textfield';
-            
-            
+
+
             $form_items .= '<option>';
             $form_items .= $this_node_type . ':';
             $form_items .= $this_field_label . ':';
@@ -211,14 +211,14 @@ function photoldr_node_structure_page($uidvar = NULL) {
           }
         continue;
         }
-        
+
           /**
           * Special support for the date module.
           */
         if ($instance['widget']['module'] == 'date') {
-          
+
             $this_field_type = 'date';
-            
+
             $form_items .= '<option>';
             $form_items .= $this_node_type . ':';
             $form_items .= $this_field_label . ':';
@@ -226,7 +226,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $form_items .= $this_field_type . ':';
             $form_items .= $this_field_required ;
             $form_items .= '</option>' . "\n";
-            
+
             $form_items .= '<option>';
             $form_items .= $this_node_type . ':';
             $form_items .= $this_field_label . ' End:';
@@ -234,11 +234,11 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $form_items .= $this_field_type . ':';
             $form_items .= $this_field_required ;
             $form_items .= '</option>' . "\n";
-          
+
         continue;
         }
-  
-  
+
+
 
     switch ($module) {
           case 'image':
@@ -264,7 +264,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
                 $this_field_type = $module;
                 break;
     } // end of switch statement
-  
+
           if ($instance['required']) {
             $this_field_required = '#required';
           }
@@ -276,21 +276,21 @@ function photoldr_node_structure_page($uidvar = NULL) {
           $form_items .= $this_field_type . ':';
           $form_items .= $this_field_required ;
           $form_items .= '</option>' . "\n";
-  
-  
+
+
           if ($module == 'image') {
             $form_items .= '<option>' . $ntype . ':Replace Photos:image_overwrite:checkbox:</option>';
           }
         }  // end foreach field
-        
-        
-        
-        
+
+
+
+
     }  // END foreach ($instances as $instance)
     $form_items .= '</form_items>' . "\n";
     $node_display_settings .= '</node_types>' . "\n";
-    
-    
+
+
    /**
     * This is the actual conversion of the $pub array to the <domain> XML element.
     */
@@ -298,7 +298,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
     // Move code to function  <domain> site fields are in $pub
     $output .= _photoldr_domain_to_xml($pub);
-    
+
     // These are the settings for the iOS app add/edit forms
     $output .= $form_items;
 
@@ -306,7 +306,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
     // Add <nodes> tag Content.
     $output .= _photoldr_xml_node_content();
-    
+
     if (variable_get('photoldr_allow_unpublished', 'no') != 'no') {
       // Add <nodes> tag Content for unpublished nodes.
       $output .= _photoldr_xml_unpublished_node_content($account);
@@ -338,10 +338,10 @@ function photoldr_node_structure_page($uidvar = NULL) {
  *
  *
  * @return
- *   String xml document body.  This string should be enclosed in a document tag 
+ *   String xml document body.  This string should be enclosed in a document tag
  *   and have an XML header added to the display.  In this document context, this
  *   portion of XML will reside withing the <domain></domain> key.
- *   
+ *
  */
 function _photoldr_xml_node_content() {
   global $user;
@@ -350,16 +350,16 @@ function _photoldr_xml_node_content() {
   $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' );
   $pub = array();
   $data = array();
-  
+
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $enabled_nodes = variable_get('photoldr_types', $defaultnodeslist);
   foreach ($enabled_nodes as $k => $nodename)  {
     $node_order[$nodename] = variable_get('photoldr_node_weight_' . $nodename);
   }
   asort($node_order);
-  
 
-  
+
+
   if (isset($_POST['changed'])) {
     $data['changed'] = check_plain($_POST['changed']);
   }
@@ -368,7 +368,7 @@ function _photoldr_xml_node_content() {
   }
 
   $uidvar = _photoldr_html_user_auth();
-  $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid; 
+  $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
   // END user authentication section
 
@@ -390,7 +390,7 @@ function _photoldr_xml_node_content() {
   else {
         $sort = 'ASC';
       }
-      
+
 
     // Query nodes owned by this user
     $query = db_select('node', 'n');
@@ -415,14 +415,14 @@ function _photoldr_xml_node_content() {
     }
 
     $result = $query->execute();
-    
+
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
   } // end foreach node type
-  
+
     // make XML from $pub
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
-  
+
     // debug post data.  st uid to -10 to disable
   if ($uid == 1) {
     $handle = fopen("pubdata.txt", "a");
@@ -442,17 +442,17 @@ function _photoldr_xml_node_content() {
  * This function queries the database for ndoes and returns XML.
  *
  * @return
- *   String xml document body.  This string should be enclosed in a document tag 
+ *   String xml document body.  This string should be enclosed in a document tag
  *   and have an XML header added to the display.  In this document context, this
  *   portion of XML will reside withing the <domain></domain> key.  For no access
  *   or no results, returns empty string.
- *   
+ *
  */
 function _photoldr_xml_unpublished_node_content($account) {
   /**  This can help show permissions
   foreach (module_list(FALSE, FALSE, TRUE) as $module) {
     print_r($module);
-    
+
     // Drupal 7
     if ($permissions = module_invoke($module, 'permission')) {
       print_r($permissions);
@@ -473,15 +473,15 @@ function _photoldr_xml_unpublished_node_content($account) {
     // return empty string for no results.
     return '';
   }
-  
-  
+
+
   global $user;
   global $language;
   $langcode = isset($langcode) ? $langcode : $language->language;
   $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' );
   $pub = array();
   $data = array();
-  
+
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $enabled_nodes = variable_get('photoldr_types', $defaultnodeslist);
   foreach ($enabled_nodes as $k => $nodename)  {
@@ -490,7 +490,7 @@ function _photoldr_xml_unpublished_node_content($account) {
   asort($node_order);
 
   $uidvar = _photoldr_html_user_auth();
-  $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid; 
+  $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
   // END user authentication section
 
@@ -510,7 +510,7 @@ function _photoldr_xml_unpublished_node_content($account) {
       else {
         $sort = 'ASC';
       }
-      
+
 
     // Query nodes owned by this user
     $query = db_select('node', 'n');
@@ -519,11 +519,11 @@ function _photoldr_xml_unpublished_node_content($account) {
       ->condition('n.type', $nodename);
     $query
       ->orderBy('n.' . $node_order_by, $sort);
-    
+
     //Decide what unpublished nodes to display.
     if ($unpublished) {
       $query->condition('n.status', 0);
-    } 
+    }
     elseif ($userunpublished) {
       $query
           ->condition('n.status', 0)
@@ -535,15 +535,15 @@ function _photoldr_xml_unpublished_node_content($account) {
     }
 
     $result = $query->execute();
-    
+
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
   } // end foreach node type
-  
-  
+
+
     // make XML from $pub
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
-  
+
 
   return $xml_body;
 

@@ -6,7 +6,7 @@
  */
 function photoldr_button_admin_settings() {
 
-  
+
   $options = array('no', 'yes');
   $form['photoldr_button_on_forms'] = array(
     '#type' => 'select',

@@ -6,7 +6,7 @@
 
 
  /**
- * Implements hook_help(). 
+ * Implements hook_help().
  */
 function photoldr_help($path, $arg) {
   switch ($path) {
@@ -29,7 +29,7 @@ function photoldr_help($path, $arg) {
  */
 function photoldr_menu() {
 
-  
+
   // Give the site the structure of the nodes
   // Use HTML Authentication
   $items['photoldrstructure.xml'] = array(
@@ -42,7 +42,7 @@ function photoldr_menu() {
     'weight' => 1,
     'type' => MENU_SUGGESTED_ITEM,
   );
-  
+
   // Give the site the structure of the nodes
   // Use Drupal Authentication
   $items['admin/config/photoldr/photoldrstructure.xml'] = array(
@@ -68,10 +68,10 @@ function photoldr_menu() {
     'file path' => drupal_get_path('module', 'photoldr'),
     'type' => MENU_SUGGESTED_ITEM,
   );
-  
-  
+
+
   // Module settings.
-  
+
   $items['admin/config/photoldr'] = array(
     'title' => 'PhotoLDR',
     'description' => 'PhotoLDR Module Configuration',
@@ -97,7 +97,7 @@ function photoldr_menu() {
 
 
 /**
- * Private function checks _POST and _GET for data and 
+ * Private function checks _POST and _GET for data and
  * returns FALSE or a valid UID integer
  */
 function _photoldr_html_user_auth() {
@@ -114,7 +114,7 @@ function _photoldr_html_user_auth() {
     $usern = check_plain($data['username']);
     $passw = check_plain($data['password']);
     $uid = user_authenticate($usern, $passw);
-  } 
+  }
   else {
       watchdog('PhotoLDR', 'No DATA moved from Post or Get.');
   }
@@ -147,7 +147,7 @@ function _photoldr_html_user_auth() {
  *
  * @return
  *   Array of accumulated contents in the $pub array.
- *   
+ *
  */
 function _photoldr_prep_node_for_xml($result, $pub, $account) {
   // simple_dates are timestamps
@@ -181,14 +181,14 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
       else {
         $usereditany = FALSE;
       }
-  
+
       $access = 'edit own ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usereditown = TRUE;
       }
       else {
         $usereditown = FALSE;
-      } 
+      }
 
       $access = 'delete any ' . $ntype . ' content';
       if (user_access($access, $account)) {
@@ -204,8 +204,8 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
       }
       else {
         $userdeleteown = FALSE;
-      } 
-    
+      }
+
       $access = 'administer nodes';
       if (user_access($access, $account)) {
         $nodeadmin = TRUE;
@@ -213,16 +213,16 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
       else {
         $nodeadmin = FALSE;
       }
-    
-    
-    
+
+
+
     foreach ($node as $k => $v) {
       // Process nodes as fields
-      
+
       $pub[$container][$row->nid]['userdelete'] = '0';
       $pub[$container][$row->nid]['useredit'] = '0';
 
-     // Add extra info about the user access to this node. 
+     // Add extra info about the user access to this node.
     if ($nodeadmin) {
         $pub[$container][$row->nid]['userdelete'] = '1';
         $pub[$container][$row->nid]['useredit'] = '1';
@@ -243,14 +243,14 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
         $pub[$container][$row->nid]['useredit'] = '1';
       }
     }
-    
-    
+
+
 
 
     if (isset($instances[$k]['widget']['module'])) {
-      // Process custom fields 
+      // Process custom fields
 
-      // Process image field 
+      // Process image field
       if ($instances[$k]['widget']['module'] == 'image') {
             foreach ($v as $k1 => $v1) {
               foreach ($v1 as $k2 => $v2) {
@@ -258,20 +258,20 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
                   continue;
                 }
                 $imgpath = file_create_url($v2['uri']);
-  
+
                 $themed_icon = image_style_url($icon_style, $v2['uri']);
                 $key = 'icon' . $k2;
                 $pub[$container][$row->nid][$key] =  $themed_icon;
-  
+
                 $themed_img = image_style_url($image_style, $v2['uri']);
                 $key = 'image' . $k2;
                 $pub[$container][$row->nid][$key] =  $themed_img;
-  
+
               }
             }
         continue;
       }  // End field_image
-        
+
         // Process Date fields
         if ($instances[$k]['widget']['module'] == 'date') {
           foreach ($v as $k1 => $v1) {
@@ -286,11 +286,11 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           }
           continue;
         }
-        
+
 
         // Process Address fields
         if ($instances[$k]['widget']['module'] == 'addressfield') {
-  
+
           foreach ($v['und'] as $k1 => $v1) {
 
               $pub[$container][$row->nid]['street1'] =  $v1['thoroughfare'];
@@ -304,17 +304,17 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           continue;
         }
 
-         // Process Product fields  
-         // TODO this needs some work.  
+         // Process Product fields
+         // TODO this needs some work.
         if ($instances[$k]['widget']['module'] == 'commerce_product_reference') {
-          
+
           if (isset($v['und']['0']['product_id'])) {
             $product = commerce_product_load($v['und']['0']['product_id']);
             // hardcoding field_image
             $product_images = $product->field_image;
             $product_title = $product->title;
             $product_sku = $product->sku;
-            
+
               foreach ($product_images as $k1 => $v1) {
                 foreach ($v1 as $k2 => $v2) {
                   if ((!isset($v2)) || ($v2 == "")) {
@@ -332,14 +332,14 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
                 }
               }
-            
-           /* 
+
+           /*
             $handle = fopen("commerce_product_reference.txt", "a");
             fwrite($handle, 'Key: ' . print_r($product, true) . '  ');
-            fclose($handle); 
+            fclose($handle);
             */
           }
-  
+
           continue;
         }
 
@@ -355,12 +355,12 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
         $pub[$container][$row->nid][$k] =  date('Y-m-d', $v);
         continue;
       }
-      
 
 
 
 
-        
+
+
         // Default field Handling - All other or unsupported fields.
       if (is_array($v)) {
         if (isset($v['und']['0']['safe_value'])) {
@@ -369,22 +369,22 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           continue;
         }
         elseif (isset($v['und']['0']['value'])) {
-          
+
           $pub[$container][$row->nid][$k] = htmlspecialchars($v['und']['0']['value']);
-          
+
         }
       }
       else {
         $pub[$container][$row->nid][$k] =  htmlspecialchars(strip_tags($v));
       }
-    
+
     }
-  
-  
+
+
   }  // All data gathered in PUB varialble
 
   return $pub;
-  
+
 }
 
 
@@ -404,13 +404,13 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
  *
  * @return
  *   Array of accumulated contents as the $pub array.
- *   
+ *
  */
 function _photoldr_account_to_xml($account, $pub) {
     // At this point we have a Valid user.  Lets get some data
   // Store data in the PUB variable to later generate XML.
   $simple_dates = array('created', 'changed', 'access', 'login');
-  
+
     $pub['name'] = $account->name;
     $pub['email'] = $account->mail;
     $instances = field_info_instances('user', 'user');
@@ -425,7 +425,7 @@ function _photoldr_account_to_xml($account, $pub) {
       }
 
       if (isset($instances[$k]['widget']['module'])) {
-        // Process custom fields 
+        // Process custom fields
         if ($instances[$k]['widget']['module'] == 'image') {
             foreach ($v as $k1 => $v1) {
               foreach ($v1 as $k2 => $v2) {
@@ -436,9 +436,9 @@ function _photoldr_account_to_xml($account, $pub) {
             }
           continue;
         }  // End field_image
-        
+
         if ($instances[$k]['widget']['module'] == 'date') {
-          
+
           foreach ($v as $k1 => $v1) {
             foreach ($v1 as $k2 => $v2) {
               $pub['user'][$k] =  $v2['value'];
@@ -446,19 +446,19 @@ function _photoldr_account_to_xml($account, $pub) {
           }
           continue;
         }  // end date field
-        
-        
+
+
       }  // end special fields
-    
+
       if (is_array($v)) {
-        $pub['user'][$k] = serialize($v); 
+        $pub['user'][$k] = serialize($v);
       }
       else {
         $pub['user'][$k] = $v;
       }
     }
     return $pub;
-  
+
 }
 
 
@@ -476,8 +476,8 @@ function _photoldr_account_to_xml($account, $pub) {
  *   Array of fields to skip in creating the XML.
  *
  * @return
- *   String of XML tags.  This string should be enclosed in an XML tag 
- *   
+ *   String of XML tags.  This string should be enclosed in an XML tag
+ *
  */
 function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
   $output = '';
@@ -498,7 +498,7 @@ function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data',
                 }
                   $k1 = (isset($k1)) ? $k1 : 'node';
                   $k1 = is_string($k1) ? $k1 : 'node';
-                
+
                 if (is_array($v1)) {
                   $output .=  '<' . $k1 . '>';
                     foreach ($v1 as $k2 => $v2) {
@@ -543,23 +543,23 @@ function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data',
                     $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' ;  // <tag>serialarray</tag>
                   }
                 }
-                
+
               } // END foreach ($v as $k1 => $v1)
-              
+
               $output .= '</' . $k . '>';
 
-            
+
           }
           else {
             if (!is_object($v)) {
               $output .= '<' . $k . '>' . $v . '</' . $k . '>' ;  // <tag>serialarray</tag>
             }
           }
-          
+
     }
-  
+
   return $output;
-  
+
 }
 
 
@@ -577,8 +577,8 @@ function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data',
  *   Array of fields to skip in creating the XML.
  *
  * @return
- *   String of XML tags.  This string should be enclosed in an XML tag 
- *   
+ *   String of XML tags.  This string should be enclosed in an XML tag
+ *
  */
 function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
   $output = '';
@@ -597,26 +597,26 @@ function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data'
                   $k1 = isset($k1) ? $k1 : 'option';
                   $k1 = is_string($k1) ? $k1 : 'option';
                   $k1 = 'option';
-                
+
                 if (is_array($v1)) {
                   $output .= '<' . $k1 . '>' . serialize($v1) . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
                 }
                 else {
                   $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>
                 }
-                
+
               } // END foreach ($v as $k1 => $v1)
-              
+
               $output .= '</' . $k . '>' . "\n";
 
-            
+
           }
           else {
-            
+
             $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;  // <tag>serialarray</tag>
-            
+
           }
-          
+
     }
     return $output;
 }

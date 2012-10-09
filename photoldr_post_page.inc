@@ -22,7 +22,7 @@ function photoldr_post_page() {
 
   // Give the user feedback.  Accumulate througouht process
   $feed_user = "";
-  
+
   // Decide on Get or Post  Post preffered
   if (isset($_POST['username'])) {
     $data = $_POST;
@@ -39,7 +39,7 @@ function photoldr_post_page() {
 
 
   // Authenticate the user
-  
+
   $uid = _photoldr_html_user_auth();
   if ($uid == FALSE) {
     drupal_access_denied();
@@ -47,7 +47,7 @@ function photoldr_post_page() {
   }
   else {
     $account = user_load($uid);
-    
+
       $access = 'create ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usercreate = TRUE;
@@ -63,14 +63,14 @@ function photoldr_post_page() {
       else {
         $usereditany = FALSE;
       }
-  
+
       $access = 'edit own ' . $ntype . ' content';
       if (user_access($access, $account)) {
         $usereditown = TRUE;
       }
       else {
         $usereditown = FALSE;
-      } 
+      }
 
       $access = 'delete any ' . $ntype . ' content';
       if (user_access($access, $account)) {
@@ -86,8 +86,8 @@ function photoldr_post_page() {
       }
       else {
         $userdeleteown = FALSE;
-      } 
-  
+      }
+
       $access = 'administer nodes';
       if (user_access($access, $account)) {
         $nodeadmin = TRUE;
@@ -95,13 +95,13 @@ function photoldr_post_page() {
       else {
         $nodeadmin = FALSE;
       }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     if (!($usercreate)) {
       drupal_access_denied();
     print "<!doctype html><html><head><meta charset=\"UTF-8\"><title>Access Denied</title></head><body>Access Denied</body></html>";
@@ -118,7 +118,7 @@ function photoldr_post_page() {
     unset($testdata['password']);
     $handle = fopen("postdata.txt", "a");
     fwrite($handle, 'Data: \n' . print_r($testdata, TRUE) . '  ');
-    fclose($handle); 
+    fclose($handle);
   }
 
 
@@ -126,11 +126,11 @@ function photoldr_post_page() {
   $types = node_type_get_names();
   if (!isset($types[$ntype])) {
     watchdog('PhotoLDR', '%ntype is not a valid node type on this site.  <br /> %uri <br /> %host <br /> %addr',
-              array('%ntype' => $ntype, 
-               '%uri' => request_uri(), 
-               '%host' => $_SERVER['REMOTE_HOST'], 
+              array('%ntype' => $ntype,
+               '%uri' => request_uri(),
+               '%host' => $_SERVER['REMOTE_HOST'],
                '%addr' => $_SERVER['REMOTE_ADDR'], )
-              ); 
+              );
     return;
   }
 
@@ -143,17 +143,17 @@ function photoldr_post_page() {
 
   // load existing node by node id.
   if ($nid != 'new') {
-    
+
     $node = node_load($nid);
     if (!$node) {
       // Could not load the nid, create a new node
       $nid = 'new';
-    } 
+    }
     elseif ($node->type != $ntype) {
       // Node types do not match, so do not mangle the node, create a new node
       $nid = 'new';
     }
-    
+
     if (($node->uid != $uid) && ($usereditany == FALSE)) {
       // Only the owner of the node can modify it
       drupal_access_denied();
@@ -161,21 +161,21 @@ function photoldr_post_page() {
       return;
     }
   }
-  
+
   // Create blank node object in memory
   if ($nid == 'new') {
     //Setup the node structure
     $node = new stdClass();
     $node->nid = NULL;
-  
+
     // Insert new data
     $node->type = $ntype;
     node_object_prepare($node);
     $node->uid = $uid;
     $node->name = $account->name;
   }
-  
-  
+
+
     $type = node_type_get_type($node);
     $field_types = field_info_field_types();
     $instances = field_info_instances('node', $node->type);
@@ -188,10 +188,10 @@ function photoldr_post_page() {
       $field = field_info_field($field_name);
       // Skeleton node object with $node->field_name
       $node->{$instance['field_name']} = "";
-      $module[] = $field_types[$field['type']]['module'];   
+      $module[] = $field_types[$field['type']]['module'];
     }
   }
-    
+
 
 
   // Get the default addresses from the user or Instance if the user is not set
@@ -201,7 +201,7 @@ function photoldr_post_page() {
     unset($node->field_address['und']['0']['thoroughfare']);
     unset($node->field_address['und']['0']['premise']);
   }
-  
+
   //TODO: This is for debuging.  To compare the effect of changing an existing node.
  //  $node_src = $node;
 
@@ -214,7 +214,7 @@ function photoldr_post_page() {
       // If $v is an array, make it a string.
       $v = implode('; ', $v);
     }
-    
+
     switch (drupal_strtolower($k)) {
         case 'status':
             $node->status = (isset($v)) ? check_plain($v) : $node->status;
@@ -229,7 +229,7 @@ function photoldr_post_page() {
          //   $node->body['und']['0']['format'] = isset($node->body['und']['0']['format']) ? $node->body['und']['0']['format'] : 'full_html';
             $node->body['und']['0']['value'] = isset($v) ? check_markup($v, 'full_html') : $node->body['und']['0']['value'];
             $node->body['und']['0']['safe_value'] = isset($v) ? check_markup($v, 'full_html') : $node->body['und']['0']['safe_value'];
-            
+
             break;
         case 'street1':
             $node->field_address['und']['0']['thoroughfare'] = ($v) ? check_plain($v) : $node->field_address['und']['0']['thoroughfare'];
@@ -277,7 +277,7 @@ function photoldr_post_page() {
   // IMAGE HANDLING
   $images = array();
   $imagefields = array();
-  
+
 
   $instance = field_info_instances('node', $ntype);
   $imagefieldnames = array();
@@ -285,7 +285,7 @@ function photoldr_post_page() {
           if ($v['widget']['module'] == 'image') {
             $imagefieldnames[] = $v['field_name'];
           }
-          
+
       // Date field handling  date("Y-m-d H:i", strtotime($exp_date))
       if ($v['widget']['module'] == 'date') {
         $datefield = $v['field_name'];
@@ -299,8 +299,8 @@ function photoldr_post_page() {
                 );
             }
       }  // End date handling
-      
-      
+
+
     }
 
   if (count($imagefieldnames) > 1) {
@@ -315,20 +315,20 @@ function photoldr_post_page() {
   if (isset($instances[$photoldr_interact_image_field])) {
     $field_name = $instances[$photoldr_interact_image_field]['field_name'];
   }
-  
+
 
   $info = '';
   if (isset($field_name)) {
-    
+
       if (($nid == 'new') && (!isset($node->{$field_name}))) {
         // Create empty node field for image
         $node->{$field_name} = '';
-      } 
+      }
       if ($image_overwrite != FALSE) {
         unset($node->{$field_name});
         $node->{$field_name} = '';
       }
-    
+
       $imagefieldinfo = field_info_field($field_name);
       switch ($imagefieldinfo['cardinality']) {
         case FIELD_CARDINALITY_UNLIMITED:
@@ -341,7 +341,7 @@ function photoldr_post_page() {
       $images = _photoldr_process_images($ntype, $uid, $field_name);
 
         if (is_array($images)) {
-          
+
           foreach ($images as $image) {
            // Final touches on the Image Field.
             $image['title'] = '';
@@ -350,13 +350,13 @@ function photoldr_post_page() {
           }
 
         }  // End ISARRAY IMAGES
-    
+
   }  // END ISSET FIELDNAME
 
 
 
   // $node_render = node_view($node);
-  
+
   node_save($node);
 
   // debug post data.  st uid to -10 to disable
@@ -365,7 +365,7 @@ function photoldr_post_page() {
     // unset($testdata['password']);
     $handle = fopen("postdata.txt", "a");
     fwrite($handle, 'Node: \n' . print_r($testdata, TRUE) . '  ');
-    fclose($handle); 
+    fclose($handle);
   }
 
 
@@ -373,11 +373,11 @@ function photoldr_post_page() {
   // This is an XML return
   $xml_head = '<?xml version="1.0" encoding="utf-8"?><domains><domain>';
   $xml_foot = '</domain></domains>';
-  
+
   if ($node->nid) {
       watchdog('PhotoLDR', 'Posted data for %nid as uid %uid.', array('%nid' => $node->nid, '%uid' => $node->uid, ));
   }
-  
+
   if ($node->nid) {
     $result = array();
     $pub = array();
@@ -392,10 +392,10 @@ function photoldr_post_page() {
   else {
     // This is an HTML return
    // print "<h1>ERROR - Node not saved.</h1>";
-    
+
    // print $node_rendered;
-    return "<h1>ERROR - Node not saved.</h1>";  
-  
+    return "<h1>ERROR - Node not saved.</h1>";
+
   }
 
 
@@ -428,9 +428,9 @@ function _photoldr_process_images($type, $uid, $field_name) {
     // No Files in _POST
     return;
   }
-  
+
   //Test _FILES for images
-  
+
   $count = 0;
   foreach ($_FILES as $k => $v) {
     if (preg_match('/image*/i', $k)) {
@@ -449,9 +449,9 @@ function _photoldr_process_images($type, $uid, $field_name) {
   $instances = field_info_instances('node', $type);
   $instance = $instances[$field_name];
   $field = field_info_field($field_name);
-  
-  
-  
+
+
+
 // Image Field Options **************************************************
   switch ($field['cardinality']) {
     case FIELD_CARDINALITY_UNLIMITED:
@@ -465,15 +465,15 @@ function _photoldr_process_images($type, $uid, $field_name) {
   $max_size = $instance['settings']['max_filesize'];
   $extensions = $instance['settings']['file_extensions'];
   $max_res = $instance['settings']['max_resolution'];
-  $min_res = $instance['settings']['min_resolution']; 
+  $min_res = $instance['settings']['min_resolution'];
 
   $validators = array(
       'file_validate_is_image' => array(),
       'file_validate_extensions' => array($extensions),
       'file_validate_size' => array($max_size * 1024 * 1024),
     );
-    
-    
+
+
   // Set and Prepare the file directory.
   $picture_directory = variable_get('file_default_scheme', 'public') . '://' . $uri . '/';
   file_prepare_directory($picture_directory, FILE_CREATE_DIRECTORY);
@@ -486,7 +486,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
     $fuid = str_pad((int) $uid, 6, "0", STR_PAD_LEFT);
     $fdate = date('Y-m-d-Hi', REQUEST_TIME);
     $filename = $type . '-' . $fuid . '-' . $fdate . '-' . $v['name'];
-    
+
     // Make sure extension and filename are safe.
     $filename = file_munge_filename($filename, $extensions, FALSE);
     $destination = file_stream_wrapper_uri_normalize($picture_directory . $filename);
@@ -500,7 +500,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
     if (empty($validimg)) {
       $file_copy->status = 1;
     }
-    
+
      // The file will be purged if it has a status of 0;
     if ($file_copy->status == 0) {
       file_delete($file_copy);
@@ -508,7 +508,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
     }
     else {
         $result_save = file_save($file_copy);
-        
+
         // This collects the image objects to save in the node.
         $images[$i] = $result_save;
         $images[$i]->alt = $type . ' image';
@@ -535,9 +535,9 @@ function _photoldr_process_images($type, $uid, $field_name) {
 
 
   if ($feed_user != "") {
-    // drupal_set_message('<pre>Feedback: <br>' .  $feed_user . '</pre>');    
+    // drupal_set_message('<pre>Feedback: <br>' .  $feed_user . '</pre>');
   }
-  
+
   return $images_return;
 
 }
@@ -548,19 +548,19 @@ function _photoldr_process_images($type, $uid, $field_name) {
  * $imagefile is the image object
  */
 function photoldr_autorotate_image($imagefile) {
-  
+
   if (!function_exists('exif_read_data')) {
-    // drupal_set_message('<pre>exif_read_data  function does not exist </pre>'); 
+    // drupal_set_message('<pre>exif_read_data  function does not exist </pre>');
 
     return;
   }
   $filename = file_create_url($imagefile->uri);
   $image = image_load($imagefile->uri);
   $exif = exif_read_data($filename);
-    //  drupal_set_message('<pre>exif_read_data  function <br>' . print_r($exif,true) . ' </pre>'); 
+    //  drupal_set_message('<pre>exif_read_data  function <br>' . print_r($exif,true) . ' </pre>');
 
   $ort = isset($exif['Orientation']) ? $exif['Orientation'] : 1;
-  
+
   switch ($ort) {
       case 1: // nothing
         break;
@@ -589,13 +589,13 @@ function photoldr_autorotate_image($imagefile) {
       image_save($image);
         break;
 
-      case 7: 
+      case 7:
         // horizontal flip + 90 rotate right
         //    image_flip($image,1);
         image_rotate($image, -90);
         image_save($image);
         break;
-      case 8:    
+      case 8:
           // 90 rotate left
           image_rotate($image, 90);
           image_save($image);
