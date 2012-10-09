@@ -426,7 +426,7 @@ function _photoldr_xml_node_content() {
     // debug post data.  st uid to -10 to disable
   if ($uid == 1) {
     $handle = fopen("pubdata.txt", "a");
-    fwrite($handle, 'Pub: ' . print_r($pub, true) . '  ');
+    fwrite($handle, 'Pub: ' . print_r($pub, TRUE) . '  ');
     fclose($handle);
   }
   return $xml_body;
@@ -489,7 +489,6 @@ function _photoldr_xml_unpublished_node_content($account) {
   }
   asort($node_order);
 
-  drupal_set_message('UID: ' . $user->uid);
   $uidvar = _photoldr_html_user_auth();
   $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid; 
   $account = user_load($uid);

@@ -368,7 +368,7 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           //$pub[$container][$row->nid][$k] = print_r(htmlentities(strip_tags($v['und']['0']['value'], '<a><img><br>')), true);
           continue;
         }
-        else if (isset($v['und']['0']['value'])) {
+        elseif (isset($v['und']['0']['value'])) {
           
           $pub[$container][$row->nid][$k] = htmlspecialchars($v['und']['0']['value']);
           

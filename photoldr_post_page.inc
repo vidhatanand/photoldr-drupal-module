@@ -1,15 +1,16 @@
 <?php
 /**
+ *
  * @file
  * Post page for the photoldr module.
  *
  * /?q=photoldrpost.php
  *
  * Accepts images in POST and strings in POST and GET
-
  */
-  
-  
+
+
+
 /**
  * This is a form page for posting from the iOS app
  * username and password in POST or GET authenticate.
@@ -30,7 +31,7 @@ function photoldr_post_page() {
     $data = $_GET;
   }
   else {
-   // watchdog('PhotoLDR', 'No Post or Get Autentication type data in transaction');
+    // watchdog('PhotoLDR', 'No Post or Get Autentication type data in transaction');
     return;
   }
   $default_type = variable_get('photoldr_default_post_type', 'page');
@@ -109,13 +110,14 @@ function photoldr_post_page() {
   }
 
   // End user authentication check
-  
+
+
   // debug post data.  st uid to -10 to disable
   if ($uid == 1) {
     $testdata = $data;
     unset($testdata['password']);
     $handle = fopen("postdata.txt", "a");
-    fwrite($handle, 'Data: \n' . print_r($testdata, true) . '  ');
+    fwrite($handle, 'Data: \n' . print_r($testdata, TRUE) . '  ');
     fclose($handle); 
   }
 
@@ -283,8 +285,8 @@ function photoldr_post_page() {
           if ($v['widget']['module'] == 'image') {
             $imagefieldnames[] = $v['field_name'];
           }
-					
-			// Date field handling  date("Y-m-d H:i", strtotime($exp_date))
+          
+      // Date field handling  date("Y-m-d H:i", strtotime($exp_date))
       if ($v['widget']['module'] == 'date') {
         $datefield = $v['field_name'];
         $node->{$datefield}['und']['0'] = array(
@@ -294,11 +296,11 @@ function photoldr_post_page() {
             if ($nid == 'new') {
               $node->{$datefield}['und']['0'] = array(
                     'timezone' => $account->timezone
-               );
+                );
             }
       }  // End date handling
-			
-			
+      
+      
     }
 
   if (count($imagefieldnames) > 1) {
@@ -353,7 +355,7 @@ function photoldr_post_page() {
 
 
 
- // $node_render = node_view($node);
+  // $node_render = node_view($node);
   
   node_save($node);
 
@@ -362,7 +364,7 @@ function photoldr_post_page() {
     $testdata = $node;
     // unset($testdata['password']);
     $handle = fopen("postdata.txt", "a");
-    fwrite($handle, 'Node: \n' . print_r($testdata, true) . '  ');
+    fwrite($handle, 'Node: \n' . print_r($testdata, TRUE) . '  ');
     fclose($handle); 
   }
 
@@ -377,7 +379,6 @@ function photoldr_post_page() {
   }
   
   if ($node->nid) {
-    //   print "<h1>Success - Node ID " . $node->nid . "</h1>";
     $result = array();
     $pub = array();
     $result[] = $node;
