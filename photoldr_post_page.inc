@@ -563,44 +563,43 @@ function photoldr_autorotate_image($imagefile) {
   
   switch ($ort) {
       case 1: // nothing
-      break;
+        break;
 
       case 2: // horizontal flip
       //    image_flip($image, 1);
-      break;
+        break;
 
       case 3: // 180 rotate left
           image_rotate($image, 180);
           image_save($image);
-      break;
+        break;
 
       case 4: // vertical flip
       //    image_flip($image, 2);
-      break;
+        break;
 
       case 5: // vertical flip + 90 rotate right
       //        image_flip($image, 2);
               image_rotate($image, -90);
               image_save($image);
-      break;
+        break;
 
       case 6: // 90 rotate right
-          image_rotate($image, -90);
-          image_save($image);
-      break;
+      image_rotate($image, -90);
+      image_save($image);
+        break;
 
-      case 7: // horizontal flip + 90 rotate right
-      //    image_flip($image,1);
-          image_rotate($image, -90);
-          image_save($image);
-      break;
-
-      case 8:    // 90 rotate left
+      case 7: 
+        // horizontal flip + 90 rotate right
+        //    image_flip($image,1);
+        image_rotate($image, -90);
+        image_save($image);
+        break;
+      case 8:    
+          // 90 rotate left
           image_rotate($image, 90);
           image_save($image);
-      break;
+        break;
   }
 
 }
-
-

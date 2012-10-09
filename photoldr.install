@@ -9,16 +9,15 @@
  * Implements hook_install().
  */
 function photoldr_install() {
-  
-  
 }
+
 
 /**
  * Implements hook_uninstall().
  */
 function photoldr_uninstall() {
   // Remove all the variables that might have been set while this
-  // module was enabled.  
+  // module was enabled.
 
   db_delete('variable')
     ->condition('name', "photoldr%", "LIKE")
@@ -26,4 +25,3 @@ function photoldr_uninstall() {
 
   cache_clear_all('variables', 'cache_bootstrap');
 }
-
