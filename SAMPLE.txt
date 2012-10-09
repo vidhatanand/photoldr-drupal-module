@@ -1,10 +1,12 @@
+See sample.xml for a working example.
+
 <domains> Top level document. Container for <domain>
 
 <domain> Document Contents – Contains all other tags with site data.
 
 
-<FQDN> Fully Qualified Domains Name – Site Admin settable option that is the sites URL.  Must 
-  be a resolvable URL, but allow mixed case. 
+<FQDN> Fully Qualified Domains Name – Site Admin settable option that is the 
+sites URL.  Must be a resolvable URL, but allow mixed case. 
 
     <FQDN>www.Example.com</FQDN>
 
@@ -21,9 +23,9 @@
 
     <date>2012-09-05 16:22</date>
 
-    
-<exp_date> Date to stop using this data without a refresh.  PHP date( "Y-m-d").  Admin should 
-  be able to set a Relative date +3 months, +1 year, which will be 
+
+<exp_date> Date to stop using this data without a refresh.  PHP date( "Y-m-d").  
+Admin should be able to set a Relative date +3 months, +1 year, which will be 
 
     <exp_date>2013-09-05</exp_date>
 
@@ -38,8 +40,9 @@
   EXAMPLE:
   <post_url>http://www.example.com?q=photoldrpost.php</post_url>
 
-
-<app_options> container for <options> which is a list of fields to collect settings from the app.
+--------------------------------------------------------------------------------
+<app_options> container for <options> which is a list of fields to collect 
+settings from the app.
 
 <option> When in <app_options> this is a descriptor for fields. 
 
@@ -51,57 +54,38 @@
         fieldtype - textfield, textarea, password, checkbox, date, image
         options - #required for any except images
 
+--------------------------------------------------------------------------------
+<form_items> container for <options> which list of node types and fields with 
+settings.
 
-  EXAMPLE:
-  <app_options>
-    <option>app:Username:username:textfield:</option>
-    <option>app:Password:password:password:</option>
-    <option>app:Publish:status:checkbox:</option>
-  </app_options>
-
-
-<form_items> container for <options> which list of node types and fields with settings.
-
-In <form_items> the first <option> is a special "hidden" option that is present ONLY when 
-  the authenticated user has permission to Add this type of record. 
+In <form_items> the first <option> is a special "hidden" option that is present 
+ONLY when the authenticated user has permission to Add this type of record. 
 
   <option>recordtype:Hidden:posturl:url</option>
     url - fully formed url: http://www.example.com/postpage.php
 
 
-<option> - describes fields per each node type.
+<option> - describes fields per each node type.  
 
      <option>recordtype:Label:fieldname:fieldtype:options</option>
      
-        recordtype - in drupal this is the machine name of the node type. Lowercase, no spaces
+        recordtype - in drupal this is the machine name of the node type. 
+                     Lowercase, no spaces
         label - Case allowed, spaces permitted.
         fieldname - Machine name of the field. Lowercase, no spaces
         fieldtype - textfield, textarea, password, checkbox, date, image
-        options - #required for any except images, OR #1-9 for images count.  9 max.
-
-
-  EXAMPLE:
-    <form_items>
-      <option>article:Hidden:posturl:http://www.example.com/?q=photoldrpost.php</option>
-      <option>article:Title:title:textfield:#required</option>
-      <option>article:Body:body:textarea:</option>
-      <option>article:Tags:field_tags:textfield:UNSUPPORTED taxonomy</option>
-      <option>article:Image:field_image:image:#9</option>
-      <option>article:Replace Photos:image_overwrite:checkbox:</option>
-      <option>page:Hidden:posturl:http://www.example.com/?q=photoldrpost.php</option>
-      <option>page:Title:title:textfield:#required</option>
-      <option>page:Body:body:textarea:</option>
-      <option>page:Image:field_image:image:#9</option>
-    </form_items>
+        options - #required for any except images, 
+                   OR #1-9 for images count.  9 max.
 
  NOTE:
-    Only <node> tags that match the fieldname in the above <form_items><options> will be rendered
-    editable on the iOS app. Al other tags will not be editable.
+    Only <node> tags that match the fieldname in the above <form_items><options> 
+    will be rendered editable on the iOS app. Al other tags will not be editable.
 
 
 
-
-<user> contains information only if a user has authenticated. uid, name, and mail are required for authenticated users.
+--------------------------------------------------------------------------------
+<user> contains information only if a user has authenticated. uid, name, and mail 
+are required for authenticated users.
 
   EXAMPLE:
     <user>
@@ -112,63 +96,23 @@ In <form_items> the first <option> is a special "hidden" option that is present 
 
 
 
-
+--------------------------------------------------------------------------------
 <nodes> is a container for multiple <node> items
 
-<node> is the record from the site.  These nodes typically contain a lot of data not needed by the user.  
-  All significant data, which will be editable by the user will be presented as a <key>string</key> where 
-  key is the fieldname to match fieldnames in the node structure.  Special additional items will be 
+<node> is the record from the site.  These nodes typically contain a lot of data
+  not needed by the user.  All significant data, which will be editable by the 
+  user will be presented as a <key>string</key> where key is the fieldname to 
+  match fieldnames in the node structure.  Special additional items will be 
   <userdelete> and <useredit>
 
-  <userdelete>1</userdelete>   (Only if the authenticated user can delete this item)
-  <useredit>1</useredit>       (Only if the authenticated user can modify this item)
+  <userdelete>1</userdelete> 
+  <useredit>1</useredit> 
 
- 
-  EXAMPLE:
-  <nodes>
-    <node>
-      <userdelete>1</userdelete>
-      <useredit>1</useredit>
-      <uid>1</uid>                     (uid of the content owner)
-      <name>admin</name>               (name of the content owner)
-      <type>page</type>                (system name for type of content)
-      <title>Page Title</title>        (content title)
-      <created>2012-02-16</created>    (content creation date if available)
-      <changed>2012-08-31</changed>    (content last modification date if available)
-      <body>Sample Node Body</body>    (content body - a textarea field named body in this case. May contain HTML.)
-      <icon0>http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/somefile.jpg</icon0>
-      <image0>http://www.example.com/sites/default/files/styles/medium/public/field/image/somefile.jpg</image0>
-    </node>
-   <node>
-      <uid>99</uid>
-      <name>anotheruser</name>
-      <type>page</type>               
-      <title>Page Title 2</title>
-      <created>2012-02-16</created>
-      <changed>2012-08-31</changed>
-      <body>Sample Node Body 2</body>
-      <icon0>http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/somefile2.jpg</icon0>
-      <image0>http://www.example.com/sites/default/files/styles/medium/public/field/image/somefile2.jpg</image0>
-    </node>
-   <node>
-      <userdelete>1</userdelete>
-      <useredit>1</useredit>
-      <uid>123</uid>                    
-      <name>someone</name>
-      <type>page</type>
-      <title>Page Title 3</title>
-      <created>2012-02-16</created>
-      <changed>2012-08-31</changed>
-      <body>Sample Node Body 3</body>
-      <icon0>http://www.example.com/sites/default/files/styles/thumbnail/public/field/image/somefile3.jpg</icon0>
-      <image0>http://www.example.com/sites/default/files/styles/medium/public/field/image/somefile3.jpg</image0>
-    </node>
-  
+    The tag names inside the <node> that match the fieldname in the above 
+    <form_items><options> will be rendered editable on the iOS app. 
 
-  NOTE:
-    The tag names inside the <node> that match the fieldname in the above <form_items><options> will be rendered
-    editable on the iOS app. 
-
-    <icon#> This is the image in a compact (100-200 pixels wide x 100-200 pixels high)
-    <image#>This is the image in a medium to large format (640-2000 pixels wide x 480-2000 pixels high)
+    <icon#> This is the image in a compact
+        (100-200 pixels wide x 100-200 pixels high)
+    <image#>This is the image in a medium to large format 
+       (640-2000 pixels wide x 480-2000 pixels high)
     Images get special handling.
