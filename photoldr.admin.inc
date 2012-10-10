@@ -202,7 +202,7 @@ function photoldr_admin_settings() {
     '#markup' => '',
   );
 
-// SHOW FIELD SETTINGS for PHOTOLDR APP
+  // SHOW FIELD SETTINGS for PHOTOLDR APP
   $feed_back = '<br /> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br />nodetype:Label:field_name:type:options<br /><br />';
 
   // These modules/widget types are supported.
@@ -212,116 +212,121 @@ function photoldr_admin_settings() {
   $addressfields = array('street1', 'street2', 'city', 'state', 'zip', 'country');
   $field_types = field_info_field_types();
 
-    // Build nodetype:Label:field_name:type:options
-    $instances = field_info_instances('node');
-    foreach ($instances as $ntype => $fields) {
-      $type = node_type_get_type($ntype);
-      if (isset($type->has_title)) {
-            $feed_back .= $ntype . ':Title:title:textfield:<em style="color:blue">#required</em>';
-            $feed_back .= '<br />' . "\n";
+  // Build nodetype:Label:field_name:type:options
+  $instances = field_info_instances('node');
+  foreach ($instances as $ntype => $fields) {
+    $type = node_type_get_type($ntype);
+    if (isset($type->has_title)) {
+          $feed_back .= $ntype . ':Title:title:textfield:<em style="color:blue">#required</em>';
+          $feed_back .= '<br />' . "\n";
+    }
 
+    foreach ($fields as $instance) {
+      $module = $instance['widget']['module'];
+      $field_name = $instance['field_name'];
+      $label = $instance['label'];
 
-      }
-      foreach ($fields as $instance) {
-        $module = $instance['widget']['module'];
-        $field_name = $instance['field_name'];
-        $label = $instance['label'];
+      if (!in_array($module, $supported_fields)) {
 
-        if (!in_array($module, $supported_fields)) {
-
-          if ($instance['widget']['type'] == 'options_select') {
-            $feed_back .= $field_name . ', ' . $module . ', ' . $instance['widget']['type'] . ',  is not <em style="color:red"><strong>supported</strong></em>. ';
-            $feed_back .= '<br />' . "\n";
-            continue;
-          }
-
-          if ($instance['widget']['type'] == 'options_onoff') {
-            $feed_back .= $ntype . ':';
-            $feed_back .= $label . ':';
-            $feed_back .= $field_name . ':';
-            $feed_back .= 'checkbox:';
-            $feed_back .= '<em>#true</em>';
-            $feed_back .= '<br />' . "\n";
-            continue;
-
-          }
-            $feed_back .= $ntype . ':';
-            $feed_back .= $label . ':';
-            $feed_back .= $field_name . ':';
-            $feed_back .= 'textfield';
-            $feed_back .= '          <strong>   ';
-            $feed_back .= $module . ' ' . $instance['widget']['type'] . ' is not <em style="color:red">supported</em>.</strong> ';
-            $feed_back .= '<br />' . "\n";
-
+        if ($instance['widget']['type'] == 'options_select') {
+          $feed_back .= $field_name . ', ' . $module . ', ' . $instance['widget']['type'] . ',  is not <em style="color:red"><strong>supported</strong></em>. ';
+          $feed_back .= '<br />' . "\n";
           continue;
         }
 
-        $fieldinfo = field_info_field($instance['field_name']);
-
-        if ($instance['widget']['module'] == 'addressfield') {
-
-          foreach ($addressfields as $fieldname) {
-            $feed_back .= $ntype . ':';
-            $feed_back .= drupal_ucfirst($fieldname) . ':';
-            $feed_back .= $fieldname . ':';
-            $feed_back .= 'textfield';
-            $feed_back .= '<br />' . "\n";
-          }
-        continue;
+        if ($instance['widget']['type'] == 'options_onoff') {
+          $feed_back .= $ntype . ':';
+          $feed_back .= $label . ':';
+          $feed_back .= $field_name . ':';
+          $feed_back .= 'checkbox:';
+          $feed_back .= '<em>#true</em>';
+          $feed_back .= '<br />' . "\n";
+          continue;
         }
-
 
         $feed_back .= $ntype . ':';
         $feed_back .= $label . ':';
         $feed_back .= $field_name . ':';
-        switch ($module) {
-          case 'date':
-                $feed_back .= 'date' . ':';
-                break;
-          case 'cck_phone':
-                $feed_back .= 'textfield' . ':';
-                break;
-          case 'text':
-              if (isset($instance['widget']['settings']['rows'])) {
-                $feed_back .= 'textarea' . ':';
-              }
-              else {
-                $feed_back .= 'textfield' . ':';
-              }
-              break;
-          default:
-                $feed_back .= $module . ':';
-                break;
-        }
+        $feed_back .= 'textfield';
+        $feed_back .= '          <strong>   ';
+        $feed_back .= $module . ' ' . $instance['widget']['type'] . ' is not <em style="color:red">supported</em>.</strong> ';
+        $feed_back .= '<br />' . "\n";
+        continue;
+      }
 
-          if ($instance['required']) {
-            $feed_back .= '<em style="color:blue">#required</em>' . '<br />' . "\n";
-          }
-  else {
-            $feed_back .= '<br />' . "\n";
-          }
+      $fieldinfo = field_info_field($instance['field_name']);
 
+      if ($instance['widget']['module'] == 'addressfield') {
 
-        }
+        foreach ($addressfields as $fieldname) {
+          $feed_back .= $ntype . ':';
+          $feed_back .= drupal_ucfirst($fieldname) . ':';
+          $feed_back .= $fieldname . ':';
+          $feed_back .= 'textfield';
           $feed_back .= '<br />' . "\n";
-    }  // END foreach ($instances as $instance)
+        }
+        continue;
+      }
 
 
-    // This is just for site developers to see how the node data is presented.
-    $form['photoldr_admin'] = array(
-      '#title' => 'Node Type Samples',
-      '#type' => 'fieldset',
-      '#weight' => '20',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-    $form['photoldr_admin']['samples'] = array(
-      '#type' => 'markup',
-      '#prefix' => '<strong>Sample format of data:</strong> <br/>',
-      '#markup' => $feed_back,
-      '#suffix' => '</hr>',
-    );
-      // Image Field Name selection.  This is depreciated and may be pruned soon.
+      $feed_back .= $ntype . ':';
+      $feed_back .= $label . ':';
+      $feed_back .= $field_name . ':';
+      switch ($module) {
+        case 'date':
+              $feed_back .= 'date' . ':';
+              break;
+
+        case 'cck_phone':
+              $feed_back .= 'textfield' . ':';
+              break;
+
+        case 'text':
+            if (isset($instance['widget']['settings']['rows'])) {
+              $feed_back .= 'textarea' . ':';
+            }
+            else {
+              $feed_back .= 'textfield' . ':';
+            }
+            break;
+
+        default:
+            $feed_back .= $module . ':';
+            break;
+
+      }
+
+      if ($instance['required']) {
+        $feed_back .= '<em style="color:blue">#required</em>' . '<br />' . "\n";
+      }
+      else {
+        $feed_back .= '<br />' . "\n";
+      }
+
+      // end foreach ($fields as $instance)
+    }
+
+    $feed_back .= '<br />' . "\n";
+    // END foreach ($instances as $instance)
+  }
+
+
+  // This is just for site developers to see how the node data is presented.
+  $form['photoldr_admin'] = array(
+    '#title' => 'Node Type Samples',
+    '#type' => 'fieldset',
+    '#weight' => '20',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['photoldr_admin']['samples'] = array(
+    '#type' => 'markup',
+    '#prefix' => '<strong>Sample format of data:</strong> <br/>',
+    '#markup' => $feed_back,
+    '#suffix' => '</hr>',
+  );
+
+  // Image Field Name selection.  This is depreciated and may be pruned soon.
   $fields = field_info_fields();
   $imagefields = array();
   foreach ($fields as $k => $v) {
