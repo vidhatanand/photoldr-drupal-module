@@ -90,8 +90,8 @@ function photoldr_admin_settings() {
   );
 
 
-  // This is the default data/node type to create when a user adds data.  This is
-  // only useful if there is only one data type.
+  // This is the default data/node type to create when a user adds data.
+  // This is only useful if there is only one data type.
   // This may be removed... unless a value is found.
   reset($nodenames);
   $form['photoldr_default_post_type'] = array(
@@ -107,9 +107,9 @@ function photoldr_admin_settings() {
     '#markup' => '<h3>' . t('Save Settings after changing any above options to refresh the available options bellow.') . '</h3>',
   );
   $form['submit'] = array(
-    '#type' => 'submit', 
-    '#value' => t('Save and Refresh'), 
-    '#suffix' => '<hr/>'
+    '#type' => 'submit',
+    '#value' => t('Save and Refresh'),
+    '#suffix' => '<hr/>',
   );
 
   // view_types is for a future feature in the iOS app which
@@ -120,9 +120,9 @@ function photoldr_admin_settings() {
   $weight_used = array();
   $count = 0;
 
-  // This is a rough attempt at setting the order of the node types to display in
-  // the XML. There is a better way I just need to find out how the Drupal ordered
-  // weights is implemented.
+  // This is a rough attempt at setting the order of the node types to display
+  // in the XML. There is a better way I just need to find out how the Drupal 
+  // ordered weights is implemented.
   foreach ($enabled_nodes as $k => $nodename) {
     $weight = variable_get('photoldr_node_weight_' . $nodename, '');
     if ($weight == '') {
@@ -186,8 +186,8 @@ function photoldr_admin_settings() {
       '#type' => 'select',
       '#title' => t('@nodename - Sort Order', array('@nodename' => $nodename)),
       '#options' => array(
-        'DESC' => 'Descending Z-A or Newest First', 
-        'ASC' => 'Ascending A-Z or Oldest First'
+        'DESC' => 'Descending Z-A or Newest First',
+        'ASC' => 'Ascending A-Z or Oldest First',
       ),
       '#default_value' => variable_get('photoldr_item_order_' . $nodename, 'DESC'),
       '#description' => t('This will set the order which items are returned to the App.'),
@@ -199,7 +199,7 @@ function photoldr_admin_settings() {
         'created' => 'Created',
         'changed' => 'Changed',
         'title' => 'Title',
-        'nid' => "Node ID"
+        'nid' => "Node ID",
       ),
       '#default_value' => variable_get('photoldr_item_orderby_' . $nodename, 'created'),
       '#description' => t('This will set the field used to sort.'),
@@ -213,12 +213,21 @@ function photoldr_admin_settings() {
     '#markup' => '',
   );
 
-  // SHOW FIELD SETTINGS for PHOTOLDR APP
+  // SHOW FIELD SETTINGS for PHOTOLDR APP.
   $feed_back = '<br /> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br />nodetype:Label:field_name:type:options<br /><br />';
 
   // These modules/widget types are supported.
-  $supported_fields = array('image', 'textfield', 'text', 'textarea', 'checkbox', 'date', 'cck_phone', 'addressfield');
-  // This is the added support for the addressfield type.  Addressfield is a field collection.
+  $supported_fields = array(
+    'image',
+    'textfield',
+    'text',
+    'textarea',
+    'checkbox',
+    'date',
+    'cck_phone',
+    'addressfield',
+  );
+  // This is the added support for the addressfield type.
   // Currently only US formatted addresses are supported.
   $addressfields = array('street1', 'street2', 'city', 'state', 'zip', 'country');
   $field_types = field_info_field_types();
@@ -228,8 +237,8 @@ function photoldr_admin_settings() {
   foreach ($instances as $ntype => $fields) {
     $type = node_type_get_type($ntype);
     if (isset($type->has_title)) {
-          $feed_back .= $ntype . ':Title:title:textfield:<em style="color:blue">#required</em>';
-          $feed_back .= '<br />' . "\n";
+      $feed_back .= $ntype . ':Title:title:textfield:<em style="color:blue">#required</em>';
+      $feed_back .= '<br />' . "\n";
     }
 
     foreach ($fields as $instance) {
@@ -285,12 +294,12 @@ function photoldr_admin_settings() {
       $feed_back .= $field_name . ':';
       switch ($module) {
         case 'date':
-            $feed_back .= 'date' . ':';
-            break;
+          $feed_back .= 'date' . ':';
+          break;
 
         case 'cck_phone':
-            $feed_back .= 'textfield' . ':';
-            break;
+          $feed_back .= 'textfield' . ':';
+          break;
 
         case 'text':
           if (isset($instance['widget']['settings']['rows'])) {
@@ -314,11 +323,11 @@ function photoldr_admin_settings() {
         $feed_back .= '<br />' . "\n";
       }
 
-      // end foreach ($fields as $instance)
+      // End foreach ($fields as $instance).
     }
 
     $feed_back .= '<br />' . "\n";
-    // END foreach ($instances as $instance)
+    // END foreach ($instances as $instance).
   }
 
 
