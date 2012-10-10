@@ -39,6 +39,8 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
   $exp_date = variable_get('photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
 
+
+  // Image field cardinality
   $fields = field_info_fields();
   $imagefields = array();
   $imagefieldmax = array();
@@ -46,15 +48,15 @@ function photoldr_node_structure_page($uidvar = NULL) {
   foreach ($fields as $k => $v) {
     $module = $v['module'];
     if (in_array($module, array('image'))) {
-                $imagefieldinfo = field_info_field($k);
-                switch ($imagefieldinfo['cardinality']) {
-                  case FIELD_CARDINALITY_UNLIMITED:
-                    $max = '10';
-                    break;
-                  default:
-                    $max = $imagefieldinfo['cardinality'];
-                    break;
-                }
+      $imagefieldinfo = field_info_field($k);
+      switch ($imagefieldinfo['cardinality']) {
+        case FIELD_CARDINALITY_UNLIMITED:
+          $max = '10';
+          break;
+        default:
+          $max = $imagefieldinfo['cardinality'];
+          break;
+      }
       $imagefields[$k] = $k;
       $imagefieldmax[$k] = $max;
     }
@@ -65,28 +67,28 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
 
 
-    /**
-     * Accumulate the data to be converted to XML inside the $pub array
-     * the base if the document <domains><domain> is the equivilent of the
-     * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
-     * <domains><domain><FQDN>...</FQDN>
-     */
-    $pub['FQDN'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
-    $pub['site_name'] = variable_get('photoldr_site_name',  variable_get('site_name'));
-    $pub['published'] = "1";
-    $pub['cms'] = "drupal";
-    $pub['standalone'] = "1";
-    $pub['date'] = date( "Y-m-d H:i") ;
-    $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
-    $pub['exp_url'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
-    $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
-    /**
-       * <app_options> exposes site specific options for user settings
-       * in the iOS app
-       */
-      $pub['app_options'][] = "app:Username:username:textfield:";
-      $pub['app_options'][] = "app:Password:password:password:";
-      $pub['app_options'][] = "app:Publish:status:checkbox:";
+  /**
+  * Accumulate the data to be converted to XML inside the $pub array
+  * the base if the document <domains><domain> is the equivilent of the
+  * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
+  * <domains><domain><FQDN>...</FQDN>
+  */
+  $pub['FQDN'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
+  $pub['site_name'] = variable_get('photoldr_site_name',  variable_get('site_name'));
+  $pub['published'] = "1";
+  $pub['cms'] = "drupal";
+  $pub['standalone'] = "1";
+  $pub['date'] = date( "Y-m-d H:i") ;
+  $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
+  $pub['exp_url'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
+  $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
+  /**
+   * <app_options> exposes site specific options for user settings
+   * in the iOS app
+   */
+  $pub['app_options'][] = "app:Username:username:textfield:";
+  $pub['app_options'][] = "app:Password:password:password:";
+  $pub['app_options'][] = "app:Publish:status:checkbox:";
 
 
   /**
@@ -97,32 +99,39 @@ function photoldr_node_structure_page($uidvar = NULL) {
   $form_items = '<form_items>' . "\n";
   $node_display_settings = '<node_types>' . "\n";
 
+  // These fields are supported by this module
   $supported_fields = array('image', 'textfield', 'text', 'textarea', 'checkbox', 'date', 'cck_phone', 'addressfield');
+
+  // addressfield US format name for fields.
   $addressfields = array('street1', 'street2', 'city', 'state', 'zip', 'country');
   $field_types = field_info_field_types();
 
-    // Build nodetype:Label:field_name:type:options
-    $instances = field_info_instances('node');
-    foreach ($instances as $ntype => $fields) {
-      $type = node_type_get_type($ntype);
 
-      if ($uid == FALSE) {
-        $usercreate = FALSE;
-      }
-      $access = 'create ' . $ntype . ' content';
-      if (user_access($access, $account)) {
-        $usercreate = TRUE;
-      }
-      else {
-        $usercreate = FALSE;
-      }
+ /**
+  * Build nodetype:Label:field_name:type:options
+  * Long foreach loop that attempt to address each field type.
+  */
+  $instances = field_info_instances('node');
+  foreach ($instances as $ntype => $fields) {
+    $type = node_type_get_type($ntype);
 
-      $node_view = variable_get('photoldr_node_view_' . $ntype, 'table');
-      $node_max = variable_get('photoldr_item_max_' . $ntype, 10);
-      $node_age_max = variable_get('photoldr_item_age_max_' . $ntype, 0);
-      $node_order = variable_get('photoldr_item_order_' . $ntype, 0);
+    if ($uid == FALSE) {
+      $usercreate = FALSE;
+    }
+    $access = 'create ' . $ntype . ' content';
+    if (user_access($access, $account)) {
+      $usercreate = TRUE;
+    }
+    else {
+      $usercreate = FALSE;
+    }
 
-      $node_display_settings .= '<option>' . $ntype . ':' . $node_view . '</option>' . "\n";
+    $node_view = variable_get('photoldr_node_view_' . $ntype, 'table');
+    $node_max = variable_get('photoldr_item_max_' . $ntype, 10);
+    $node_age_max = variable_get('photoldr_item_age_max_' . $ntype, 0);
+    $node_order = variable_get('photoldr_item_order_' . $ntype, 0);
+
+    $node_display_settings .= '<option>' . $ntype . ':' . $node_view . '</option>' . "\n";
 
    /**
     * Add postURL option ONLY for user's with permission to create/add this type of node.
@@ -133,141 +142,51 @@ function photoldr_node_structure_page($uidvar = NULL) {
       $form_items .= "\n";
     }
 
-      /**
-       * Basically all Drupal nodes have a title and body. Verify first then add option.
-       */
-      if (isset($type->has_title)) {
-            $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
-            $form_items .= "\n";
-      }
+    /**
+     * Basically all Drupal nodes have a title and body. Verify first then add option.
+     */
+    if (isset($type->has_title)) {
+          $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
+          $form_items .= "\n";
+    }
 
 
-       /**
-         * Check the widget and setup the option for the field.
-         * Also address unsupported fields.
-         */
-      foreach ($fields as $instance) {
-        $module = $instance['widget']['module'];
-        $label = $instance['label'];
-        $field_name = $instance['field_name'];
-        $fieldinfo = field_info_field($instance['field_name']);
+    /**
+     * Check the widget and setup the option for the field.
+     * Also address unsupported fields.
+     */
+    foreach ($fields as $instance) {
+      $module = $instance['widget']['module'];
+      $label = $instance['label'];
+      $field_name = $instance['field_name'];
+      $fieldinfo = field_info_field($instance['field_name']);
 
-        $this_node_type = $ntype;
-        $this_field_label = $label;
-        $this_field_name = $field_name;
-        $this_field_type = '';
-        $this_field_required = '';
+      $this_node_type = $ntype;
+      $this_field_label = $label;
+      $this_field_name = $field_name;
+      $this_field_type = '';
+      $this_field_required = '';
 
 
-        // Handle other or unsupported fields
-        if (!in_array($module, $supported_fields)) {
+      // Handle other or unsupported fields
+      if (!in_array($module, $supported_fields)) {
 
-          if ($instance['widget']['type'] == 'options_select') {
-            // Option Select Fields
-            $this_field_type = 'options_select';
-            $this_field_required = 'UNSUPPORTED';
+        if ($instance['widget']['type'] == 'options_select') {
+          // Option Select Fields
+          $this_field_type = 'options_select';
+          $this_field_required = 'UNSUPPORTED';
 
-          }
-          elseif ($instance['widget']['type'] == 'options_onoff') {
-            // Checkbox
-            $this_field_type = 'checkbox';
-            $this_field_required = '#true';
-          }
-          else {
-            // All other unsupported
-            $this_field_type = 'textfield';
-            $this_field_required = 'UNSUPPORTED ' . $instance['widget']['module'];
-          }
-
-            $form_items .= '<option>';
-            $form_items .= $this_node_type . ':';
-            $form_items .= $this_field_label . ':';
-            $form_items .= $this_field_name . ':';
-            $form_items .= $this_field_type . ':';
-            $form_items .= $this_field_required ;
-            $form_items .= '</option>' . "\n";
-          continue;
         }
-
-
-         /**
-          * Special support for the addressfield module.
-          */
-        if ($instance['widget']['module'] == 'addressfield') {
-
-          foreach ($addressfields as $fieldname) {
-            $this_field_label = drupal_ucfirst($fieldname);
-            $this_field_name = $fieldname;
-            $this_field_type = 'textfield';
-
-
-            $form_items .= '<option>';
-            $form_items .= $this_node_type . ':';
-            $form_items .= $this_field_label . ':';
-            $form_items .= $this_field_name . ':';
-            $form_items .= $this_field_type . ':';
-            $form_items .= $this_field_required ;
-            $form_items .= '</option>' . "\n";
-          }
-        continue;
+        elseif ($instance['widget']['type'] == 'options_onoff') {
+          // Checkbox
+          $this_field_type = 'checkbox';
+          $this_field_required = '#true';
         }
-
-          /**
-          * Special support for the date module.
-          */
-        if ($instance['widget']['module'] == 'date') {
-
-            $this_field_type = 'date';
-
-            $form_items .= '<option>';
-            $form_items .= $this_node_type . ':';
-            $form_items .= $this_field_label . ':';
-            $form_items .= $this_field_name . ':';
-            $form_items .= $this_field_type . ':';
-            $form_items .= $this_field_required ;
-            $form_items .= '</option>' . "\n";
-
-            $form_items .= '<option>';
-            $form_items .= $this_node_type . ':';
-            $form_items .= $this_field_label . ' End:';
-            $form_items .= $this_field_name . '_end:';
-            $form_items .= $this_field_type . ':';
-            $form_items .= $this_field_required ;
-            $form_items .= '</option>' . "\n";
-
-        continue;
+        else {
+          // All other unsupported
+          $this_field_type = 'textfield';
+          $this_field_required = 'UNSUPPORTED ' . $instance['widget']['module'];
         }
-
-
-
-    switch ($module) {
-          case 'image':
-                if ($imagefieldmax[$this_field_name] > 3) {
-                  $this_field_type = 'image';
-                }
-                else {
-                  $this_field_type = 'image';
-                }
-                $this_field_required = '#' . $imagefieldmax[$this_field_name];
-
-                break;
-          case 'cck_phone':
-          case 'text':
-              if (isset($instance['widget']['settings']['rows'])) {
-                $this_field_type = 'textarea';
-              }
-              else {
-                $this_field_type = 'textfield';
-              }
-              break;
-          default:
-                $this_field_type = $module;
-                break;
-    } // end of switch statement
-
-          if ($instance['required']) {
-            $this_field_required = '#required';
-          }
 
           $form_items .= '<option>';
           $form_items .= $this_node_type . ':';
@@ -276,43 +195,140 @@ function photoldr_node_structure_page($uidvar = NULL) {
           $form_items .= $this_field_type . ':';
           $form_items .= $this_field_required ;
           $form_items .= '</option>' . "\n";
+          continue;
+      }
 
 
-          if ($module == 'image') {
-            $form_items .= '<option>' . $ntype . ':Replace Photos:image_overwrite:checkbox:</option>';
+       /**
+        * Special support for the addressfield module.
+        */
+      if ($instance['widget']['module'] == 'addressfield') {
+
+        foreach ($addressfields as $fieldname) {
+          $this_field_label = drupal_ucfirst($fieldname);
+          $this_field_name = $fieldname;
+          $this_field_type = 'textfield';
+
+
+          $form_items .= '<option>';
+          $form_items .= $this_node_type . ':';
+          $form_items .= $this_field_label . ':';
+          $form_items .= $this_field_name . ':';
+          $form_items .= $this_field_type . ':';
+          $form_items .= $this_field_required ;
+          $form_items .= '</option>' . "\n";
+        }
+        continue;
+      }
+
+     /**
+      * Special support for the date module.
+      */
+      if ($instance['widget']['module'] == 'date') {
+
+        $this_field_type = 'date';
+
+        $form_items .= '<option>';
+        $form_items .= $this_node_type . ':';
+        $form_items .= $this_field_label . ':';
+        $form_items .= $this_field_name . ':';
+        $form_items .= $this_field_type . ':';
+        $form_items .= $this_field_required ;
+        $form_items .= '</option>' . "\n";
+
+        $form_items .= '<option>';
+        $form_items .= $this_node_type . ':';
+        $form_items .= $this_field_label . ' End:';
+        $form_items .= $this_field_name . '_end:';
+        $form_items .= $this_field_type . ':';
+        $form_items .= $this_field_required ;
+        $form_items .= '</option>' . "\n";
+
+        continue;
+      }
+
+
+
+      switch ($module) {
+        case 'image':
+          if ($imagefieldmax[$this_field_name] > 3) {
+            $this_field_type = 'image';
           }
-        }  // end foreach field
+          else {
+            $this_field_type = 'image';
+          }
+          $this_field_required = '#' . $imagefieldmax[$this_field_name];
+
+          break;
+        case 'cck_phone':
+        case 'text':
+          if (isset($instance['widget']['settings']['rows'])) {
+            $this_field_type = 'textarea';
+          }
+          else {
+            $this_field_type = 'textfield';
+          }
+          break;
+        default:
+          $this_field_type = $module;
+          break;
+      } // end of switch statement
+
+      if ($instance['required']) {
+        $this_field_required = '#required';
+      }
+
+      $form_items .= '<option>';
+      $form_items .= $this_node_type . ':';
+      $form_items .= $this_field_label . ':';
+      $form_items .= $this_field_name . ':';
+      $form_items .= $this_field_type . ':';
+      $form_items .= $this_field_required ;
+      $form_items .= '</option>' . "\n";
 
 
+      if ($module == 'image') {
+        $form_items .= '<option>' . $ntype . ':Replace Photos:image_overwrite:checkbox:</option>';
+      }
 
-
-    }  // END foreach ($instances as $instance)
-    $form_items .= '</form_items>' . "\n";
-    $node_display_settings .= '</node_types>' . "\n";
-
-
-   /**
-    * This is the actual conversion of the $pub array to the <domain> XML element.
-    */
-    $output .= '<domain>' . "\n";
-
-    // Move code to function  <domain> site fields are in $pub
-    $output .= _photoldr_domain_to_xml($pub);
-
-    // These are the settings for the iOS app add/edit forms
-    $output .= $form_items;
-
-    $output .= $node_display_settings;
-
-    // Add <nodes> tag Content.
-    $output .= _photoldr_xml_node_content();
-
-    if (variable_get('photoldr_allow_unpublished', 'no') != 'no') {
-      // Add <nodes> tag Content for unpublished nodes.
-      $output .= _photoldr_xml_unpublished_node_content($account);
+      // end foreach ($fields as $instance)
     }
-    // Close the <domain> tag in the document.
-    $output .= '</domain>' . "\n";
+
+
+    // END foreach ($instances as $ntype => $fields)
+  }
+
+
+
+
+
+  // close the accumulated variables with their tags.
+  $form_items .= '</form_items>' . "\n";
+  $node_display_settings .= '</node_types>' . "\n";
+
+
+ /**
+  * This is the actual conversion of the $pub array to the <domain> XML element.
+  */
+  $output .= '<domain>' . "\n";
+
+  // Move code to function  <domain> site fields are in $pub
+  $output .= _photoldr_domain_to_xml($pub);
+
+  // These are the settings for the iOS app add/edit forms
+  $output .= $form_items;
+
+  $output .= $node_display_settings;
+
+  // Add <nodes> tag Content.
+  $output .= _photoldr_xml_node_content();
+
+  if (variable_get('photoldr_allow_unpublished', 'no') != 'no') {
+    // Add <unpublished_nodes> tag Content for unpublished nodes.
+    $output .= _photoldr_xml_unpublished_node_content($account);
+  }
+  // Close the <domain> tag in the document.
+  $output .= '</domain>' . "\n";
 
 
   $xml_head = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
@@ -376,20 +392,20 @@ function _photoldr_xml_node_content() {
 
   // Get list of nodes to publish and act on the list
   foreach ($node_order as $nodename => $k) {
-      unset($query);
-      unset($result);
-      $node_type = node_type_get_type($nodename);
-      $node_max = variable_get('photoldr_item_max_' . $nodename, 10);
-      $node_age_max = variable_get('photoldr_item_age_max_' . $nodename, 0);
-      $node_order = variable_get('photoldr_item_order_' . $nodename, 'DESC');
-      $node_order_by = variable_get('photoldr_item_orderby_' . $nodename, 'created');
+    unset($query);
+    unset($result);
+    $node_type = node_type_get_type($nodename);
+    $node_max = variable_get('photoldr_item_max_' . $nodename, 10);
+    $node_age_max = variable_get('photoldr_item_age_max_' . $nodename, 0);
+    $node_order = variable_get('photoldr_item_order_' . $nodename, 'DESC');
+    $node_order_by = variable_get('photoldr_item_orderby_' . $nodename, 'created');
 
-      if ($node_order == 'DESC') {
-        $sort = 'DESC';
-      }
-  else {
-        $sort = 'ASC';
-      }
+    if ($node_order == 'DESC') {
+      $sort = 'DESC';
+    }
+    else {
+      $sort = 'ASC';
+    }
 
 
     // Query nodes owned by this user
@@ -401,6 +417,7 @@ function _photoldr_xml_node_content() {
     $query
       ->orderBy('n.' . $node_order_by, $sort);
 
+    // If the changed selector is set in POST, use it here or use the user setting
     if (isset($data['changed'])) {
       $oldest_date = date(strtotime($data['changed']));
       $query->condition('n.changed', $oldest_date, "<");
@@ -410,25 +427,34 @@ function _photoldr_xml_node_content() {
       $query->condition('n.created', $oldest_date, '>');
     }
 
+    // Limit the number of nodes returned (this is by type)
     if (isset($node_max) && ($node_max != 0)) {
       $query->range('0', $node_max);
     }
 
     $result = $query->execute();
 
+    // Use $result to populate the $pub array
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
-  } // end foreach node type
 
-    // make XML from $pub
+    // end foreach ($node_order as $nodename => $k)
+  }
+
+
+
+  // make XML from $pub array
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
 
-    // debug post data.  st uid to -10 to disable
+  // debug pub data if user is Admin.  st uid to -10 to disable
   if ($uid == 1) {
     $handle = fopen("pubdata.txt", "a");
     fwrite($handle, 'Pub: ' . print_r($pub, TRUE) . '  ');
     fclose($handle);
   }
+
+
+
   return $xml_body;
 
 }
@@ -496,20 +522,20 @@ function _photoldr_xml_unpublished_node_content($account) {
 
   // Get list of nodes to publish and act on the list
   foreach ($node_order as $nodename => $k) {
-      unset($query);
-      unset($result);
-      $node_type = node_type_get_type($nodename);
-      $node_max = variable_get('photoldr_item_max_' . $nodename, 10);
-      $node_age_max = variable_get('photoldr_item_age_max_' . $nodename, 0);
-      $node_order = variable_get('photoldr_item_order_' . $nodename, 'DESC');
-      $node_order_by = variable_get('photoldr_item_orderby_' . $nodename, 'created');
+    unset($query);
+    unset($result);
+    $node_type = node_type_get_type($nodename);
+    $node_max = variable_get('photoldr_item_max_' . $nodename, 10);
+    $node_age_max = variable_get('photoldr_item_age_max_' . $nodename, 0);
+    $node_order = variable_get('photoldr_item_order_' . $nodename, 'DESC');
+    $node_order_by = variable_get('photoldr_item_orderby_' . $nodename, 'created');
 
-      if ($node_order == 'DESC') {
-        $sort = 'DESC';
-      }
-      else {
-        $sort = 'ASC';
-      }
+    if ($node_order == 'DESC') {
+      $sort = 'DESC';
+    }
+    else {
+      $sort = 'ASC';
+    }
 
 
     // Query nodes owned by this user
@@ -536,12 +562,15 @@ function _photoldr_xml_unpublished_node_content($account) {
 
     $result = $query->execute();
 
+    // Use $result to populate the $pub array
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
-  } // end foreach node type
+
+    // end foreach ($node_order as $nodename => $k)
+  }
 
 
-    // make XML from $pub
+  // make XML from $pub
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
 
 
