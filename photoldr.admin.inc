@@ -229,7 +229,14 @@ function photoldr_admin_settings() {
   );
   // This is the added support for the addressfield type.
   // Currently only US formatted addresses are supported.
-  $addressfields = array('street1', 'street2', 'city', 'state', 'zip', 'country');
+  $addressfields = array(
+    'street1',
+    'street2',
+    'city',
+    'state',
+    'zip',
+    'country',
+  );
   $field_types = field_info_field_types();
 
   // Build nodetype:Label:field_name:type:options

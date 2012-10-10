@@ -2,7 +2,6 @@
 /**
  * @file
  * Install file for PhotoLDR module.
- *
  */
 
 /**
@@ -14,11 +13,11 @@ function photoldr_install() {
 
 /**
  * Implements hook_uninstall().
+ *
+ * Remove all the variables that might have been set while 
+ * this module was enabled.
  */
 function photoldr_uninstall() {
-  // Remove all the variables that might have been set while this
-  // module was enabled.
-
   db_delete('variable')
     ->condition('name', "photoldr%", "LIKE")
     ->execute();
