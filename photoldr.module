@@ -258,7 +258,8 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
             }
           }
           continue;
-        }  // End field_image.
+          // End field_image.
+        }
 
         // Process Date fields.
         if ($instances[$k]['widget']['module'] == 'date') {
@@ -266,7 +267,6 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
             if (!isset($v1['0']['value'])) {
               continue;
             }
-
             $end_date = isset($v1['0']['value2']) ? $v1['0']['value2'] : $v1['0']['value'];
             $pub[$container][$row->nid][$k] = $v1['0']['value'];
             $pub[$container][$row->nid][$k . '_end'] = $end_date;
@@ -276,7 +276,7 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
         }
 
 
-          // Process Address fields.
+        // Process Address fields.
         if ($instances[$k]['widget']['module'] == 'addressfield') {
 
           foreach ($v['und'] as $k1 => $v1) {
@@ -291,14 +291,14 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           }
           continue;
         }
-  
+
         // Process Product fields.
         // TODO this needs some work.
         if ($instances[$k]['widget']['module'] == 'commerce_product_reference') {
 
           if (isset($v['und']['0']['product_id'])) {
             $product = commerce_product_load($v['und']['0']['product_id']);
-            // hardcoding field_image
+            // Hardcoding field_image.
             $product_images = $product->field_image;
             $product_title = $product->title;
             $product_sku = $product->sku;
@@ -321,7 +321,7 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
               }
             }
 
-           /*
+            /*
             $handle = fopen("commerce_product_reference.txt", "a");
             fwrite($handle, 'Key: ' . print_r($product, true) . '  ');
             fclose($handle);
@@ -330,8 +330,8 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
           continue;
         }
-  
-        }  // End if widget module fields.
+        // End if (isset($instances[$k]['widget']['module'])).
+      }
 
 
       // Handle simple dates that are timestamps.
@@ -377,7 +377,6 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
  *
  * @return array
  *   Array of accumulated contents as the $pub array.
- *
  */
 function _photoldr_account_to_xml($account, $pub) {
   // At this point we have a Valid user.  Lets get some data.
@@ -398,7 +397,7 @@ function _photoldr_account_to_xml($account, $pub) {
     }
 
     if (isset($instances[$k]['widget']['module'])) {
-      // Process custom fields
+      // Process custom fields.
       if ($instances[$k]['widget']['module'] == 'image') {
         foreach ($v as $k1 => $v1) {
           foreach ($v1 as $k2 => $v2) {
@@ -408,19 +407,20 @@ function _photoldr_account_to_xml($account, $pub) {
           }
         }
         continue;
-      }  // End field_image.
+        // End field_image.
+      }
 
       if ($instances[$k]['widget']['module'] == 'date') {
-
         foreach ($v as $k1 => $v1) {
           foreach ($v1 as $k2 => $v2) {
             $pub['user'][$k] = $v2['value'];
           }
         }
         continue;
-      }  // End date field.
-
-    }  // End special fields.
+        // End date field.
+      }
+      // End special fields.
+    }
 
     if (is_array($v)) {
       $pub['user'][$k] = serialize($v);
@@ -446,16 +446,16 @@ function _photoldr_account_to_xml($account, $pub) {
  *
  * @return string
  *   String of XML tags.  This string should be enclosed in an XML tag
- *
  */
-function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
+function _photoldr_nodes_to_xml($pub, $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
   $output = '';
-     // Make XML from $pub.
+  // Make XML from $pub.
   foreach ($pub as $k => $v) {
+
     if (in_array($k, $restrictedfields)) {
       continue;
     }
-  
+
     $k = (isset($k)) ? $k : 'item';
     $k = is_string($k) ? $k : 'item';
 
@@ -465,7 +465,7 @@ function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data',
         if (in_array($k1, $restrictedfields)) {
           continue;
         }
-        
+
         $k1 = (isset($k1)) ? $k1 : 'node';
         $k1 = is_string($k1) ? $k1 : 'node';
 
@@ -488,40 +488,47 @@ function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data',
                       continue;
                     }
                     if (is_array($v4)) {
-                      $output .= '<' . $k4 . '>' . serialize($v4) . '</' . $k4 . '>' ;  // <tag>serialarray</tag>.
+                      // <tag>serialarray</tag>.
+                      $output .= '<' . $k4 . '>' . serialize($v4) . '</' . $k4 . '>';
                     }
                     else {
-                      $output .= '<' . $k4 . '>' . $v4 . '</' . $k4 . '>' ;  // <tag>serialarray</tag>.
+                      // <tag>serialarray</tag>.
+                      $output .= '<' . $k4 . '>' . $v4 . '</' . $k4 . '>';
                     }
                   }
                   $output .= '</' . $k3 . '>';
                 }
                 else {
-                  $output .= '<' . $k3 . '>' . $v3 . '</' . $k3 . '>' ;  // <tag>serialarray</tag>.
+                  // <tag>serialarray</tag>.
+                  $output .= '<' . $k3 . '>' . $v3 . '</' . $k3 . '>';
                 }
               }
               $output .= '</' . $k2 . '>';
             }
             else {
-              $output .= '<' . $k2 . '>' . $v2 . '</' . $k2 . '>' ;  // <tag>serialarray</tag>.
+              // <tag>serialarray</tag>.
+              $output .= '<' . $k2 . '>' . $v2 . '</' . $k2 . '>';
             }
           }
           $output .= '</' . $k1 . '>';
         }
         else {
           if (!is_object($v1)) {
-            $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' ;  // <tag>serialarray</tag>.
+            // <tag>serialarray</tag>.
+            $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>';
           }
         }
 
-      } // END foreach ($v as $k1 => $v1).
+        // END foreach ($v as $k1 => $v1).
+      } 
 
       $output .= '</' . $k . '>';
 
     }
     else {
       if (!is_object($v)) {
-        $output .= '<' . $k . '>' . $v . '</' . $k . '>' ;  // <tag>serialarray</tag>.
+        // <tag>serialarray</tag>.
+        $output .= '<' . $k . '>' . $v . '</' . $k . '>';
       }
     }
   
@@ -543,11 +550,9 @@ function _photoldr_nodes_to_xml($pub,  $restrictedfields = array('pass', 'data',
  *
  * @return string
  *   String of XML tags.  This string should be enclosed in an XML tag
- *
  */
 function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
   $output = '';
-
 
   foreach ($pub as $k => $v) {
 
@@ -564,21 +569,23 @@ function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data'
         $k1 = 'option';
 
         if (is_array($v1)) {
-          $output .= '<' . $k1 . '>' . serialize($v1) . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>.
+          // <tag>serialarray</tag>.
+          $output .= '<' . $k1 . '>' . serialize($v1) . '</' . $k1 . '>' . "\n";
         }
         else {
-          $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";  // <tag>serialarray</tag>.
+          // <tag>serialarray</tag>.
+          $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";
         }
+        // END foreach ($v as $k1 => $v1).
 
-      } // END foreach ($v as $k1 => $v1).
+      }
 
       $output .= '</' . $k . '>' . "\n";
 
-
     }
     else {
-
-      $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;  // <tag>serialarray</tag>.
+      // <tag>serialarray</tag>.
+      $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;
 
     }
 
