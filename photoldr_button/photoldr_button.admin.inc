@@ -4,6 +4,9 @@
  * Admin page callback for the photoldr_button module.
  */
 
+/**
+ * Builds and returns the PhotoLDR Button admin settings form.
+ */
 function photoldr_button_admin_settings() {
 
   $options = array('no', 'yes');

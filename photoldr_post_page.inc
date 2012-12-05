@@ -10,8 +10,9 @@
 
 
 /**
- * This is a form page for posting from the iOS app
- * username and password in POST or GET authenticate.
+ * This is a form page for posting from the iOS app.
+ *
+ * Use username and password in POST or GET authenticate.
  */
 function photoldr_post_page() {
   global $language;
@@ -33,7 +34,6 @@ function photoldr_post_page() {
   }
   $default_type = variable_get('photoldr_default_post_type', 'page');
   $ntype = isset($data['type']) ? drupal_strtolower(check_plain($data['type'])) : $default_type;
-
 
   // Authenticate the user.
   $uid = _photoldr_html_user_auth();
@@ -549,7 +549,7 @@ function photoldr_autorotate_image($imagefile) {
 
     case 2:
       // Horizontal flip.
-      //  image_flip($image, 1);
+      // image_flip($image, 1);
       break;
 
     case 3:
@@ -563,7 +563,7 @@ function photoldr_autorotate_image($imagefile) {
       // image_flip($image, 2);
       break;
 
-    case 5: 
+    case 5:
       // Vertical flip + 90 rotate right.
       // image_flip($image, 2);
       image_rotate($image, -90);

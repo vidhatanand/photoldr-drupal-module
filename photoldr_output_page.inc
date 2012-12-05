@@ -68,25 +68,25 @@ function photoldr_node_structure_page($uidvar = NULL) {
   // the base if the document <domains><domain> is the equivilent of the
   // root of the $pub array.  So, $pub['FQDN'] will becomer the object at
   // <domains><domain><FQDN>...</FQDN>.
-  $pub['FQDN'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
-  $pub['site_name'] = variable_get('photoldr_site_name',  variable_get('site_name'));
+  $pub['FQDN'] = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
+  $pub['site_name'] = variable_get('photoldr_site_name', variable_get('site_name'));
   $pub['published'] = "1";
   $pub['cms'] = "drupal";
   $pub['standalone'] = "1";
-  $pub['date'] = date( "Y-m-d H:i") ;
+  $pub['date'] = date("Y-m-d H:i");
   $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
-  $pub['exp_url'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
+  $pub['exp_url'] = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
   $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
 
   // <app_options> exposes site specific options for user settings
-  // in the iOS app
+  // in the iOS app.
   $pub['app_options'][] = "app:Username:username:textfield:";
   $pub['app_options'][] = "app:Password:password:password:";
   $pub['app_options'][] = "app:Publish:status:checkbox:";
 
 
   // <form_items> tag exposes field settings to PHOTOLDR APP
-  // <node_types> tag will eventually allow configurable displays in 
+  // <node_types> tag will eventually allow configurable displays in
   // the iOS app like table view, map view, or book view.
   $form_items = '<form_items>' . "\n";
   $node_display_settings = '<node_types>' . "\n";
@@ -151,8 +151,8 @@ function photoldr_node_structure_page($uidvar = NULL) {
     // Basically all Drupal nodes have a title and body.
     // Verify first then add option.
     if (isset($type->has_title)) {
-          $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
-          $form_items .= "\n";
+      $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
+      $form_items .= "\n";
     }
 
 
@@ -196,7 +196,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
         $form_items .= $this_field_label . ':';
         $form_items .= $this_field_name . ':';
         $form_items .= $this_field_type . ':';
-        $form_items .= $this_field_required ;
+        $form_items .= $this_field_required;
         $form_items .= '</option>' . "\n";
         continue;
       }
@@ -342,8 +342,8 @@ function photoldr_node_structure_page($uidvar = NULL) {
  * This function queries the database for ndoes and returns XML.
  *
  * @return string
- *   String xml document body.  This string should be enclosed in a 
- *   document tag and have an XML header added to the display.  In this 
+ *   String xml document body.  This string should be enclosed in a
+ *   document tag and have an XML header added to the display.  In this
  *   document context, this portion of XML will reside withing the
  *   <domain></domain> key.
  */
@@ -373,8 +373,8 @@ function _photoldr_xml_node_content() {
   $uidvar = _photoldr_html_user_auth();
   $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
-  // END user authentication section.
 
+  // Xml.
   $pub = _photoldr_account_to_xml($account, $pub);
 
   // Get list of nodes to publish and act on the list.
@@ -433,7 +433,7 @@ function _photoldr_xml_node_content() {
   // Make XML from $pub array.
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
 
-  // Debug pub data if user is Admin.  st uid to -10 to disable
+  // Debug pub data if user is Admin.  set uid to -10 to disable.
   if ($uid == 1) {
     $handle = fopen("pubdata.txt", "a");
     fwrite($handle, 'Pub: ' . print_r($pub, TRUE) . '  ');
@@ -458,14 +458,6 @@ function _photoldr_xml_node_content() {
  *   no access or no results, returns empty string.
  */
 function _photoldr_xml_unpublished_node_content($account) {
-/** This can help show permissions
- * foreach (module_list(FALSE, FALSE, TRUE) as $module) {
- *   print_r($module);
- *   if ($permissions = module_invoke($module, 'permission')) {
- *     print_r($permissions);
- *   }
- * }
- */
   $unpublished = FALSE;
   $userunpublished = FALSE;
   $access = 'administer nodes';
@@ -491,7 +483,7 @@ function _photoldr_xml_unpublished_node_content($account) {
 
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $enabled_nodes = variable_get('photoldr_types', $defaultnodeslist);
-  foreach ($enabled_nodes as $k => $nodename)  {
+  foreach ($enabled_nodes as $k => $nodename) {
     $node_order[$nodename] = variable_get('photoldr_node_weight_' . $nodename);
   }
   asort($node_order);
@@ -554,5 +546,4 @@ function _photoldr_xml_unpublished_node_content($account) {
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
 
   return $xml_body;
-
 }
