@@ -69,4 +69,3 @@ The XML Output is described in SAMPLE.txt and sample.xml
 
 Current maintainers:
 * Ian Willis (willisiw) - willisiw@754180.no-reply.drupal.org
-

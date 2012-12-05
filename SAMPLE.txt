@@ -40,6 +40,7 @@ Admin should be able to set a Relative date +3 months, +1 year, which will be
   EXAMPLE:
   <post_url>http://www.example.com?q=photoldrpost.php</post_url>
 
+
 --------------------------------------------------------------------------------
 <app_options> container for <options> which is a list of fields to collect 
 settings from the app.
@@ -53,6 +54,7 @@ settings from the app.
         fieldname - Machine name of the field. Lowercase, no spaces
         fieldtype - textfield, textarea, password, checkbox, date, image
         options - #required for any except images
+
 
 --------------------------------------------------------------------------------
 <form_items> container for <options> which list of node types and fields with 
@@ -82,10 +84,9 @@ ONLY when the authenticated user has permission to Add this type of record.
   will be rendered editable on the iOS app. Al other tags will not be editable.
 
 
-
 --------------------------------------------------------------------------------
-<user> contains information only if a user has authenticated. uid, name, and mail
-are required for authenticated users.
+<user> contains information only if a user has authenticated. uid, name, and 
+mail are required for authenticated users.
 
   EXAMPLE:
     <user>
@@ -93,7 +94,6 @@ are required for authenticated users.
       <name>demo</name>
       <mail>demo@example.com</mail>
     </user>
-
 
 
 --------------------------------------------------------------------------------
@@ -116,4 +116,3 @@ are required for authenticated users.
     <image#>This is the image in a medium to large format 
        (640-2000 pixels wide x 480-2000 pixels high)
     Images get special handling.
-

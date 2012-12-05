@@ -520,7 +520,7 @@ function _photoldr_nodes_to_xml($pub, $restrictedfields = array('pass', 'data', 
         }
 
         // END foreach ($v as $k1 => $v1).
-      } 
+      }
 
       $output .= '</' . $k . '>';
 
@@ -531,7 +531,7 @@ function _photoldr_nodes_to_xml($pub, $restrictedfields = array('pass', 'data', 
         $output .= '<' . $k . '>' . $v . '</' . $k . '>';
       }
     }
-  
+
   }
 
   return $output;
@@ -551,7 +551,7 @@ function _photoldr_nodes_to_xml($pub, $restrictedfields = array('pass', 'data', 
  * @return string
  *   String of XML tags.  This string should be enclosed in an XML tag
  */
-function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' )) {
+function _photoldr_domain_to_xml($pub, $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
   $output = '';
 
   foreach ($pub as $k => $v) {
@@ -577,7 +577,6 @@ function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data'
           $output .= '<' . $k1 . '>' . $v1 . '</' . $k1 . '>' . "\n";
         }
         // END foreach ($v as $k1 => $v1).
-
       }
 
       $output .= '</' . $k . '>' . "\n";
@@ -585,7 +584,7 @@ function _photoldr_domain_to_xml($pub,  $restrictedfields = array('pass', 'data'
     }
     else {
       // <tag>serialarray</tag>.
-      $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n" ;
+      $output .= '<' . $k . '>' . $v . '</' . $k . '>' . "\n";
 
     }
 

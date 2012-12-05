@@ -121,7 +121,7 @@ function photoldr_admin_settings() {
   $count = 0;
 
   // This is a rough attempt at setting the order of the node types to display
-  // in the XML. There is a better way I just need to find out how the Drupal 
+  // in the XML. There is a better way I just need to find out how the Drupal
   // ordered weights is implemented.
   foreach ($enabled_nodes as $k => $nodename) {
     $weight = variable_get('photoldr_node_weight_' . $nodename, '');
@@ -301,19 +301,19 @@ function photoldr_admin_settings() {
       $feed_back .= $field_name . ':';
       switch ($module) {
         case 'date':
-          $feed_back .= 'date' . ':';
+          $feed_back .= 'date:';
           break;
 
         case 'cck_phone':
-          $feed_back .= 'textfield' . ':';
+          $feed_back .= 'textfield:';
           break;
 
         case 'text':
           if (isset($instance['widget']['settings']['rows'])) {
-            $feed_back .= 'textarea' . ':';
+            $feed_back .= 'textarea:';
           }
           else {
-            $feed_back .= 'textfield' . ':';
+            $feed_back .= 'textfield:';
           }
           break;
 
