@@ -12,8 +12,9 @@
 
 
 /**
- * Presents XML page after checing user authentication 
- * via POST or GET variables username and password.
+ * Presents XML page after checing user authentication.
+ *
+ * Use POST or GET variables username and password.
  */
 function photoldr_node_structure_page_auth() {
   $uid = _photoldr_html_user_auth();
@@ -36,7 +37,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
   $exp_date = variable_get('photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
 
 
-  // Image field cardinality
+  // Image field cardinality.
   $fields = field_info_fields();
   $imagefields = array();
   $imagefieldmax = array();
@@ -49,26 +50,24 @@ function photoldr_node_structure_page($uidvar = NULL) {
         case FIELD_CARDINALITY_UNLIMITED:
           $max = '10';
           break;
-          
+
         default:
           $max = $imagefieldinfo['cardinality'];
           break;
-          
+
       }
       $imagefields[$k] = $k;
       $imagefieldmax[$k] = $max;
     }
   }
   reset($imagefields);
-  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');;
+  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');
 
 
-  /**
-   * Accumulate the data to be converted to XML inside the $pub array
-   * the base if the document <domains><domain> is the equivilent of the
-   * root of the $pub array.  So, $pub['FQDN'] will becomer the object at
-   * <domains><domain><FQDN>...</FQDN>
-   */
+  // Accumulate the data to be converted to XML inside the $pub array
+  // the base if the document <domains><domain> is the equivilent of the
+  // root of the $pub array.  So, $pub['FQDN'] will becomer the object at
+  // <domains><domain><FQDN>...</FQDN>.
   $pub['FQDN'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
   $pub['site_name'] = variable_get('photoldr_site_name',  variable_get('site_name'));
   $pub['published'] = "1";
@@ -78,35 +77,46 @@ function photoldr_node_structure_page($uidvar = NULL) {
   $pub['exp_date'] = date("Y-m-d", strtotime($exp_date));
   $pub['exp_url'] = variable_get('photoldr_FQDN',  check_plain($_SERVER['HTTP_HOST']));
   $pub['post_url'] = "http://" . $pub['FQDN'] . "/?q=photoldrpost.php";
-  /**
-   * <app_options> exposes site specific options for user settings
-   * in the iOS app
-   */
+
+  // <app_options> exposes site specific options for user settings
+  // in the iOS app
   $pub['app_options'][] = "app:Username:username:textfield:";
   $pub['app_options'][] = "app:Password:password:password:";
   $pub['app_options'][] = "app:Publish:status:checkbox:";
 
 
-  /**
-   * <form_items> tag exposes field settings to PHOTOLDR APP
-   * <node_types> tag will eventually allow configurable displays in 
-	 * the iOS app like table view, map view, or book view.
-   */
+  // <form_items> tag exposes field settings to PHOTOLDR APP
+  // <node_types> tag will eventually allow configurable displays in 
+  // the iOS app like table view, map view, or book view.
   $form_items = '<form_items>' . "\n";
   $node_display_settings = '<node_types>' . "\n";
 
   // These fields are supported by this module.
-  $supported_fields = array('image', 'textfield', 'text', 'textarea', 'checkbox', 'date', 'cck_phone', 'addressfield');
+  $supported_fields = array(
+    'image',
+    'textfield',
+    'text',
+    'textarea',
+    'checkbox',
+    'date',
+    'cck_phone',
+    'addressfield',
+  );
 
   // Addressfield US format name for fields.
-  $addressfields = array('street1', 'street2', 'city', 'state', 'zip', 'country');
+  $addressfields = array(
+    'street1',
+    'street2',
+    'city',
+    'state',
+    'zip',
+    'country',
+  );
   $field_types = field_info_field_types();
 
 
-  /**
-   * Build nodetype:Label:field_name:type:options
-   * Long foreach loop that attempt to address each field type.
-   */
+  // Build nodetype:Label:field_name:type:options
+  // foreach loop that attempt to address each field type.
   $instances = field_info_instances('node');
   foreach ($instances as $ntype => $fields) {
     $type = node_type_get_type($ntype);
@@ -129,30 +139,25 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
     $node_display_settings .= '<option>' . $ntype . ':' . $node_view . '</option>' . "\n";
 
-    /**
-     * Add postURL option ONLY for user's with permission to
-		 * create/add this type of node.
-     * nodetype:Hidden:posturl:http://hostname/?q=photoldrpost.php
-     */
+
+    // Add postURL option ONLY for user's with permission to
+    // create/add this type of node.
+    // nodetype:Hidden:posturl:http://hostname/?q=photoldrpost.php
     if ($usercreate) {
       $form_items .= '<option>' . $ntype . ':Hidden:posturl:' . $pub['post_url'] . '</option>';
       $form_items .= "\n";
     }
 
-    /**
-     * Basically all Drupal nodes have a title and body.
-		 * Verify first then add option.
-     */
+    // Basically all Drupal nodes have a title and body.
+    // Verify first then add option.
     if (isset($type->has_title)) {
           $form_items .= '<option>' . $ntype . ':Title:title:textfield:#required</option>';
           $form_items .= "\n";
     }
 
 
-    /**
-     * Check the widget and setup the option for the field.
-     * Also address unsupported fields.
-     */
+    // Check the widget and setup the option for the field.
+    // Also address unsupported fields.
     foreach ($fields as $instance) {
       $module = $instance['widget']['module'];
       $label = $instance['label'];
@@ -170,30 +175,30 @@ function photoldr_node_structure_page($uidvar = NULL) {
       if (!in_array($module, $supported_fields)) {
 
         if ($instance['widget']['type'] == 'options_select') {
-          // Option Select Fields
+          // Option Select Fields.
           $this_field_type = 'options_select';
           $this_field_required = 'UNSUPPORTED';
 
         }
         elseif ($instance['widget']['type'] == 'options_onoff') {
-          // Checkbox
+          // Checkbox.
           $this_field_type = 'checkbox';
           $this_field_required = '#true';
         }
         else {
-          // All other unsupported
+          // All other unsupported.
           $this_field_type = 'textfield';
           $this_field_required = 'UNSUPPORTED ' . $instance['widget']['module'];
         }
 
-          $form_items .= '<option>';
-          $form_items .= $this_node_type . ':';
-          $form_items .= $this_field_label . ':';
-          $form_items .= $this_field_name . ':';
-          $form_items .= $this_field_type . ':';
-          $form_items .= $this_field_required ;
-          $form_items .= '</option>' . "\n";
-          continue;
+        $form_items .= '<option>';
+        $form_items .= $this_node_type . ':';
+        $form_items .= $this_field_label . ':';
+        $form_items .= $this_field_name . ':';
+        $form_items .= $this_field_type . ':';
+        $form_items .= $this_field_required ;
+        $form_items .= '</option>' . "\n";
+        continue;
       }
 
 
@@ -211,7 +216,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
           $form_items .= $this_field_label . ':';
           $form_items .= $this_field_name . ':';
           $form_items .= $this_field_type . ':';
-          $form_items .= $this_field_required ;
+          $form_items .= $this_field_required;
           $form_items .= '</option>' . "\n";
         }
         continue;
@@ -227,7 +232,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
         $form_items .= $this_field_label . ':';
         $form_items .= $this_field_name . ':';
         $form_items .= $this_field_type . ':';
-        $form_items .= $this_field_required ;
+        $form_items .= $this_field_required;
         $form_items .= '</option>' . "\n";
 
         $form_items .= '<option>';
@@ -235,7 +240,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
         $form_items .= $this_field_label . ' End:';
         $form_items .= $this_field_name . '_end:';
         $form_items .= $this_field_type . ':';
-        $form_items .= $this_field_required ;
+        $form_items .= $this_field_required;
         $form_items .= '</option>' . "\n";
 
         continue;
@@ -252,7 +257,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
           }
           $this_field_required = '#' . $imagefieldmax[$this_field_name];
           break;
-          
+
         case 'cck_phone':
         case 'text':
           if (isset($instance['widget']['settings']['rows'])) {
@@ -262,12 +267,10 @@ function photoldr_node_structure_page($uidvar = NULL) {
             $this_field_type = 'textfield';
           }
           break;
-          
+
         default:
           $this_field_type = $module;
-          break;
-          
-      } // end of switch statement
+      }
 
       if ($instance['required']) {
         $this_field_required = '#required';
@@ -278,7 +281,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
       $form_items .= $this_field_label . ':';
       $form_items .= $this_field_name . ':';
       $form_items .= $this_field_type . ':';
-      $form_items .= $this_field_required ;
+      $form_items .= $this_field_required;
       $form_items .= '</option>' . "\n";
 
       if ($module == 'image') {
@@ -300,7 +303,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
   // This is the actual conversion of the $pub array to
   // the <domain> XML element.
-
   $output .= '<domain>' . "\n";
 
   // Move code to function  <domain> site fields are in $pub.
@@ -327,9 +329,9 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
   drupal_add_http_header('Content-Type', 'application/xml');
 
-  print($xml_head);
-  print($output);
-  print($xml_foot);
+  print $xml_head;
+  print $output;
+  print $xml_foot;
 
 }
 
@@ -339,10 +341,11 @@ function photoldr_node_structure_page($uidvar = NULL) {
  *
  * This function queries the database for ndoes and returns XML.
  *
- * @return
- *   String xml document body.  This string should be enclosed in a document tag
- *   and have an XML header added to the display.  In this document context, this
- *   portion of XML will reside withing the <domain></domain> key.
+ * @return string
+ *   String xml document body.  This string should be enclosed in a 
+ *   document tag and have an XML header added to the display.  In this 
+ *   document context, this portion of XML will reside withing the
+ *   <domain></domain> key.
  */
 function _photoldr_xml_node_content() {
   global $user;
@@ -354,7 +357,7 @@ function _photoldr_xml_node_content() {
 
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $enabled_nodes = variable_get('photoldr_types', $defaultnodeslist);
-  foreach ($enabled_nodes as $k => $nodename)  {
+  foreach ($enabled_nodes as $k => $nodename) {
     $node_order[$nodename] = variable_get('photoldr_node_weight_' . $nodename);
   }
   asort($node_order);
@@ -370,7 +373,7 @@ function _photoldr_xml_node_content() {
   $uidvar = _photoldr_html_user_auth();
   $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
-  // END user authentication section
+  // END user authentication section.
 
   $pub = _photoldr_account_to_xml($account, $pub);
 
@@ -401,7 +404,7 @@ function _photoldr_xml_node_content() {
     $query
       ->orderBy('n.' . $node_order_by, $sort);
 
-    // If the changed selector is set in POST, 
+    // If the changed selector is set in POST,
     // use it here or use the user setting.
     if (isset($data['changed'])) {
       $oldest_date = date(strtotime($data['changed']));
@@ -430,7 +433,7 @@ function _photoldr_xml_node_content() {
   // Make XML from $pub array.
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
 
-  // debug pub data if user is Admin.  st uid to -10 to disable
+  // Debug pub data if user is Admin.  st uid to -10 to disable
   if ($uid == 1) {
     $handle = fopen("pubdata.txt", "a");
     fwrite($handle, 'Pub: ' . print_r($pub, TRUE) . '  ');
@@ -448,14 +451,14 @@ function _photoldr_xml_node_content() {
  *
  * This function queries the database for ndoes and returns XML.
  *
- * @return
- *   String xml document body.  This string should be enclosed in a document tag
- *   and have an XML header added to the display.  In this document context, this
- *   portion of XML will reside withing the <domain></domain> key.  For no access
- *   or no results, returns empty string.
+ * @return string
+ *   String xml document body.  This string should be enclosed in a document
+ *   tag and have an XML header added to the display.  In this document context,
+ *   this portion of XML will reside withing the <domain></domain> key.  For
+ *   no access or no results, returns empty string.
  */
 function _photoldr_xml_unpublished_node_content($account) {
-/*  This can help show permissions
+/** This can help show permissions
  * foreach (module_list(FALSE, FALSE, TRUE) as $module) {
  *   print_r($module);
  *   if ($permissions = module_invoke($module, 'permission')) {
@@ -482,7 +485,7 @@ function _photoldr_xml_unpublished_node_content($account) {
   global $user;
   global $language;
   $langcode = isset($langcode) ? $langcode : $language->language;
-  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' );
+  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles');
   $pub = array();
   $data = array();
 
@@ -497,7 +500,6 @@ function _photoldr_xml_unpublished_node_content($account) {
   $uid = ((isset($uidvar)) && ($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
   // END user authentication section.
-
   // Get list of nodes to publish and act on the list.
   foreach ($node_order as $nodename => $k) {
     unset($query);
@@ -550,7 +552,6 @@ function _photoldr_xml_unpublished_node_content($account) {
 
   // Make XML from $pub.
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
-
 
   return $xml_body;
 

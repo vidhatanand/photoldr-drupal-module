@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * @file
  * Post page for the photoldr module.
  *
@@ -17,7 +16,7 @@
 function photoldr_post_page() {
   global $language;
   $langcode = isset($langcode) ? $langcode : $language->language;
-  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles' );
+  $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles');
 
   // Give the user feedback.  Accumulate througouht process.
   $feed_user = "";
@@ -30,7 +29,6 @@ function photoldr_post_page() {
     $data = $_GET;
   }
   else {
-    // watchdog('PhotoLDR', 'No Post or Get Autentication type data in transaction');
     return;
   }
   $default_type = variable_get('photoldr_default_post_type', 'page');
@@ -46,63 +44,61 @@ function photoldr_post_page() {
   else {
     $account = user_load($uid);
 
-      $access = 'create ' . $ntype . ' content';
-      if (user_access($access, $account)) {
-        $usercreate = TRUE;
-      }
-      else {
-        $usercreate = FALSE;
-      }
+    $access = 'create ' . $ntype . ' content';
 
-      $access = 'edit any ' . $ntype . ' content';
-      if (user_access($access, $account)) {
-        $usereditany = TRUE;
-      }
-      else {
-        $usereditany = FALSE;
-      }
+    if (user_access($access, $account)) {
+      $usercreate = TRUE;
+    }
+    else {
+      $usercreate = FALSE;
+    }
 
-      $access = 'edit own ' . $ntype . ' content';
-      if (user_access($access, $account)) {
-        $usereditown = TRUE;
-      }
-      else {
-        $usereditown = FALSE;
-      }
+    $access = 'edit any ' . $ntype . ' content';
+    if (user_access($access, $account)) {
+      $usereditany = TRUE;
+    }
+    else {
+      $usereditany = FALSE;
+    }
 
-      $access = 'delete any ' . $ntype . ' content';
-      if (user_access($access, $account)) {
-        $userdeleteany = TRUE;
-      }
-      else {
-        $userdeleteany = FALSE;
-      }
+    $access = 'edit own ' . $ntype . ' content';
+    if (user_access($access, $account)) {
+      $usereditown = TRUE;
+    }
+    else {
+      $usereditown = FALSE;
+    }
 
-      $access = 'delete own ' . $ntype . ' content';
-      if (user_access($access, $account)) {
-        $userdeleteown = TRUE;
-      }
-      else {
-        $userdeleteown = FALSE;
-      }
+    $access = 'delete any ' . $ntype . ' content';
+    if (user_access($access, $account)) {
+      $userdeleteany = TRUE;
+    }
+    else {
+      $userdeleteany = FALSE;
+    }
 
-      $access = 'administer nodes';
-      if (user_access($access, $account)) {
-        $nodeadmin = TRUE;
-      }
-      else {
-        $nodeadmin = FALSE;
-      }
+    $access = 'delete own ' . $ntype . ' content';
+    if (user_access($access, $account)) {
+      $userdeleteown = TRUE;
+    }
+    else {
+      $userdeleteown = FALSE;
+    }
 
+    $access = 'administer nodes';
+    if (user_access($access, $account)) {
+      $nodeadmin = TRUE;
+    }
+    else {
+      $nodeadmin = FALSE;
+    }
 
     if (!($usercreate)) {
       drupal_access_denied();
-    print "<!doctype html><html><head><meta charset=\"UTF-8\"><title>Access Denied</title></head><body>Access Denied</body></html>";
+      print "<!doctype html><html><head><meta charset=\"UTF-8\"><title>Access Denied</title></head><body>Access Denied</body></html>";
       return;
     }
   }
-
-  // End user authentication check.
 
 
   // Debug post data.  set uid to -10 to disable.
@@ -119,11 +115,12 @@ function photoldr_post_page() {
   if (!isset($types[$ntype])) {
     watchdog('PhotoLDR',
       '%ntype is not a valid node type on this site.  <br /> %uri <br /> %host <br /> %addr',
-      array('%ntype' => $ntype,
+      array(
+        '%ntype' => $ntype,
         '%uri' => request_uri(),
         '%host' => $_SERVER['REMOTE_HOST'],
-        '%addr' => $_SERVER['REMOTE_ADDR'],
-        )
+        '%addr' => ip_address(),
+      )
       );
     return;
   }
@@ -151,7 +148,7 @@ function photoldr_post_page() {
     if (($node->uid != $uid) && ($usereditany == FALSE)) {
       // Only the owner of the node can modify it.
       drupal_access_denied();
-    print "<!doctype html><html><head><meta charset=\"UTF-8\"><title>Access Denied</title></head><body>Access Denied</body></html>";
+      print "<!doctype html><html><head><meta charset=\"UTF-8\"><title>Access Denied</title></head><body>Access Denied</body></html>";
       return;
     }
   }
@@ -169,10 +166,10 @@ function photoldr_post_page() {
     $node->name = $account->name;
   }
 
-    $type = node_type_get_type($node);
-    $field_types = field_info_field_types();
-    $instances = field_info_instances('node', $node->type);
-    $module = array();
+  $type = node_type_get_type($node);
+  $field_types = field_info_field_types();
+  $instances = field_info_instances('node', $node->type);
+  $module = array();
 
   if ($nid == 'new') {
     // Building a blank node.
@@ -186,7 +183,7 @@ function photoldr_post_page() {
   }
 
 
-  // Get the default addresses from the user or Instance 
+  // Get the default addresses from the user or Instance
   // if the user is not set.
   // Build node address field.
   if (isset($instances['field_address'])) {
@@ -269,7 +266,7 @@ function photoldr_post_page() {
           $node->{'field_' . $k}['und'] = check_plain($v);
         }
 
-      // END switch case.
+        // END switch case.
     }
 
     // END foreach $data.
@@ -292,14 +289,14 @@ function photoldr_post_page() {
     if ($v['widget']['module'] == 'date') {
       $datefield = $v['field_name'];
       $node->{$datefield}['und']['0'] = array(
-                'value' => isset($data[$datefield]) ? date("Y-m-d H:i", strtotime(check_plain($data[$datefield]))) : $node->{$datefield}['und']['0']['value'],
-                'value2' => isset($data[$datefield . '_end']) ? date("Y-m-d H:i", strtotime(check_plain($data[$datefield . '_end']))) : $node->{$datefield}['und']['0']['value2'],
-              );
+        'value' => isset($data[$datefield]) ? date("Y-m-d H:i", strtotime(check_plain($data[$datefield]))) : $node->{$datefield}['und']['0']['value'],
+        'value2' => isset($data[$datefield . '_end']) ? date("Y-m-d H:i", strtotime(check_plain($data[$datefield . '_end']))) : $node->{$datefield}['und']['0']['value2'],
+      );
 
       if ($nid == 'new') {
         $node->{$datefield}['und']['0'] = array(
-              'timezone' => $account->timezone
-          );
+          'timezone' => $account->timezone,
+        );
       }
 
       // End date handling.
@@ -310,7 +307,7 @@ function photoldr_post_page() {
 
   if (count($imagefieldnames) > 1) {
     // There is more than on image field!!!
-      $photoldr_interact_image_field = $imagefieldnames['0'];
+    $photoldr_interact_image_field = $imagefieldnames['0'];
   }
   if (count($imagefieldnames) == 1) {
     $photoldr_interact_image_field = $imagefieldnames['0'];
@@ -378,7 +375,10 @@ function photoldr_post_page() {
   $xml_foot = '</domain></domains>';
 
   if ($node->nid) {
-      watchdog('PhotoLDR', 'Posted data for %nid as uid %uid.', array('%nid' => $node->nid, '%uid' => $node->uid, ));
+    watchdog('PhotoLDR', 'Posted data for %nid as uid %uid.', array(
+      '%nid' => $node->nid,
+      '%uid' => $node->uid,
+    ));
   }
 
   if ($node->nid) {
@@ -388,9 +388,9 @@ function photoldr_post_page() {
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
     $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
     drupal_add_http_header('Content-Type', 'application/xml');
-    print($xml_head);
-    print($xml_body);
-    print($xml_foot);
+    print $xml_head;
+    print $xml_body;
+    print $xml_foot;
   }
   else {
     // This is an HTML return.
@@ -405,7 +405,7 @@ function photoldr_post_page() {
 
 
 /**
- * Private function to process images in POST
+ * Private function to process images in POST.
  *
  * $type is the node type to associate
  * $uid is the authenticate user uid
@@ -421,7 +421,7 @@ function _photoldr_process_images($type, $uid, $field_name) {
   // Test _FILES for images.
   $count = 0;
   foreach ($_FILES as $k => $v) {
-    if (preg_match('/image*/i', $k)) {
+    if (preg_match('/imag*/i', $k)) {
       // Count Images in _POST.
       $count++;
     }
@@ -437,7 +437,6 @@ function _photoldr_process_images($type, $uid, $field_name) {
   $instances = field_info_instances('node', $type);
   $instance = $instances[$field_name];
   $field = field_info_field($field_name);
-
 
 
   // Image Field Options **************************************************
@@ -457,9 +456,9 @@ function _photoldr_process_images($type, $uid, $field_name) {
   $min_res = $instance['settings']['min_resolution'];
 
   $validators = array(
-      'file_validate_is_image' => array(),
-      'file_validate_extensions' => array($extensions),
-      'file_validate_size' => array($max_size * 1024 * 1024),
+    'file_validate_is_image' => array(),
+    'file_validate_extensions' => array($extensions),
+    'file_validate_size' => array($max_size * 1024 * 1024),
   );
 
 
@@ -490,20 +489,20 @@ function _photoldr_process_images($type, $uid, $field_name) {
       $file_copy->status = 1;
     }
 
-     // The file will be purged if it has a status of 0.
+    // The file will be purged if it has a status of 0.
     if ($file_copy->status == 0) {
       file_delete($file_copy);
       $feed_user .= 'Bad file ' . $v['name'] . ' removed.<br />';
     }
     else {
-        $result_save = file_save($file_copy);
-
-        // This collects the image objects to save in the node.
-        $images[$i] = $result_save;
-        $images[$i]->alt = $type . ' image';
-        $images[$i]->title = '';
+      $result_save = file_save($file_copy);
+      // This collects the image objects to save in the node.
+      $images[$i] = $result_save;
+      $images[$i]->alt = $type . ' image';
+      $images[$i]->title = '';
     }
-      //Adhere to cardinality regardless of input.
+
+    // Adhere to cardinality regardless of input.
     if ($i == $max) {
       break;
     }
@@ -544,42 +543,48 @@ function photoldr_autorotate_image($imagefile) {
   $ort = isset($exif['Orientation']) ? $exif['Orientation'] : 1;
 
   switch ($ort) {
-    case 1: // nothing
+    case 1:
+      // Nothing.
       break;
 
-    case 2: // horizontal flip
+    case 2:
+      // Horizontal flip.
       //  image_flip($image, 1);
       break;
 
-    case 3: // 180 rotate left
+    case 3:
+      // 180 rotate left.
       image_rotate($image, 180);
       image_save($image);
       break;
 
-    case 4: // vertical flip
+    case 4:
+      // Vertical flip.
       // image_flip($image, 2);
       break;
 
-    case 5: // vertical flip + 90 rotate right
+    case 5: 
+      // Vertical flip + 90 rotate right.
       // image_flip($image, 2);
       image_rotate($image, -90);
       image_save($image);
       break;
 
-    case 6: // 90 rotate right
+    case 6:
+      // 90 rotate right.
       image_rotate($image, -90);
       image_save($image);
       break;
 
     case 7:
-      // horizontal flip + 90 rotate right
+      // Horizontal flip + 90 rotate right.
       // image_flip($image,1);
       image_rotate($image, -90);
       image_save($image);
       break;
 
     case 8:
-      // 90 rotate left
+      // 90 rotate left.
       image_rotate($image, 90);
       image_save($image);
       break;
