@@ -1,11 +1,9 @@
 <?php
 /**
- *
  * @file
  * Admin page callback for the photoldr_button module.
  */
 function photoldr_button_admin_settings() {
-
 
   $options = array('no', 'yes');
   $form['photoldr_button_on_forms'] = array(
