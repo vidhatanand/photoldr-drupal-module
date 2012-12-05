@@ -3,7 +3,7 @@ description = (Experimnental) Blocks for the PhotoLDR app.
 core = 7.x
 package = PhotoLDR
 
+configure = admin/config/photoldr_button
+
 dependencies[] = photoldr
 dependencies[] = block
-
-configure = admin/config/photoldr_button
