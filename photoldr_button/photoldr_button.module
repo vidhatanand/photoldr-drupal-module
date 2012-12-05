@@ -38,7 +38,7 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   $photoldr_button_node_types = variable_get('photoldr_button_types', $defaultnodeslist);
   $uid = $user->uid;
   $mobile_type = FALSE;
-  if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+  if (preg_match('/iphon/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
     $mobile_type = "iPhone";
   }
   if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
@@ -64,12 +64,12 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   if (array_search($form['#node']->type, $photoldr_button_node_types) != FALSE) {
     return;
   }
- /**
-  drupal_set_message(print_r($photoldr_button_node_types, TRUE));
-  $handle = fopen("formarry.txt", "a");
-  fwrite($handle, print_r($form, true));
-  fclose($handle);
-  */
+
+  // drupal_set_message(print_r($photoldr_button_node_types, TRUE));
+  // $handle = fopen("formarry.txt", "a");
+  // fwrite($handle, print_r($form, true));
+  // fclose($handle);
+ 
 
   $type = $form['#node']->type;
   $nid = isset($form['#node']->nid) ? $form['#node']->nid : 'new';
@@ -78,9 +78,9 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
 
 
   if ($uid != $nuid) {
-    //must own node to use this.
+    // Must own node to use this.
     if ($uid != 1) {
-    // return;
+      // return;
     }
   }
 
