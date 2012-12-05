@@ -447,7 +447,12 @@ function _photoldr_account_to_xml($account, $pub) {
  * @return string
  *   String of XML tags.  This string should be enclosed in an XML tag
  */
-function _photoldr_nodes_to_xml($pub, $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
+function _photoldr_nodes_to_xml($pub, $restrictedfields = array(
+  'pass',
+  'data',
+  'rdf_mapping',
+  'roles',
+  )) {
   $output = '';
   // Make XML from $pub.
   foreach ($pub as $k => $v) {
@@ -551,7 +556,12 @@ function _photoldr_nodes_to_xml($pub, $restrictedfields = array('pass', 'data', 
  * @return string
  *   String of XML tags.  This string should be enclosed in an XML tag
  */
-function _photoldr_domain_to_xml($pub, $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles')) {
+function _photoldr_domain_to_xml($pub, $restrictedfields = array(
+  'pass',
+  'data',
+  'rdf_mapping',
+  'roles',
+  )) {
   $output = '';
 
   foreach ($pub as $k => $v) {

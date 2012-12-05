@@ -65,12 +65,6 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
-  // drupal_set_message(print_r($photoldr_button_node_types, TRUE));
-  // $handle = fopen("formarry.txt", "a");
-  // fwrite($handle, print_r($form, true));
-  // fclose($handle);
- 
-
   $type = $form['#node']->type;
   $nid = isset($form['#node']->nid) ? $form['#node']->nid : 'new';
   $nuid = $form['#node']->uid;
