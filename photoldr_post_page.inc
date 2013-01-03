@@ -100,7 +100,6 @@ function photoldr_post_page() {
     }
   }
 
-
   // Debug post data.  set uid to -10 to disable.
   if ($uid == 1) {
     $testdata = $data;
@@ -109,7 +108,6 @@ function photoldr_post_page() {
     fwrite($handle, 'Data: \n' . print_r($testdata, TRUE) . '  ');
     fclose($handle);
   }
-
 
   $types = node_type_get_names();
   if (!isset($types[$ntype])) {
@@ -125,11 +123,9 @@ function photoldr_post_page() {
     return;
   }
 
-
   // Since we have a valid node type, decide if we are
   // modifying or creating a node.
   $nid = (isset($data['nid'])) ? check_plain($data['nid']) : 'new';
-  $status = (isset($data['status'])) ? check_plain($data['status']) : '1';
 
   // Load existing node by node id.
   if ($nid != 'new') {
@@ -166,7 +162,6 @@ function photoldr_post_page() {
     $node->name = $account->name;
   }
 
-  $type = node_type_get_type($node);
   $field_types = field_info_field_types();
   $instances = field_info_instances('node', $node->type);
   $module = array();
@@ -182,7 +177,6 @@ function photoldr_post_page() {
     }
   }
 
-
   // Get the default addresses from the user or Instance
   // if the user is not set.
   // Build node address field.
@@ -191,7 +185,6 @@ function photoldr_post_page() {
     unset($node->field_address['und']['0']['thoroughfare']);
     unset($node->field_address['und']['0']['premise']);
   }
-
 
   // Loop through $data array and fill in the node values.
   foreach ($data as $k => $v) {
@@ -272,14 +265,11 @@ function photoldr_post_page() {
     // END foreach $data.
   }
 
-
   // IMAGE handling. ----------------------------------------
   $images = array();
-  $imagefields = array();
-
-
   $instance = field_info_instances('node', $ntype);
   $imagefieldnames = array();
+
   foreach ($instance as $k => $v) {
     if ($v['widget']['module'] == 'image') {
       $imagefieldnames[] = $v['field_name'];
@@ -302,7 +292,6 @@ function photoldr_post_page() {
       // End date handling.
     }
 
-
   }
 
   if (count($imagefieldnames) > 1) {
@@ -318,8 +307,6 @@ function photoldr_post_page() {
     $field_name = $instances[$photoldr_interact_image_field]['field_name'];
   }
 
-
-  $info = '';
   if (isset($field_name)) {
 
     if (($nid == 'new') && (!isset($node->{$field_name}))) {
@@ -369,7 +356,6 @@ function photoldr_post_page() {
     fclose($handle);
   }
 
-
   // This is an XML return.
   $xml_head = '<?xml version="1.0" encoding="utf-8"?><domains><domain>';
   $xml_foot = '</domain></domains>';
@@ -383,7 +369,6 @@ function photoldr_post_page() {
 
   if ($node->nid) {
     $result = array();
-    $pub = array();
     $result[] = $node;
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
     $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
@@ -431,13 +416,11 @@ function _photoldr_process_images($type, $uid, $field_name) {
     return;
   }
 
-
   // Image Field Handling ************************************************
   $images = array();
   $instances = field_info_instances('node', $type);
   $instance = $instances[$field_name];
   $field = field_info_field($field_name);
-
 
   // Image Field Options **************************************************
   switch ($field['cardinality']) {
@@ -461,11 +444,9 @@ function _photoldr_process_images($type, $uid, $field_name) {
     'file_validate_size' => array($max_size * 1024 * 1024),
   );
 
-
   // Set and Prepare the file directory.
   $picture_directory = variable_get('file_default_scheme', 'public') . '://' . $uri . '/';
   file_prepare_directory($picture_directory, FILE_CREATE_DIRECTORY);
-
 
   $i = "0";
   foreach ($_FILES as $k => $v) {
@@ -479,7 +460,6 @@ function _photoldr_process_images($type, $uid, $field_name) {
     $filename = file_munge_filename($filename, $extensions, FALSE);
     $destination = file_stream_wrapper_uri_normalize($picture_directory . $filename);
     $file_copy = file_copy($src, $destination, FILE_EXISTS_REPLACE);
-
 
     // Make sure we have an image.
     $validimg = file_validate_is_image($file_copy);
@@ -511,7 +491,6 @@ function _photoldr_process_images($type, $uid, $field_name) {
 
   $images_return = '';
 
-
   foreach ($images as $key => $imgobj) {
     file_validate_image_resolution($imgobj, $max_res, $min_res);
     photoldr_autorotate_image($imgobj);
@@ -520,7 +499,6 @@ function _photoldr_process_images($type, $uid, $field_name) {
       $images_return[$key][$obj] = $value;
     }
   }
-
 
   return $images_return;
 
