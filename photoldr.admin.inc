@@ -214,7 +214,7 @@ function photoldr_admin_settings() {
   );
 
   // SHOW FIELD SETTINGS for PHOTOLDR APP.
-  $feed_back = '<br /> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br />nodetype:Label:field_name:type:options<br /><br />';
+  $feed_back .= '<br /> Items in <em style="color:red">Red</em>. are unsupported, but try the suggested input style. <br />nodetype:Label:field_name:type:options<br /><br />';
 
   // These modules/widget types are supported.
   $supported_fields = array(
@@ -363,7 +363,7 @@ function photoldr_admin_settings() {
     }
   }
   reset($imagefields);
-  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');;
+  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');
   $form['photoldr_admin']['photoldr_image_field'] = array(
     '#type' => 'markup',
     '#prefix' => '<strong>' . t('Image Fields in this site.') . '</strong><pre><br/>',
