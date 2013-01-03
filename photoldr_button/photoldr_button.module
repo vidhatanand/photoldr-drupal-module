@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Add a link to Image widgets to photoldr_button://
@@ -29,7 +28,6 @@ function photoldr_button_menu() {
  */
 function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   global $user;
-  global $base_url;
 
   $hostname = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
 
@@ -47,7 +45,6 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
     $mobile_type = "iPod";
   }
-
 
   if ($mobile_type == FALSE) {
     return;
@@ -70,14 +67,12 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   $nuid = $form['#node']->uid;
   $q = $_GET['q'];
 
-
   if ($uid != $nuid) {
     // Must own node to use this.
     if ($uid != 1) {
       // return;
     }
   }
-
 
   $opts = _photoldr_button_parse_form($form);
   $icontag = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/LaunchBadge.png">';

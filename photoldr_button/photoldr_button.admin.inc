@@ -18,6 +18,5 @@ function photoldr_button_admin_settings() {
     '#description' => t('Show the PhotoLDR app link on node add/edit forms.'),
   );
 
-
   return system_settings_form($form);
 }
