@@ -8,14 +8,13 @@
  * Builds and returns the PhotoLDR admin page settings form.
  */
 function photoldr_admin_settings() {
-  global $base_url;
   $feed_back = "";
 
   // Add a list of links at the top of the admin page showing all menu links for
   // this module.
   $links = photoldr_menu();
   $nodeorder = array();
-  $helptxt = '<p><strong>PhotoLDR must have node types allowed.  Then users permissions must be set to allow users to create content, or the post will fail. </strong></p>';
+  $helptxt = t('<p><strong>PhotoLDR must have node types allowed.  Then users permissions must be set to allow users to create content, or the post will fail. </strong></p>');
 
   foreach ($links as $link => $v) {
     $helptxt .= '<p>' . l($v['title'] . ' - ' . $v['description'], $link) . '</p>';
@@ -30,7 +29,7 @@ function photoldr_admin_settings() {
   // Site settings for PhotoLDR.
   $form['photoldr_FQDN'] = array(
     '#type' => 'textfield',
-    '#title' => t('FQDN'),
+    '#title' => 'FQDN',
     '#size' => 30,
     '#default_value' => variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST'])),
     '#description' => t('Fully Qualified Domain Name of this web site.  Ex. www.Example.com'),
@@ -182,8 +181,8 @@ function photoldr_admin_settings() {
       '#type' => 'select',
       '#title' => t('@nodename - Sort Order', array('@nodename' => $nodename)),
       '#options' => array(
-        'DESC' => 'Descending Z-A or Newest First',
-        'ASC' => 'Ascending A-Z or Oldest First',
+        'DESC' => t('Descending Z-A or Newest First'),
+        'ASC' => t('Ascending A-Z or Oldest First'),
       ),
       '#default_value' => variable_get('photoldr_item_order_' . $nodename, 'DESC'),
       '#description' => t('This will set the order which items are returned to the App.'),
@@ -192,10 +191,10 @@ function photoldr_admin_settings() {
       '#type' => 'select',
       '#title' => t('@nodename - Sort By', array('@nodename' => $nodename)),
       '#options' => array(
-        'created' => 'Created',
-        'changed' => 'Changed',
-        'title' => 'Title',
-        'nid' => "Node ID",
+        'created' => t('Created'),
+        'changed' => t('Changed'),
+        'title' => t('Title'),
+        'nid' => t('Node ID'),
       ),
       '#default_value' => variable_get('photoldr_item_orderby_' . $nodename, 'created'),
       '#description' => t('This will set the field used to sort.'),
