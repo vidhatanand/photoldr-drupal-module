@@ -10,7 +10,6 @@
  * This presents this Druapl site as XML.
  */
 
-
 /**
  * Presents XML page after checing user authentication.
  *
@@ -21,21 +20,17 @@ function photoldr_node_structure_page_auth() {
   photoldr_node_structure_page($uid);
 }
 
-
 /**
  * Presents XML page with the current Drupal authenicated user.
  */
 function photoldr_node_structure_page($uidvar = NULL) {
   global $user;
-  global $base_url;
   $uid = (isset($uidvar)) ? $uidvar : $user->uid;
   $account = user_load($uid);
 
-  $build = array();
   $output = '';
 
   $exp_date = variable_get('photoldr_exp_date', date("Y-m-d", strtotime('+3 year')));
-
 
   // Image field cardinality.
   $fields = field_info_fields();
@@ -61,8 +56,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
     }
   }
   reset($imagefields);
-  $imgoptions = (count($imagefields) > 0) ? $imagefields : array('none found');
-
 
   // Accumulate the data to be converted to XML inside the $pub array
   // the base if the document <domains><domain> is the equivilent of the
@@ -83,7 +76,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
   $pub['app_options'][] = "app:Username:username:textfield:";
   $pub['app_options'][] = "app:Password:password:password:";
   $pub['app_options'][] = "app:Publish:status:checkbox:";
-
 
   // <form_items> tag exposes field settings to PHOTOLDR APP
   // <node_types> tag will eventually allow configurable displays in
@@ -112,8 +104,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
     'zip',
     'country',
   );
-  $field_types = field_info_field_types();
-
 
   // Build nodetype:Label:field_name:type:options
   // foreach loop that attempt to address each field type.
@@ -133,12 +123,7 @@ function photoldr_node_structure_page($uidvar = NULL) {
     }
 
     $node_view = variable_get('photoldr_node_view_' . $ntype, 'table');
-    $node_max = variable_get('photoldr_item_max_' . $ntype, 10);
-    $node_age_max = variable_get('photoldr_item_age_max_' . $ntype, 0);
-    $node_order = variable_get('photoldr_item_order_' . $ntype, 0);
-
     $node_display_settings .= '<option>' . $ntype . ':' . $node_view . '</option>' . "\n";
-
 
     // Add postURL option ONLY for user's with permission to
     // create/add this type of node.
@@ -155,13 +140,14 @@ function photoldr_node_structure_page($uidvar = NULL) {
       $form_items .= "\n";
     }
 
-
     // Check the widget and setup the option for the field.
     // Also address unsupported fields.
     foreach ($fields as $instance) {
       $module = $instance['widget']['module'];
       $label = $instance['label'];
       $field_name = $instance['field_name'];
+
+      // TODO: Add some logic to use the field_info.
       $fieldinfo = field_info_field($instance['field_name']);
 
       $this_node_type = $ntype;
@@ -169,7 +155,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
       $this_field_name = $field_name;
       $this_field_type = '';
       $this_field_required = '';
-
 
       // Handle other or unsupported fields.
       if (!in_array($module, $supported_fields)) {
@@ -201,7 +186,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
         continue;
       }
 
-
       // Special support for the addressfield module.
       if ($instance['widget']['module'] == 'addressfield') {
 
@@ -209,7 +193,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
           $this_field_label = drupal_ucfirst($fieldname);
           $this_field_name = $fieldname;
           $this_field_type = 'textfield';
-
 
           $form_items .= '<option>';
           $form_items .= $this_node_type . ':';
@@ -245,7 +228,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
         continue;
       }
-
 
       switch ($module) {
         case 'image':
@@ -291,15 +273,12 @@ function photoldr_node_structure_page($uidvar = NULL) {
       // End foreach ($fields as $instance).
     }
 
-
     // END foreach ($instances as $ntype => $fields).
   }
-
 
   // Close the accumulated variables with their tags.
   $form_items .= '</form_items>' . "\n";
   $node_display_settings .= '</node_types>' . "\n";
-
 
   // This is the actual conversion of the $pub array to
   // the <domain> XML element.
@@ -335,7 +314,6 @@ function photoldr_node_structure_page($uidvar = NULL) {
 
 }
 
-
 /**
  * Get published nodes and convert them to XML.
  *
@@ -352,6 +330,7 @@ function _photoldr_xml_node_content() {
   global $language;
   $langcode = isset($langcode) ? $langcode : $language->language;
   $restrictedfields = array('pass', 'data', 'rdf_mapping', 'roles');
+  // Make the $pub array empty.
   $pub = array();
   $data = array();
 
@@ -361,7 +340,6 @@ function _photoldr_xml_node_content() {
     $node_order[$nodename] = variable_get('photoldr_node_weight_' . $nodename);
   }
   asort($node_order);
-
 
   if (isset($_POST['changed'])) {
     $data['changed'] = check_plain($_POST['changed']);
@@ -394,7 +372,6 @@ function _photoldr_xml_node_content() {
       $sort = 'ASC';
     }
 
-
     // Query nodes owned by this user.
     $query = db_select('node', 'n');
     $query
@@ -425,10 +402,8 @@ function _photoldr_xml_node_content() {
     // Use $result to populate the $pub array.
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
-
     // End foreach ($node_order as $nodename => $k).
   }
-
 
   // Make XML from $pub array.
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
@@ -440,11 +415,9 @@ function _photoldr_xml_node_content() {
     fclose($handle);
   }
 
-
   return $xml_body;
 
 }
-
 
 /**
  * Get unpublished nodes and convert them to XML.
@@ -472,7 +445,6 @@ function _photoldr_xml_unpublished_node_content($account) {
     // Return empty string for no results.
     return '';
   }
-
 
   global $user;
   global $language;
@@ -509,7 +481,6 @@ function _photoldr_xml_unpublished_node_content($account) {
       $sort = 'ASC';
     }
 
-
     // Query nodes owned by this user.
     $query = db_select('node', 'n');
     $query
@@ -537,10 +508,8 @@ function _photoldr_xml_unpublished_node_content($account) {
     // Use $result to populate the $pub array.
     $pub = _photoldr_prep_node_for_xml($result, $pub, $account);
 
-
     // End foreach ($node_order as $nodename => $k).
   }
-
 
   // Make XML from $pub.
   $xml_body = _photoldr_nodes_to_xml($pub, $restrictedfields);
