@@ -69,7 +69,6 @@ function photoldr_admin_settings() {
     '#description' => t('Select the types of nodes used by PhotoLDR. CTRL-click to select multiple.'),
   );
 
-
   // Allow the Site admin to pick image sizes to show in the iOS app.
   foreach (image_styles() as $style) {
     $styles[$style['name']] = $style['name'];
@@ -88,7 +87,6 @@ function photoldr_admin_settings() {
     '#default_value' => variable_get('photoldr_image_icon_field_style', array('thumbnail' => 'thumbnail')),
     '#description' => t('Select the image style of icon displayed by PhotoLDR.') . ' ' . l(t('Image Style Config'), 'admin/config/media/image-styles'),
   );
-
 
   // This is the default data/node type to create when a user adds data.
   // This is only useful if there is only one data type.
@@ -115,7 +113,6 @@ function photoldr_admin_settings() {
   // view_types is for a future feature in the iOS app which
   // allows a site admin to select how the data should be shown in the iOS app.
   $view_types = array('table' => 'Table', 'map' => 'Map -coming soon');
-  $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $enabled_nodes = variable_get('photoldr_types', $defaultnodeslist);
   $weight_used = array();
   $count = 0;
@@ -148,7 +145,6 @@ function photoldr_admin_settings() {
     '#type' => 'markup',
     '#markup' => '<hr/>',
   );
-
 
   // This section presents node type specific settings for each node
   // in a three column table layaout.  This could be improved also.
@@ -237,7 +233,6 @@ function photoldr_admin_settings() {
     'zip',
     'country',
   );
-  $field_types = field_info_field_types();
 
   // Build nodetype:Label:field_name:type:options
   $instances = field_info_instances('node');
@@ -295,7 +290,6 @@ function photoldr_admin_settings() {
         continue;
       }
 
-
       $feed_back .= $ntype . ':';
       $feed_back .= $label . ':';
       $feed_back .= $field_name . ':';
@@ -337,7 +331,6 @@ function photoldr_admin_settings() {
     // END foreach ($instances as $instance).
   }
 
-
   // This is just for site developers to see how the node data is presented.
   $form['photoldr_admin'] = array(
     '#title' => 'Node Type Samples',
@@ -370,7 +363,6 @@ function photoldr_admin_settings() {
     '#markup' => print_r($imgoptions, TRUE),
     '#suffix' => '</pre>',
   );
-
 
   return system_settings_form($form);
 }

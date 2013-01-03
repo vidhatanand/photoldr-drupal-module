@@ -4,7 +4,6 @@
  * Present data and receive data from an iOS app PhotoLDR
  */
 
-
 /**
  * Implements hook_help().
  */
@@ -18,7 +17,6 @@ function photoldr_help($path, $arg) {
   }
 }
 
-
 /**
  * Implements hook_menu().
  *
@@ -27,7 +25,6 @@ function photoldr_help($path, $arg) {
  * configuration page
  */
 function photoldr_menu() {
-
 
   // Publish the site to an iOS app using XML.
   // Use HTML Authentication.
@@ -54,7 +51,6 @@ function photoldr_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
 
-
   // Post data to the site in $_POST.
   $items['photoldrpost.php'] = array(
     'title' => 'Post Page',
@@ -65,7 +61,6 @@ function photoldr_menu() {
     'file path' => drupal_get_path('module', 'photoldr'),
     'type' => MENU_SUGGESTED_ITEM,
   );
-
 
   // Module settings.
   $items['admin/config/photoldr'] = array(
@@ -88,7 +83,6 @@ function photoldr_menu() {
   );
   return $items;
 }
-
 
 /**
  * Private function checks _POST and _GET for data.
@@ -116,7 +110,6 @@ function _photoldr_html_user_auth() {
 
   return $uid;
 }
-
 
 /**
  * Add nodes from a query into an existing array.
@@ -208,7 +201,6 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
       $nodeadmin = FALSE;
     }
 
-
     foreach ($node as $k => $v) {
       // Process nodes as fields.
       $pub[$container][$row->nid]['userdelete'] = '0';
@@ -235,7 +227,6 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           $pub[$container][$row->nid]['useredit'] = '1';
         }
       }
-
 
       if (isset($instances[$k]['widget']['module'])) {
         // Process custom fields.
@@ -274,7 +265,6 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
           }
           continue;
         }
-
 
         // Process Address fields.
         if ($instances[$k]['widget']['module'] == 'addressfield') {
@@ -333,13 +323,11 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
         // End if (isset($instances[$k]['widget']['module'])).
       }
 
-
       // Handle simple dates that are timestamps.
       if (in_array($k, $simple_dates) && (is_numeric($v))) {
         $pub[$container][$row->nid][$k] = date('Y-m-d', $v);
         continue;
       }
-
 
       // Default field Handling - All other or unsupported fields.
       if (is_array($v)) {
@@ -357,13 +345,11 @@ function _photoldr_prep_node_for_xml($result, $pub, $account) {
 
     }
 
-
   }
   // All data gathered in PUB varialble.
   return $pub;
 
 }
-
 
 /**
  * Add user account object data into an existing array.
@@ -433,9 +419,8 @@ function _photoldr_account_to_xml($account, $pub) {
   return $pub;
 }
 
-
 /**
- * Create a string object XML from an array of nodes.
+ * Create a string of XML from an array of nodes.
  *
  * This step turns the accumulated site information into XML.
  *
@@ -542,9 +527,8 @@ function _photoldr_nodes_to_xml($pub, $restrictedfields = array(
   return $output;
 }
 
-
 /**
- * Create a string object consing XML from an array.
+ * Create a string of XML from an array.
  *
  * This step turns the accumulated site information into XML.
  *
