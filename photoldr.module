@@ -62,13 +62,14 @@ function photoldr_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
 
-  // Module settings.
+  // Module settings.  Access for Demo Site.
   $items['admin/config/photoldr'] = array(
     'title' => 'PhotoLDR',
     'description' => 'PhotoLDR Module Configuration',
     'page callback' => 'drupal_get_form',
+    'theme callback' => variable_get('admin_theme'),
     'page arguments' => array('photoldr_admin_settings'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('access content'),
     'file' => 'photoldr.admin.inc',
     'file path' => drupal_get_path('module', 'photoldr'),
   );
@@ -76,12 +77,40 @@ function photoldr_menu() {
     'title' => 'PhotoLDR',
     'description' => 'PhotoLDR Module Configuration',
     'page callback' => 'drupal_get_form',
+    'theme callback' => variable_get('admin_theme'),
     'page arguments' => array('photoldr_admin_settings'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('access content'),
     'file' => 'photoldr.admin.inc',
     'file path' => drupal_get_path('module', 'photoldr'),
   );
   return $items;
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * This section is meant only for the DEMO site.
+ */
+function photoldr_cron() {
+  $now = time();
+  $triggernow = variable_get('photoldrcron_next_execution', $now);
+  if ($triggernow > $now) {
+    watchdog('photoldr', 'photoldr cron ran with no actions.');
+    return;
+  }
+
+  // Default to an hourly interval. Of course, cron has to be running at least
+  // hourly for this to work.
+  $interval = 60*60;
+
+  // Deleting variables will force the module to use the defaults.
+  db_delete('variable')
+    ->condition('name', "photoldr_%", "LIKE")
+    ->execute();
+  cache_clear_all('variables', 'cache_bootstrap');
+  variable_set('photoldrcron_next_execution', $now + $interval);
+
+  return;
 }
 
 /**
