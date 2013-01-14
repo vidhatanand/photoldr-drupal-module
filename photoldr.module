@@ -110,6 +110,13 @@ function photoldr_cron() {
   cache_clear_all('variables', 'cache_bootstrap');
   variable_set('photoldrcron_next_execution', $now + $interval);
 
+  $defaultnodeslist = array(
+    'article' => 'article',
+    'page' => 'page',
+    'event' => 'event',
+    'guest_status' => 'guest_status',
+  );
+  variable_set('photoldr_types', $defaultnodeslist);
   return;
 }
 
