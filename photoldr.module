@@ -108,8 +108,19 @@ function photoldr_cron() {
     ->condition('name', "photoldr_%", "LIKE")
     ->execute();
   cache_clear_all('variables', 'cache_bootstrap');
+  _photoldr_set_defaults();
   variable_set('photoldrcron_next_execution', $now + $interval);
+  return;
+}
 
+/**
+ * Private function sets defaults for PhotoLDR module.
+ */
+function _photoldr_set_defaults() {
+  variable_set('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
+  variable_set('photoldr_site_name',  variable_get('site_name'));
+  variable_set('photoldr_exp_date', '+3 months');
+  variable_get('photoldr_allow_unpublished', 'yes');
   $defaultnodeslist = array(
     'article' => 'article',
     'page' => 'page',
@@ -117,7 +128,21 @@ function photoldr_cron() {
     'guest_status' => 'guest_status',
   );
   variable_set('photoldr_types', $defaultnodeslist);
-  return;
+  variable_set('photoldr_image_field_style', 'medium');
+  variable_set('photoldr_image_icon_field_style', 'thumbnail');
+  variable_set('photoldr_default_post_type', 'page');
+
+  $count = 0;
+  foreach ($defaultnodeslist as $k => $nodename) {
+    $count++;
+    variable_set('photoldr_node_weight_' . $nodename, $count);
+    variable_set('photoldr_node_view_' . $nodename, 'table');
+    variable_set('photoldr_item_max_' . $nodename, 10);
+    variable_set('photoldr_item_max_' . $nodename, 10);
+    variable_set('photoldr_item_age_max_' . $nodename, 0);
+    variable_set('photoldr_item_order_' . $nodename, 'DESC');
+    variable_set('photoldr_item_orderby_' . $nodename, 'created');
+  }
 }
 
 /**
