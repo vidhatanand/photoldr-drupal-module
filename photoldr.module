@@ -101,7 +101,7 @@ function photoldr_cron() {
 
   // Default to an hourly interval. Of course, cron has to be running at least
   // hourly for this to work.
-  $interval = 60*60;
+  $interval = 2*60*60;
 
   // Deleting variables will force the module to use the defaults.
   db_delete('variable')
@@ -110,6 +110,7 @@ function photoldr_cron() {
   cache_clear_all('variables', 'cache_bootstrap');
   _photoldr_set_defaults();
   variable_set('photoldrcron_next_execution', $now + $interval);
+  watchdog('photoldr', 'PhotoLDR reset to defaults.');
   return;
 }
 
@@ -120,7 +121,7 @@ function _photoldr_set_defaults() {
   variable_set('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
   variable_set('photoldr_site_name',  variable_get('site_name'));
   variable_set('photoldr_exp_date', '+3 months');
-  variable_get('photoldr_allow_unpublished', 'yes');
+  variable_set('photoldr_allow_unpublished', 'yes');
   $defaultnodeslist = array(
     'article' => 'article',
     'page' => 'page',
@@ -138,11 +139,18 @@ function _photoldr_set_defaults() {
     variable_set('photoldr_node_weight_' . $nodename, $count);
     variable_set('photoldr_node_view_' . $nodename, 'table');
     variable_set('photoldr_item_max_' . $nodename, 10);
-    variable_set('photoldr_item_max_' . $nodename, 10);
     variable_set('photoldr_item_age_max_' . $nodename, 0);
     variable_set('photoldr_item_order_' . $nodename, 'DESC');
     variable_set('photoldr_item_orderby_' . $nodename, 'created');
   }
+
+  // Special treatment for Articles.
+  variable_set('photoldr_node_weight_article', 9);
+  variable_set('photoldr_item_order_article', 'ASC');
+  variable_set('photoldr_item_orderby_article' , 'title');
+  variable_set('photoldr_item_max_article', 15);
+
+  return;
 }
 
 /**
