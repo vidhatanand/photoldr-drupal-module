@@ -1,16 +1,14 @@
 <?php
-
 /**
  * @file
  * Add a link to Image widgets to photoldr_button://
  */
-  
- /**
+
+/**
  * Implements hook_menu().
  */
-function photoldr_button_menu() { 
-   // Module settings.
-  
+function photoldr_button_menu() {
+  // Module settings.
   $items['admin/config/photoldr/photoldr_button'] = array(
     'title' => 'PhotoLDR Button',
     'description' => 'Photoldr Button Configuration',
@@ -23,15 +21,13 @@ function photoldr_button_menu() {
   return $items;
 }
 
- /**
+/**
  * Implements hook_form_alter().
  *
  * Alter Node Form to add photoldr_button launch button with URL.
- *
  */
 function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   global $user;
-  global $base_url;
 
   $hostname = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
 
@@ -39,21 +35,19 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $photoldr_button_node_types = variable_get('photoldr_button_types', $defaultnodeslist);
   $uid = $user->uid;
-	$mobile_type = FALSE;
-	if (preg_match('/iphone/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPhone";
-	}
-	if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPad";
-	}
-	if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
-		$mobile_type = "iPod";
-	}
-	
-
+  $mobile_type = FALSE;
+  if (preg_match('/iphon/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPhone";
+  }
+  if (preg_match('/ipad/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPad";
+  }
+  if (preg_match('/ipod/i', drupal_strtolower($_SERVER['HTTP_USER_AGENT']))) {
+    $mobile_type = "iPod";
+  }
 
   if ($mobile_type == FALSE) {
-   // return;
+    return;
   }
   if ($showbutton == 'no') {
     return;
@@ -67,96 +61,95 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   if (array_search($form['#node']->type, $photoldr_button_node_types) != FALSE) {
     return;
   }
-  /**
-  drupal_set_message(print_r($photoldr_button_node_types, TRUE));
-  $handle = fopen("formarry.txt", "a");
-  fwrite($handle, print_r($form, true));
-  fclose($handle); 
-  
-  */
 
   $type = $form['#node']->type;
   $nid = isset($form['#node']->nid) ? $form['#node']->nid : 'new';
   $nuid = $form['#node']->uid;
   $q = $_GET['q'];
 
-    
   if ($uid != $nuid) {
-      //must own node to use this.
-      if ($uid != 1) {
-       // return;
-      }
+    // Must own node to use this.
+    if ($uid != 1) {
+      // return;
+    }
   }
 
+  $opts = _photoldr_button_parse_form($form);
+  $icontag = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/LaunchBadge.png">';
+  $url = 'photoldr://' . $hostname . '/' . $opts;
+  // <input type="button" value="photoldr_button" class="form-submit">
+  $new1 = '<div class="ui-btn-up-c"><h4>Add ' . $type . ' from ' . $mobile_type
+            . ' <br /><a href="' . $url . '">'
+            . $icontag .
+            '</a></h4></div>';
+  if (user_access('debug photoldr_button')) {
+    $new1 .= '<br />' . print_r($url, TRUE);
+  }
 
-    $opts = _photoldr_button_parse_form($form);
-    $icontag = '<img src="' . drupal_get_path('module', 'photoldr') . '/images/LaunchBadge.png">';
-    $url = 'photoldr://' . $hostname . '/' . $opts;
-    // <input type="button" value="photoldr_button" class="form-submit">
-    $new1 = '<div class="ui-btn-up-c"><h4>Add ' . $type . ' from ' . $mobile_type 
-              . ' <br /><a href="' . $url . '">'
-              . $icontag .
-              '</a></h4></div>';
-    if (user_access('debug photoldr_button')) {
-      $new1 .= '<br />' . print_r($url, TRUE);
-    }
-    
-    $form['photoldr_app'] = array(
-      '#title' => t('PhotLDR App'),
-      '#type' => 'markup',
-      '#weight' => '-50',
-      '#prefix' =>  '<div>',
-      '#sufix' =>  '</div>',
-      '#markup' =>  $new1,
-    );
-
-
+  $form['photoldr_app'] = array(
+    '#title' => 'PhotoLDR App',
+    '#type' => 'markup',
+    '#weight' => '-50',
+    '#prefix' => '<div>',
+    '#sufix' => '</div>',
+    '#markup' => $new1,
+  );
 
   return $form;
 
 }
 
 
-
-//  Private function that helps build the URL for photoldr:// from active form elements.
+/**
+ * Build a photoldr: URL based on the form.
+ *
+ * Private function that helps build the URL
+ * for photoldr:// from active form elements.
+ *
+ * @param array $form
+ *   This is the form array.
+ *
+ * @return string
+ *   String url based on form.
+ */
 function _photoldr_button_parse_form($form) {
   $node = $form['#node'];
-  
+
   if (!isset($form['nid']['#value'])) {
     $url = '&type=' . $form['#node']->type;
     return $url;
-    
   }
+
   $url = '';
   foreach ($node as $field => $v) {
-      switch (drupal_strtolower($field)) {
-        case 'nid':
-        case 'date':
-        case 'type':
-        case 'title':
-        case 'status':
-            if (isset($v)) {
-              $url .= '&' . $field . '=' . urlencode(check_plain($v));
-            }
-            break;
-        case 'body':
-            if (isset($v)) {
-              $url .= '&' . $field . '=' . urlencode(check_plain($v['und']['0']['value']));
-            }
-            break;
-        case 'field_address':
-            $url .= '&street1=' . urlencode(check_plain($node->field_address['und']['0']['thoroughfare']));
-            $url .= '&street2=' . urlencode(check_plain($node->field_address['und']['0']['premise']));
-            $url .= '&city=' . urlencode(check_plain($node->field_address['und']['0']['locality']));
-            $url .= '&state' . urlencode(check_plain($node->field_address['und']['0']['administrative_area']));
-            $url .= '&zip=' . urlencode(check_plain($node->field_address['und']['0']['postal_code']));
-            $url .= '&country=' . urlencode(check_plain($node->field_address['und']['0']['country']));
-            break;
+    switch (drupal_strtolower($field)) {
+      case 'nid':
+      case 'date':
+      case 'type':
+      case 'title':
+      case 'status':
+        if (isset($v)) {
+          $url .= '&' . $field . '=' . urlencode(check_plain($v));
+        }
+        break;
+
+      case 'body':
+        if (isset($v)) {
+          $url .= '&' . $field . '=' . urlencode(check_plain($v['und']['0']['value']));
+        }
+        break;
+
+      case 'field_address':
+        $url .= '&street1=' . urlencode(check_plain($node->field_address['und']['0']['thoroughfare']));
+        $url .= '&street2=' . urlencode(check_plain($node->field_address['und']['0']['premise']));
+        $url .= '&city=' . urlencode(check_plain($node->field_address['und']['0']['locality']));
+        $url .= '&state' . urlencode(check_plain($node->field_address['und']['0']['administrative_area']));
+        $url .= '&zip=' . urlencode(check_plain($node->field_address['und']['0']['postal_code']));
+        $url .= '&country=' . urlencode(check_plain($node->field_address['und']['0']['country']));
+        break;
+
     }
   }
-  
+
   return $url;
-  
 }
-
-
