@@ -21,17 +21,37 @@ function photoldr_button_menu() {
   return $items;
 }
 
+
+function photoldr_page_alter(&$page) {
+  $showapp = variable_get('photoldr_smart_app_banner', 'yes');
+  if ($showapp == TRUE) {
+    $pub['FQDN'] = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
+    $header = array(
+      '#tag' => 'meta', 
+      '#attributes' => array( 
+        'name' => 'apple-itunes-app',
+        'content' => "app-id=555194288, app-argument=photoldr://{$pub['FQDN']}",
+      ),
+    );
+    drupal_add_html_head($header, 'apple-itunes-app');
+  }
+}
+
+
 /**
  * Implements hook_form_alter().
  *
  * Alter Node Form to add photoldr_button launch button with URL.
  */
 function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
-  global $user;
+  $showbutton = variable_get('photoldr_button_on_forms', 'no');
+  if ($showbutton === "no") {
+    return;
+  }
 
+  global $user;
   $hostname = variable_get('photoldr_FQDN', check_plain($_SERVER['HTTP_HOST']));
 
-  $showbutton = variable_get('photoldr_button_on_forms', 'no');
   $defaultnodeslist = array('article', 'book', 'page', 'product_display');
   $photoldr_button_node_types = variable_get('photoldr_button_types', $defaultnodeslist);
   $uid = $user->uid;
@@ -47,9 +67,6 @@ function photoldr_button_form_alter(&$form, &$form_state, $form_id) {
   }
 
   if ($mobile_type == FALSE) {
-    return;
-  }
-  if ($showbutton == 'no') {
     return;
   }
   if (!isset($form['#node_edit_form'])) {
